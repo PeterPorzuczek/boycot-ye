@@ -75,7 +75,6 @@ async function main() {
           const createdSignature = await pb.collection('signatures').create(testSignatureData);
           console.log(`✅ Test signature record created successfully (ID: ${createdSignature.id})`);
           
-          // Fetch and log the created signature record
           const fetchedSignature = await pb.collection('signatures').getOne(createdSignature.id);
           console.log('Fetched signature record:', JSON.stringify(fetchedSignature, null, 2));
 
@@ -89,18 +88,50 @@ async function main() {
         console.log('Skipping signature test data creation because signature migration failed.');
       }
 
-      // Note: Test data for posts is created within its own migration file (migratePostsCollection)
-      // If you want to create additional test posts here, you can add that logic.
-      // For now, we rely on migratePostsCollection to have created test posts if posts migration was successful.
-      if(migrationResults.posts){
-          console.log('\nChecking for test posts (created during posts migration)...');
-          const posts = await pb.collection('posts').getList(1, 5);
-          if(posts.items.length > 0){
-              console.log(`Found ${posts.items.length} post(s). First one:`, JSON.stringify(posts.items[0], null, 2));
-          } else {
-              console.log('No test posts found from migration script.');
+      // Create test data for posts collection if its migration was successful
+      if (migrationResults.posts) {
+        try {
+          console.log('\nAttempting to create test data for posts...');
+          const testPostsData = [
+            {
+              author_id: userId,
+              title: 'My First Test Post by Test User',
+              content: 'This is the content of the first test post, created by the test user.',
+              published: true,
+              // 'created' field will be handled by PocketBase system field
+            },
+            {
+              author_id: userId,
+              title: 'Another Awesome Post by Test User',
+              content: 'Content here, checking if migrations and user-specific test data work.',
+              published: false,
+            },
+          ];
+
+          for (const postData of testPostsData) {
+            const createdPost = await pb.collection('posts').create(postData);
+            console.log(`  ✅ Created test post "${postData.title}" with ID: ${createdPost.id} (Author: ${userId})`);
           }
+        } catch (postError) {
+          console.error('❌ Error creating test post record:', postError);
+          if (postError.response && postError.response.data) {
+            console.error('Post creation error details:', JSON.stringify(postError.response.data, null, 2));
+          }
+        }
+      } else {
+        console.log('Skipping posts test data creation because posts migration failed.');
       }
+
+      // Note: Test data for posts is created within its own migration file (migratePostsCollection) - COMMENTED OUT, MOVED HERE
+      // if(migrationResults.posts){
+      //     console.log('\nChecking for test posts (created during posts migration)...');
+      //     const posts = await pb.collection('posts').getList(1, 5);
+      //     if(posts.items.length > 0){
+      //         console.log(`Found ${posts.items.length} post(s). First one:`, JSON.stringify(posts.items[0], null, 2));
+      //     } else {
+      //         console.log('No test posts found from migration script.');
+      //     }
+      // }
 
     } else {
       console.log('Skipping test record creation due to user setup failure.');

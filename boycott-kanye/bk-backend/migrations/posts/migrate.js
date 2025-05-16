@@ -7,6 +7,11 @@ const postsCollectionDefinition = {
   type: 'base',
   fields: [
     {
+      name: 'author_id',
+      type: 'text',
+      required: true
+    },
+    {
       name: 'title',
       type: 'text',
       required: true
@@ -34,22 +39,24 @@ const postsCollectionDefinition = {
   deleteRule: '@request.auth.id != ""'
 };
 
-// Test data for posts
-const testPosts = [
-  {
-    title: 'My First Test Post from Migration',
-    content: 'This is the content of the first test post.',
-    published: true,
-  },
-  {
-    title: 'Another Awesome Post',
-    content: 'Content here, checking if migrations work.',
-    published: false,
-  },
-];
+// Test data for posts - REMOVED as it will be handled in cli.js
+// const testPosts = [
+//   {
+//     author_id: "test_user_id_placeholder",
+//     title: 'My First Test Post from Migration',
+//     content: 'This is the content of the first test post.',
+//     published: true,
+//   },
+//   {
+//     author_id: "test_user_id_placeholder",
+//     title: 'Another Awesome Post',
+//     content: 'Content here, checking if migrations work.',
+//     published: false,
+//   },
+// ];
 
 /**
- * Creates or updates the posts collection in PocketBase and adds test data.
+ * Creates or updates the posts collection in PocketBase.
  * @param {object} pb PocketBase instance
  * @param {object} collectionDefinition The definition of the collection to create
  * @returns {Promise<boolean>} True if successful, false otherwise
@@ -77,7 +84,7 @@ async function migratePostsCollection(pb, collectionDefinition) {
     
     const actualSchema = verifiedCollection.fields || verifiedCollection.schema || [];
     
-    if (actualSchema.length > 1) {
+    if (actualSchema.length > 1) { // Check if schema has more than just system fields
       console.log(`✅ ${collectionName} schema appears to be created with ${actualSchema.length} fields:`);
       actualSchema.forEach(f => console.log(`  - Field: ${f.name}, Type: ${f.type}`));
 
@@ -90,20 +97,20 @@ async function migratePostsCollection(pb, collectionDefinition) {
         return false; // Schema creation failed if fields are missing
       }
 
-      // Add test data
-      console.log(`Attempting to create test data for ${collectionName}...`);
-      for (const post of testPosts) {
-        try {
-          const record = await pb.collection(collectionName).create(post);
-          console.log(`  ✅ Created test post "${post.title}" with ID: ${record.id}`);
-        } catch (error) {
-          console.error(`  ❌ Failed to create test post "${post.title}":`, error.message);
-          if (error.response && error.response.data) {
-            console.error(`     Error details:`, JSON.stringify(error.response.data, null, 2));
-          }
-        }
-      }
-      return true; // Overall success
+      // Add test data - REMOVED
+      // console.log(`Attempting to create test data for ${collectionName}...`);
+      // for (const post of testPosts) {
+      //   try {
+      //     const record = await pb.collection(collectionName).create(post);
+      //     console.log(`  ✅ Created test post "${post.title}" with ID: ${record.id}`);
+      //   } catch (error) {
+      //     console.error(`  ❌ Failed to create test post "${post.title}":`, error.message);
+      //     if (error.response && error.response.data) {
+      //       console.error(`     Error details:`, JSON.stringify(error.response.data, null, 2));
+      //     }
+      //   }
+      // }
+      return true; // Overall success if schema is correct
     } else {
       console.error(`❌ ${collectionName} schema NOT created as expected. Only ${actualSchema.length} field(s) found.`);
       return false;
