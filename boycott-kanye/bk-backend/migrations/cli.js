@@ -1,121 +1,119 @@
 /**
  * PocketBase Migration CLI Script
- * 
- * Improved version that:
- * 1. Uses environment variables from .env
- * 2. Correctly defines the schema
- * 3. Is more efficient
  */
 
 // Load environment variables
 require('dotenv').config();
 
-// PocketBase connection configuration from environment variables
-const PB_URL = process.env.PB_URL || 'http://localhost:8090';
-const ADMIN_EMAIL = process.env.PB_ADMIN_EMAIL;
-const ADMIN_PASSWORD = process.env.PB_ADMIN_PASSWORD;
-
-if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
-  console.error('Error: Missing PocketBase credentials in .env file');
-  console.error('Please create a .env file with PB_ADMIN_EMAIL and PB_ADMIN_PASSWORD');
-  process.exit(1);
-}
-
 async function main() {
   try {
-    // Dynamically import PocketBase
+    // Import dependencies
     const { default: PocketBase } = await import('pocketbase');
+    const { runAllMigrations } = await import('./index.js');
     
-    // Initialize PocketBase client
-    const pb = new PocketBase(PB_URL);
-    
-    console.log(`Authenticating with PocketBase at ${PB_URL}...`);
+    // Connect to PocketBase
+    const pb = new PocketBase(process.env.PB_URL);
+    console.log(`Attempting to connect to PocketBase at ${process.env.PB_URL}`);
     
     // Authenticate as admin
-    await pb.admins.authWithPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
-    console.log('✅ Authentication successful!');
+    await pb.admins.authWithPassword(
+      process.env.PB_ADMIN_EMAIL,
+      process.env.PB_ADMIN_PASSWORD
+    );
+    console.log('✅ Admin authentication successful!');
     
-    // Delete existing signatures collection if it exists
-    try {
-      await pb.collections.delete('signatures');
-      console.log('Deleted existing signatures collection');
-    } catch (e) {
-      // Collection doesn't exist or couldn't be deleted
-      console.log('No existing signatures collection to delete or deletion failed');
+    // Run migrations
+    const migrationResults = await runAllMigrations(pb);
+    
+    if (!migrationResults.posts && !migrationResults.signatures) {
+        console.error('All migrations failed. Skipping test data creation.');
+        process.exit(1);
     }
-    
-    // Create signatures collection with proper schema
-    console.log('Creating signatures collection...');
-    
-    const signaturesCollection = {
-      name: 'signatures',
-      type: 'base',
-      schema: [
-        {
-          name: 'user',
-          type: 'relation',
-          required: true,
-          options: {
-            collectionId: '_pb_users_auth_',
-            cascadeDelete: false,
-            maxSelect: 1
-          }
-        },
-        {
-          name: 'agree_checkbox',
-          type: 'bool',
-          required: true
-        },
-        {
-          name: 'public_display',
-          type: 'bool',
-          required: true,
-          default: false
-        },
-        {
-          name: 'created_at',
-          type: 'date',
-          required: false,
-          options: {
-            autoCreate: true
+
+    // Test data creation only if migrations were somewhat successful
+    console.log('\n==== Attempting Test Data Creation ====');
+    let userId = null;
+    try {
+      console.log('Attempting to authenticate or create a test user...');
+      pb.authStore.clear(); // Clear admin auth before authenticating as user
+      try {
+        const authData = await pb.collection('users').authWithPassword('test@example.com', 'password123');
+        userId = authData.record.id;
+        console.log(`✅ Authenticated as existing test user (ID: ${userId})`);
+      } catch (authError) {
+        console.log('Test user not found or auth failed, creating new test user...');
+        const userData = {
+          email: 'test@example.com',
+          password: 'password123',
+          passwordConfirm: 'password123',
+          emailVisibility: true, // Required by default PocketBase user settings
+        };
+        const newUser = await pb.collection('users').create(userData);
+        userId = newUser.id;
+        console.log(`✅ Created new test user (ID: ${userId})`);
+        // Re-authenticate as the new user to ensure authStore is populated for record creation
+        await pb.collection('users').authWithPassword('test@example.com', 'password123');
+        console.log('✅ Authenticated as newly created test user.');
+      }
+    } catch (userError) {
+      console.error('❌ Error during test user setup:', userError);
+      if (userError.response && userError.response.data) {
+        console.error('User setup error details:', JSON.stringify(userError.response.data, null, 2));
+      }
+      userId = null; // Ensure userId is null if setup failed
+    }
+
+    if (userId) {
+      if (migrationResults.signatures) {
+        try {
+          console.log('\nAttempting to create a test signature record...');
+          const testSignatureData = {
+            author_id: userId,
+            agree_checkbox: true,
+            public_display: true,
+          };
+          const createdSignature = await pb.collection('signatures').create(testSignatureData);
+          console.log(`✅ Test signature record created successfully (ID: ${createdSignature.id})`);
+          
+          // Fetch and log the created signature record
+          const fetchedSignature = await pb.collection('signatures').getOne(createdSignature.id);
+          console.log('Fetched signature record:', JSON.stringify(fetchedSignature, null, 2));
+
+        } catch (signatureError) {
+          console.error('❌ Error creating test signature record:', signatureError);
+          if (signatureError.response && signatureError.response.data) {
+            console.error('Signature creation error details:', JSON.stringify(signatureError.response.data, null, 2));
           }
         }
-      ],
-      listRule: '',
-      viewRule: '',
-      createRule: '@request.auth.id != ""',
-      updateRule: '@request.auth.id != ""',
-      deleteRule: '@request.auth.id != ""'
-    };
-    
-    try {
-      const collection = await pb.collections.create(signaturesCollection);
-      console.log(`✅ Signatures collection created successfully! (ID: ${collection.id})`);
-      
-      // Verify the schema is correct
-      const createdCollection = await pb.collections.getOne(collection.id);
-      console.log('Schema fields created:');
-      if (createdCollection.schema && Array.isArray(createdCollection.schema)) {
-        createdCollection.schema.forEach(field => {
-          console.log(`- ${field.name} (${field.type})`);
-        });
       } else {
-        console.log('(Schema information not available in the API response)');
+        console.log('Skipping signature test data creation because signature migration failed.');
       }
-    } catch (error) {
-      console.error('Error creating collection:', error);
-      if (error.response?.data) {
-        console.error('Error details:', JSON.stringify(error.response.data, null, 2));
+
+      // Note: Test data for posts is created within its own migration file (migratePostsCollection)
+      // If you want to create additional test posts here, you can add that logic.
+      // For now, we rely on migratePostsCollection to have created test posts if posts migration was successful.
+      if(migrationResults.posts){
+          console.log('\nChecking for test posts (created during posts migration)...');
+          const posts = await pb.collection('posts').getList(1, 5);
+          if(posts.items.length > 0){
+              console.log(`Found ${posts.items.length} post(s). First one:`, JSON.stringify(posts.items[0], null, 2));
+          } else {
+              console.log('No test posts found from migration script.');
+          }
       }
-      process.exit(1);
+
+    } else {
+      console.log('Skipping test record creation due to user setup failure.');
     }
     
-    console.log('\n==== Migration completed successfully ====');
+    console.log('\n==== CLI script finished ====');
   } catch (error) {
-    console.error('Migration script error:', error);
+    console.error('❌ Unhandled error in main CLI function:', error);
+    if (error.response && error.response.data) {
+        console.error('Error details:', JSON.stringify(error.response.data, null, 2));
+    }
     process.exit(1);
   }
 }
 
-// Run the main function
 main().catch(console.error); 
