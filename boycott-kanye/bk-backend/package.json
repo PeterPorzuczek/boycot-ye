@@ -17,7 +17,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migrate": "node migrations/cli.js",
+    "setup:env": "node scripts/create-env.js",
+    "setup:db": "npm run setup:env && npm run migrate",
+    "check:db": "node scripts/check-signatures.js",
+    "setup": "node scripts/setup-and-test.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -39,7 +44,7 @@
     "@swc/core": "^1.10.7",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.15.18",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",

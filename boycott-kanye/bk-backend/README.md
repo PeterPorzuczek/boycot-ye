@@ -96,3 +96,31 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Migrations
+
+The project includes migration scripts for PocketBase collections:
+
+- `signatures` - Collection for storing user petition signatures
+
+### Running Migrations
+
+Run migrations with the following command:
+
+```bash
+npm run migrate
+```
+
+### Testing the Migrations
+
+Verification scripts are available in the `scripts` directory:
+
+- `check-signatures.js` - Verify that the signatures collection exists
+- `create-test-signature.js` - Create a test signature
+- `list-signatures.js` - List all signatures (may require admin permissions)
+
+Run a script with:
+
+```bash
+node scripts/check-signatures.js
+```
