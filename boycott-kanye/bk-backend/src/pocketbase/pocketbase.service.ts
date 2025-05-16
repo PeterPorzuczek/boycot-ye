@@ -10,12 +10,18 @@ export class PocketbaseService implements OnModuleInit {
 
   onModuleInit() {
     this.pb = new PocketBase(
-      this.configService.get<string>('POCKETBASE_URL') || 'http://localhost:8090'
+      this.configService.get<string>('POCKETBASE_URL') ||
+        'http://localhost:8090',
     );
   }
 
   // Metody uwierzytelniania
-  async register(email: string, password: string, passwordConfirm: string, name: string) {
+  async register(
+    email: string,
+    password: string,
+    passwordConfirm: string,
+    name: string,
+  ) {
     try {
       const user = await this.pb.collection('users').create({
         email,
@@ -31,7 +37,9 @@ export class PocketbaseService implements OnModuleInit {
 
   async login(email: string, password: string) {
     try {
-      return await this.pb.collection('users').authWithPassword(email, password);
+      return await this.pb
+        .collection('users')
+        .authWithPassword(email, password);
     } catch (error) {
       throw error;
     }
@@ -43,8 +51,8 @@ export class PocketbaseService implements OnModuleInit {
       const records = await this.pb.collection('signatures').getList(1, 50, {
         expand: 'user',
       });
-      
-      return records.items.map(record => {
+
+      return records.items.map((record) => {
         // Maskowanie emaili jeśli podpis jest publiczny
         if (record.expand?.user && record.public_display) {
           const email = record.expand.user.email;
@@ -60,7 +68,11 @@ export class PocketbaseService implements OnModuleInit {
     }
   }
 
-  async createSignature(userId: string, agreeCheckbox: boolean, publicDisplay: boolean) {
+  async createSignature(
+    userId: string,
+    agreeCheckbox: boolean,
+    publicDisplay: boolean,
+  ) {
     try {
       return await this.pb.collection('signatures').create({
         user: userId,
@@ -97,10 +109,10 @@ export class PocketbaseService implements OnModuleInit {
     if (username.length <= 2) {
       return `${username[0]}*@${domain}`;
     }
-    return `${username[0]}${this.generateAsterisks(username.length - 2)}${username[username.length-1]}@${domain}`;
+    return `${username[0]}${this.generateAsterisks(username.length - 2)}${username[username.length - 1]}@${domain}`;
   }
 
   private generateAsterisks(length: number): string {
     return '*'.repeat(Math.min(length, 5));
   }
-} 
+}

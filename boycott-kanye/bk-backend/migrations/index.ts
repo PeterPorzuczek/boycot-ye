@@ -1,38 +1,63 @@
-/**
- * PocketBase migrations main module
- */
-import { migratePostsCollection } from './posts/migrate';
-import { migrateSignaturesCollection } from './signatures/migrate';
+import PocketBase from 'pocketbase';
+import {
+  migratePostsCollection,
+  postsCollectionDefinition,
+} from './migrate/posts/migrate.js';
+import {
+  migrateSignaturesCollection,
+  signaturesCollectionDefinition,
+} from './migrate/signatures/migrate.js';
 
-/**
- * Central function to run all available migrations
- *
- * @param pb PocketBase instance
- * @returns A record of migration results
- */
+interface MigrationResults {
+  posts: boolean;
+  signatures: boolean;
+}
+
 export async function runAllMigrations(
-  pb: any,
-): Promise<Record<string, boolean>> {
-  const results: Record<string, boolean> = {};
+  pb: PocketBase,
+): Promise<MigrationResults> {
+  console.log('Starting all migrations...');
+  const results: MigrationResults = {
+    posts: false,
+    signatures: false,
+  };
 
-  console.log('==== Starting PocketBase migrations ====');
-
-  // Run posts collection migration
-  console.log('\n> Migrating posts collection...');
-  results.posts = await migratePostsCollection(pb);
-
-  // Run signatures collection migration
-  console.log('\n> Migrating signatures collection...');
-  results.signatures = await migrateSignaturesCollection(pb);
-
-  // Add more migrations here as needed:
-  // results.users = await migrateUsersCollection(pb);
-  // results.comments = await migrateCommentsCollection(pb);
-
-  console.log('\n==== Migration Summary ====');
-  for (const [name, success] of Object.entries(results)) {
-    console.log(`${name}: ${success ? '✅ Success' : '❌ Failed'}`);
+  try {
+    console.log('\nMigrating posts collection...');
+    results.posts = await migratePostsCollection(pb, postsCollectionDefinition);
+  } catch (e) {
+    console.error('Error encountered directly in posts migration process:', e);
+    results.posts = false;
   }
 
+  try {
+    console.log('\nMigrating signatures collection...');
+    results.signatures = await migrateSignaturesCollection(
+      pb,
+      signaturesCollectionDefinition,
+    );
+  } catch (e) {
+    console.error(
+      'Error encountered directly in signatures migration process:',
+      e,
+    );
+    results.signatures = false;
+  }
+
+  console.log('\n==== Migration Execution Summary ====');
+  console.log(
+    `Posts Collection Migration: ${results.posts ? '✅ Success' : '❌ Failed'}`,
+  );
+  console.log(
+    `Signatures Collection Migration: ${results.signatures ? '✅ Success' : '❌ Failed'}`,
+  );
+
+  if (!results.posts || !results.signatures) {
+    console.error(
+      'One or more migrations failed. Please check the logs above.',
+    );
+  }
+
+  console.log('All migrations process completed.');
   return results;
 }

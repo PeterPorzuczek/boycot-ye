@@ -6,7 +6,9 @@ export class AuthController {
   constructor(private readonly pocketbaseService: PocketbaseService) {}
 
   @Post('register')
-  async register(@Body() registerDto: { email: string; password: string; name: string }) {
+  async register(
+    @Body() registerDto: { email: string; password: string; name: string },
+  ) {
     return this.pocketbaseService.register(
       registerDto.email,
       registerDto.password,
@@ -19,4 +21,4 @@ export class AuthController {
   async login(@Body() loginDto: { email: string; password: string }) {
     return this.pocketbaseService.login(loginDto.email, loginDto.password);
   }
-} 
+}

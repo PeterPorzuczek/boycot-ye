@@ -7,4 +7,4 @@ import { ConfigModule } from '@nestjs/config';
   providers: [PocketbaseService],
   exports: [PocketbaseService],
 })
-export class PocketbaseModule {} 
+export class PocketbaseModule {}

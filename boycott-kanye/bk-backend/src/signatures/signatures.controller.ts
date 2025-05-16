@@ -12,7 +12,12 @@ export class SignaturesController {
 
   @Post()
   async createSignature(
-    @Body() createSignatureDto: { userId: string; agreeCheckbox: boolean; publicDisplay: boolean },
+    @Body()
+    createSignatureDto: {
+      userId: string;
+      agreeCheckbox: boolean;
+      publicDisplay: boolean;
+    },
   ) {
     return this.pocketbaseService.createSignature(
       createSignatureDto.userId,
@@ -30,4 +35,4 @@ export class SignaturesController {
   async deleteSignature(@Param('id') id: string) {
     return this.pocketbaseService.deleteSignature(id);
   }
-} 
+}

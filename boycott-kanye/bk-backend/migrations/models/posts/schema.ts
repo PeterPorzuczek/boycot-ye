@@ -2,38 +2,43 @@
  * Posts collection schema definition
  */
 
-export const postsCollection = {
+export const postsCollectionDefinition = {
   name: 'posts',
   type: 'base',
   fields: [
     {
+      name: 'author_id',
+      type: 'text',
+      required: true,
+    },
+    {
       name: 'title',
       type: 'text',
-      required: true
+      required: true,
     },
     {
       name: 'content',
-      type: 'text', 
-      required: false
+      type: 'text',
+      required: false,
     },
     {
       name: 'published',
       type: 'bool',
-      required: false
+      required: false,
     },
     {
       name: 'created',
       type: 'date',
-      required: false
-    }
+      required: false,
+    },
   ],
   // API access rules
-  listRule: '@request.auth.id != ""',      
-  viewRule: '@request.auth.id != ""',      
-  createRule: '@request.auth.id != ""',    
-  updateRule: '@request.auth.id != ""',    
-  deleteRule: '@request.auth.id != ""'     
-  
+  listRule: '@request.auth.id != ""',
+  viewRule: '@request.auth.id != ""',
+  createRule: '@request.auth.id != ""',
+  updateRule: '@request.auth.id != ""',
+  deleteRule: '@request.auth.id != ""',
+
   /* Alternatively, you can use more restrictive rules:
   
   listRule: 'published = true || @request.auth.id != ""',  // Published posts visible to all, unpublished only to auth users
@@ -43,4 +48,4 @@ export const postsCollection = {
   deleteRule: '@request.auth.id != ""'   // Only authenticated users
   
   */
-}; 
+};

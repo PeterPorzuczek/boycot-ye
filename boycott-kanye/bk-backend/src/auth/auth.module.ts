@@ -6,4 +6,4 @@ import { PocketbaseModule } from '../pocketbase/pocketbase.module';
   imports: [PocketbaseModule],
   controllers: [AuthController],
 })
-export class AuthModule {} 
+export class AuthModule {}
