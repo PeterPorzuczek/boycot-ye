@@ -80,6 +80,7 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&display=swap');
 
 * {
   box-sizing: border-box;
@@ -94,6 +95,8 @@ export default {
   --secondary: #FF0000; /* Strong red for stopping hate */
   --accent: #F7C548; /* Gold accent for Kanye's albums/persona */
   --accent-2: #5D21D2; /* Purple for creativity/unity */
+  --accent-3: #E6D3A3; /* Pablo album beige */
+  --accent-4: #FB3958; /* MBDTF red */
   --light: #F8F8F8;
   --off-white: #F2F2F2;
   --grey-light: #E8E8E8;
@@ -108,6 +111,8 @@ export default {
   --gradient-dark: linear-gradient(135deg, var(--primary-dark) 0%, #191919 90%);
   --gradient-light: linear-gradient(135deg, var(--light) 0%, var(--grey-light) 100%);
   --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%); /* Gold to purple */
+  --gradient-pablo: linear-gradient(135deg, var(--accent-3) 0%, var(--accent) 70%); /* Pablo album inspired */
+  --gradient-mbdtf: linear-gradient(135deg, var(--accent-4) 0%, var(--primary-dark) 100%); /* MBDTF inspired */
   
   /* Refined spacing and sizing */
   --border-radius-sm: 4px;
@@ -223,10 +228,22 @@ body {
 .main-nav {
   display: flex;
   gap: var(--spacing-lg);
+  position: relative;
+}
+
+.main-nav::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 15 L15 0 L30 15 L15 30 Z' fill='none' stroke='%23F7C54820' stroke-width='1'/%3E%3C/svg%3E");
+  opacity: 0.2;
+  z-index: -1;
 }
 
 .nav-link {
-  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
   text-decoration: none;
   color: var(--primary);
   position: relative;
@@ -253,6 +270,19 @@ body {
 .app-content {
   min-height: calc(100vh - 160px);
   padding: var(--spacing-xxl) 0;
+  position: relative;
+}
+
+.app-content::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 L30 0 L60 30 L30 60 Z' fill='none' stroke='%23F7C54810' stroke-width='1'/%3E%3C/svg%3E");
+  z-index: -1;
+  pointer-events: none;
 }
 
 .app-footer {
@@ -278,8 +308,8 @@ body {
   padding: var(--spacing-md) var(--spacing-xl);
   border-radius: var(--border-radius-md);
   border: none;
-  font-family: 'Jost', sans-serif;
-  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -329,6 +359,20 @@ body {
   transform: translateY(-3px);
 }
 
+.btn-pablo {
+  background: var(--gradient-pablo);
+  color: var(--primary-dark);
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.btn-mbdtf {
+  background: var(--gradient-mbdtf);
+  color: white;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
 input, textarea, select {
   font-family: 'Jost', sans-serif;
   padding: var(--spacing-md);
@@ -361,8 +405,10 @@ label {
   position: relative;
   display: inline-block;
   text-transform: uppercase;
-  font-weight: 800;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
   margin-bottom: var(--spacing-lg);
+  letter-spacing: -1px;
 }
 
 .section-title::after {
@@ -390,4 +436,31 @@ label {
 .mb-3 { margin-bottom: var(--spacing-md); }
 .mb-4 { margin-bottom: var(--spacing-lg); }
 .mb-5 { margin-bottom: var(--spacing-xl); }
+
+.text-ye {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.text-pablo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 1.2em;
+  letter-spacing: -1px;
+  background: var(--gradient-pablo);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-mbdtf {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 1.2em;
+  letter-spacing: -1px;
+  background: var(--gradient-mbdtf);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 </style>

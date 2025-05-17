@@ -16,6 +16,7 @@
               <p class="quote-text">{{ $t('homePage.quote.text') }}</p>
               <p class="quote-author">{{ $t('homePage.quote.author') }}</p>
             </div>
+            <div class="album-reference">RECLAIM <span>THE</span> LEGACY</div>
           </div>
         </div>
       </div>
@@ -32,10 +33,10 @@
               <span class="label">{{ $t('homePage.hero.counterLabel') }}</span>
             </div>
           </div>
-          <router-link to="/sign" class="cta-button btn btn-primary">{{ $t('homePage.hero.signButton') }}</router-link>
+          <router-link to="/sign" class="cta-button btn btn-mbdtf">{{ $t('homePage.hero.signButton') }}</router-link>
         </div>
       
-        <h2 class="section-title">{{ $t('homePage.signatures.title') }}</h2>
+        <h2 class="section-title text-ye">{{ $t('homePage.signatures.title') }}</h2>
         <div class="signatures-content">
           <div v-if="isLoading" class="signatures-loading">
             <div class="loader"></div>
@@ -69,7 +70,11 @@
         </div>
         
         <div class="signatures-cta">
-          <router-link to="/sign" class="btn btn-primary">{{ $t('homePage.signatures.addVoiceButton') }}</router-link>
+          <router-link to="/sign" class="btn btn-pablo">{{ $t('homePage.signatures.addVoiceButton') }}</router-link>
+        </div>
+
+        <div class="pablo-banner">
+          <div class="pablo-text">I FEEL LIKE WE'RE <span>RECLAIMING</span> HIS MUSIC</div>
         </div>
       </div>
     </div>
@@ -187,9 +192,10 @@ export default {
 }
 
 .hero-title {
+  font-family: 'Montserrat', sans-serif;
   font-size: var(--font-size-jumbo);
   line-height: 1;
-  font-weight: 800;
+  font-weight: 900;
   margin-bottom: var(--spacing-lg);
   text-transform: uppercase;
   letter-spacing: -2px;
@@ -269,9 +275,48 @@ export default {
 
 .hero-visual {
   display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
   justify-content: center;
   align-items: center;
   position: relative;
+}
+
+.album-reference {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: calc(var(--font-size-xl) * 1.5);
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  transform: rotate(-5deg);
+  text-align: center;
+  line-height: 0.9;
+  padding: var(--spacing-md);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius-md);
+  background-color: var(--accent-3);
+  box-shadow: var(--shadow-md);
+}
+
+.album-reference span {
+  display: block;
+  font-size: 0.5em;
+  letter-spacing: 5px;
+  margin: var(--spacing-xs) 0;
+  color: var(--secondary);
+}
+
+.album-reference::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 L20 0 L40 20 L20 40 Z' fill='none' stroke='%23F7C54820' stroke-width='1'/%3E%3C/svg%3E");
+  z-index: -1;
 }
 
 .quote-box {
@@ -473,12 +518,14 @@ export default {
 }
 
 .signature-name {
+  font-family: 'Montserrat', sans-serif;
   font-size: var(--font-size-lg);
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: var(--spacing-xs);
   color: var(--primary);
   position: relative;
   display: inline-block;
+  letter-spacing: -0.5px;
 }
 
 .signature-name::after {
@@ -515,6 +562,7 @@ export default {
   text-align: center;
   margin-top: var(--spacing-xl);
   position: relative;
+  margin-bottom: var(--spacing-xxl);
 }
 
 .signatures-cta::before {
@@ -526,6 +574,46 @@ export default {
   top: -20px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+/* Pablo-style banner */
+.pablo-banner {
+  margin: var(--spacing-xxl) auto;
+  padding: var(--spacing-xl);
+  background: var(--gradient-pablo);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius-md);
+}
+
+.pablo-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 L20 0 L40 20 L20 40 Z' fill='none' stroke='%23F7C54820' stroke-width='1'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+.pablo-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: var(--font-size-xl);
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  position: relative;
+  z-index: 1;
+}
+
+.pablo-text span {
+  color: var(--secondary);
+  position: relative;
+  display: inline-block;
 }
 
 /* New CTA Banner */
@@ -564,11 +652,12 @@ export default {
 }
 
 .cta-title {
+  font-family: 'Montserrat', sans-serif;
   font-size: var(--font-size-xxl);
-  font-weight: 800;
+  font-weight: 900;
   margin-bottom: var(--spacing-sm);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: -1px;
   position: relative;
   display: inline-block;
 }
@@ -693,6 +782,14 @@ export default {
   
   .cta-button {
     width: 100%;
+  }
+  
+  .album-reference {
+    font-size: var(--font-size-xl);
+  }
+  
+  .pablo-text {
+    font-size: var(--font-size-md);
   }
 }
 </style> 

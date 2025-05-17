@@ -1,9 +1,10 @@
 <template>
   <div class="profile-page">
-    <div class="page-header">
-      <div class="stop-hate-ribbon">STOP HATE</div>
-      <h1>{{ t('profile.title') }}</h1>
+    <div class="ye-ribbon">
+      <div class="ye-ribbon-text">STOP HATE</div>
     </div>
+    
+    <h1 class="page-title text-ye">{{ t('profilePage.title') }}</h1>
     
     <div v-if="isLoading" class="loading-container">
       <div class="loader"></div>
@@ -301,42 +302,54 @@ export default {
   position: relative;
 }
 
-.page-header {
+.ye-ribbon {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.ye-ribbon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 40px;
+  background: var(--gradient-pablo);
+  transform: rotate(45deg) translateY(-60px) translateX(10px);
+  z-index: 5;
+  box-shadow: var(--shadow-md);
+}
+
+.ye-ribbon-text {
+  position: absolute;
+  top: 11px;
+  right: -25px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: var(--font-size-sm);
+  color: var(--primary-dark);
+  transform: rotate(45deg);
+  z-index: 10;
   text-align: center;
-  margin-bottom: var(--spacing-xxl);
+  letter-spacing: 0.5px;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
   position: relative;
   padding-top: var(--spacing-xl);
 }
 
-.stop-hate-ribbon {
-  position: absolute;
-  top: 0;
-  right: -50px;
-  background: var(--secondary);
-  color: white;
-  padding: var(--spacing-xs) var(--spacing-xl);
-  font-weight: 800;
-  font-size: var(--font-size-sm);
-  transform: rotate(45deg) translateX(30px);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: var(--shadow-md);
-  z-index: 1;
-}
-
-.page-header h1 {
-  font-size: var(--font-size-xxl);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.5px;
-  position: relative;
-  display: inline-block;
-}
-
-.page-header h1::after {
+.page-title::after {
   content: '';
   position: absolute;
-  width: 60px;
+  width: 80px;
   height: 4px;
   background: var(--gradient-primary);
   bottom: -10px;
@@ -910,10 +923,6 @@ input:checked + .slider:before {
 @media (max-width: 768px) {
   .profile-page {
     padding: 0 var(--spacing-md);
-  }
-  
-  .stop-hate-ribbon {
-    display: none;
   }
   
   .visibility-option-container {
