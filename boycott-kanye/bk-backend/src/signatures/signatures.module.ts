@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { SignaturesController } from './signatures.controller';
-import { PocketbaseModule } from '../pocketbase/pocketbase.module';
+import { SignaturesController } from './signatures.controller.js';
+import { PocketbaseModule } from '../pocketbase/pocketbase.module.js';
 
 @Module({
   imports: [PocketbaseModule],

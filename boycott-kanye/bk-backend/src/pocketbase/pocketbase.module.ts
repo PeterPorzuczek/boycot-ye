@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PocketbaseService } from './pocketbase.service';
+import { PocketbaseService } from './pocketbase.service.js';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
