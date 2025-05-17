@@ -135,7 +135,7 @@ export class PocketbaseService implements OnModuleInit {
       // PocketBase will handle the error if collection doesn't exist
 
       const signature = await this.pb.collection('signatures').create({
-        user: userId, // to jest połączenie z user-id
+        author_id: userId, // Poprawiona nazwa pola zgodnie ze schematem
         agree_checkbox: agreeCheckbox,
         public_display: publicDisplay,
       });
@@ -152,10 +152,9 @@ export class PocketbaseService implements OnModuleInit {
     try {
       this.logger.debug(`Getting signature for user: ${userId}`);
 
-      // Szukamy po polu 'user', które jest relacją do kolekcji users
+      // Szukamy po polu 'author_id', które jest ID użytkownika
       const records = await this.pb.collection('signatures').getList(1, 1, {
-        filter: `user.id = "${userId}"`,
-        expand: 'user',
+        filter: `author_id = "${userId}"`,
       });
 
       if (records.items.length > 0) {
@@ -184,7 +183,7 @@ export class PocketbaseService implements OnModuleInit {
         .collection('signatures')
         .getOne(signatureId);
 
-      if (signature.user !== userId) {
+      if (signature.author_id !== userId) {
         throw new HttpException(
           'Unauthorized to delete this signature',
           HttpStatus.FORBIDDEN,

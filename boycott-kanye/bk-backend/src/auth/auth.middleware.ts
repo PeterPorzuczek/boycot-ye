@@ -32,25 +32,43 @@ export class AuthMiddleware implements NestMiddleware {
     try {
       const token = this.extractTokenFromHeader(req);
       if (token) {
+        this.logger.debug(`Token found: ${token.substring(0, 15)}...`);
+
+        // Wyczyść autentykację przed sprawdzeniem
+        this.pb.authStore.clear();
+
+        // Zapisz token w authStore
         this.pb.authStore.save(token, null);
+
         try {
-          // Wymuś pobranie modelu użytkownika na podstawie tokena
-          const user = await this.pb.collection('users').authRefresh();
-          req.user = {
-            id: user.record.id,
-            email: user.record.email,
-            name: user.record.name,
-          };
-          this.logger.debug(`Authenticated user: ${req.user.email}`);
+          // Wymuś pobranie danych użytkownika
+          const authData = await this.pb.collection('users').authRefresh();
+          this.logger.debug('Auth refresh successful');
+
+          if (authData && authData.record) {
+            this.logger.debug(`User data: ${JSON.stringify(authData.record)}`);
+            req.user = {
+              id: authData.record.id,
+              email: authData.record.email,
+              name: authData.record.name,
+            };
+            this.logger.debug(`User set in request: ${req.user.email}`);
+          } else {
+            this.logger.warn('Auth refresh returned no record');
+            req.user = undefined;
+          }
         } catch (err) {
+          this.logger.error(`Auth refresh failed: ${JSON.stringify(err)}`);
           req.user = undefined;
-          this.logger.debug('Invalid or expired token');
         }
+      } else {
+        this.logger.debug('No token in request');
       }
     } catch (error) {
-      this.logger.error(`Auth middleware error: ${error.message}`);
+      this.logger.error(`Middleware error: ${JSON.stringify(error)}`);
       this.pb.authStore.clear();
     }
+
     next();
   }
 
