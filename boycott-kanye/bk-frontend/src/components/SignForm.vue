@@ -89,7 +89,7 @@ export default {
       
       // Validate consent checkbox
       if (!this.formState.agreeCheckbox) {
-        this.formErrors.agreeCheckbox = this.$t('errors.formValidation');
+        this.formErrors.agreeCheckbox = 'Please check this box to confirm your consent.';
         return false;
       }
       

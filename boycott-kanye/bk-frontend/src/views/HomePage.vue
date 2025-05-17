@@ -26,7 +26,10 @@
         <div v-else class="signatures-grid">
           <div v-for="signature in signatures" :key="signature.id" class="signature-item">
             <div class="signature-name">
-              {{ signature.displayName }}
+              {{ signature.expand && signature.expand.user && (signature.public_display || signature.publicDisplay) ? signature.expand.user.name : 'Anonymous' }}
+            </div>
+            <div v-if="(signature.public_display || signature.publicDisplay) && signature.expand && signature.expand.user && signature.expand.user.email" class="signature-email">
+              {{ maskEmail(signature.expand.user.email) }}
             </div>
             <div class="signature-date">
               {{ formatDate(signature.created) }}
@@ -46,14 +49,16 @@ export default {
   data() {
     return {
       signatures: [],
-      totalSignatureCount: 0,
       isLoading: true,
       error: null
     }
   },
   computed: {
     consentingSignaturesCount() {
-      return this.totalSignatureCount;
+      // Count only signatures that have agreed to the petition
+      return this.signatures.filter(signature => 
+        (signature.agree_checkbox === true) || (signature.agreeCheckbox === true)
+      ).length;
     }
   },
   created() {
@@ -65,18 +70,8 @@ export default {
       this.error = null;
       
       try {
-        // Fetch formatted signatures for display
-        const response = await axios.get('http://localhost:3000/api/signatures/display-list');
+        const response = await axios.get('http://localhost:3000/api/signatures/all');
         this.signatures = response.data;
-        
-        // Set the total count from the length of the signatures array
-        // This is correct because only consenting signatures are returned from the API
-        this.totalSignatureCount = this.signatures.length;
-        
-        console.log('Total signatures received:', this.signatures.length);
-        if (this.signatures.length > 0) {
-          console.log('First signature sample:', JSON.stringify(this.signatures[0], null, 2));
-        }
       } catch (err) {
         console.error('Error fetching signatures:', err);
         this.error = 'Failed to load signatures';
@@ -84,15 +79,24 @@ export default {
         this.isLoading = false;
       }
     },
+    
+    maskEmail(email) {
+      if (!email) return '';
+      const [local, domain] = email.split('@');
+      const firstChar = local.charAt(0);
+      const maskedLocal = firstChar + '*'.repeat(Math.min(local.length - 1, 3));
+      const domainParts = domain.split('.');
+      const tld = domainParts.pop();
+      const domainName = domainParts.join('.');
+      const firstDomainChar = domainName.charAt(0);
+      const maskedDomain = firstDomainChar + '*'.repeat(Math.min(domainName.length - 1, 3));
+      return `${maskedLocal}@${maskedDomain}.${tld}`;
+    },
+    
     formatDate(date) {
       if (!date) return '';
-      
       const dateObj = new Date(date);
-      return dateObj.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
+      return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     }
   }
 }
@@ -196,6 +200,12 @@ export default {
 
 .signature-name {
   font-weight: bold;
+}
+
+.signature-email {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
 }
 
 .signature-date {
