@@ -104,7 +104,7 @@
     </div>
     
     <div class="unity-banner">
-      <div class="unity-message">UNITED AGAINST HATE</div>
+      <div class="unity-message">{{ t('register.unityBanner') }}</div>
     </div>
   </div>
 </template>

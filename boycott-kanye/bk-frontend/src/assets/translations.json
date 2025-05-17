@@ -47,19 +47,20 @@
     "loginToSign": "Login to sign the petition against hate"
   },
   "register": {
-    "title": "CREATE YOUR ACCOUNT", 
-    "subtitle": "Join thousands of others standing against hate",
+    "title": "JOIN THE MOVEMENT", 
+    "subtitle": "Be part of the stand against hate and discrimination",
     "name": "Full Name",
     "email": "Email Address",
     "password": "Password",
     "confirmPassword": "Confirm Password",
     "passwordMismatch": "Passwords do not match",
-    "registerButton": "CREATE ACCOUNT",
+    "registerButton": "ADD YOUR VOICE",
     "haveAccount": "Already have an account?",
     "loginLink": "Login here",
-    "termsText": "By registering, you agree to stand against hate speech",
+    "termsText": "By registering, you agree to stand against hate speech and discrimination",
     "joinMovement": "JOIN THE MOVEMENT",
-    "createToSign": "Create an account to sign the petition against hate"
+    "createToSign": "Create an account to sign the petition against hate",
+    "unityBanner": "UNITED AGAINST HATE"
   },
   "signPage": {
     "title": "SIGN THE PETITION",
