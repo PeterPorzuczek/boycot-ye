@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-// Importy komponentów bez lazy loading, aby uniknąć potencjalnych problemów
+// Component imports without lazy loading to avoid potential issues
 import HomePage from '../views/HomePage.vue';
 import SignPage from '../views/SignPage.vue';
 import LoginPage from '../views/LoginPage.vue';
@@ -55,7 +55,7 @@ const router = createRouter({
   routes
 });
 
-// Podstawowa nawigacja guard bez złożonej logiki
+// Basic navigation guard without complex logic
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
   

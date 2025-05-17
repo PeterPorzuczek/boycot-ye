@@ -173,7 +173,7 @@ export default {
         const result = await fetchUserSignature();
         
         if (result) {
-          // API zwraca public_display (snake_case), ale w modelu używamy publicDisplay (camelCase)
+          // API returns public_display (snake_case), but in our model we use publicDisplay (camelCase)
           publicDisplay.value = !!result.public_display;
         }
       } catch (err) {
@@ -201,7 +201,7 @@ export default {
         
         const response = await axios.put(
           `http://localhost:3000/api/signatures/${signature.value.id}`,
-          { publicDisplay: publicDisplay.value }, // Używamy camelCase w żądaniu!
+          { publicDisplay: publicDisplay.value }, // Using camelCase in the request!
           {
             headers: {
               'Content-Type': 'application/json',
@@ -213,7 +213,7 @@ export default {
         if (response.status === 200) {
           updateSuccess.value = true;
           
-          // Response zwraca obiekt z public_display (snake_case)
+          // Response returns an object with public_display (snake_case)
           if (response.data) {
             signature.value = response.data;
           }

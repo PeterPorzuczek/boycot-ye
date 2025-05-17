@@ -10,7 +10,7 @@ export function useSignature() {
   const error = ref(null);
   const router = useRouter();
 
-  // Fetch user's signature
+  
   const fetchUserSignature = async () => {
     isFetchingSignature.value = true;
     error.value = null;
@@ -18,10 +18,10 @@ export function useSignature() {
     try {
       const response = await signatureApi.getCurrentUserSignature();
       signature.value = response.data;
-      console.log('Fetched signature:', signature.value); // Debug log
+      console.log('Fetched signature:', signature.value); 
       return signature.value;
     } catch (err) {
-      // Ignore 404, as it means the user hasn't signed the petition yet
+      
       if (err.response && err.response.status !== 404) {
         console.error('Error fetching signature:', err);
         error.value = 'Failed to retrieve signature information';
@@ -32,7 +32,7 @@ export function useSignature() {
     }
   };
 
-  // Create a signature
+  
   const createSignature = async (signatureData) => {
     isCreatingSignature.value = true;
     error.value = null;
@@ -41,7 +41,7 @@ export function useSignature() {
       const response = await signatureApi.createSignature(signatureData);
       signature.value = response.data;
       
-      // After successful signing, redirect to thank you page
+      
       router.push('/thank-you');
       
       return signature.value;
@@ -51,7 +51,7 @@ export function useSignature() {
       if (err.response) {
         if (err.response.status === 409) {
           error.value = 'You have already signed this petition';
-          // Redirect to profile if user has already signed
+          
           router.push('/profile');
         } else if (err.response.status === 400) {
           error.value = 'Invalid form data. Please check that all fields are filled correctly.';
@@ -68,18 +68,18 @@ export function useSignature() {
     }
   };
 
-  // Delete a signature
+  
   const deleteSignature = async (signatureId) => {
     if (!signatureId) {
       throw new Error('Signature ID is required');
     }
 
-    isCreatingSignature.value = true; // Reusing this state variable for deletion
+    isCreatingSignature.value = true; 
     error.value = null;
     
     try {
       await signatureApi.deleteSignature(signatureId);
-      signature.value = null; // Clear the local signature data
+      signature.value = null; 
       
       return true;
     } catch (err) {
@@ -103,13 +103,13 @@ export function useSignature() {
     }
   };
 
-  // Update signature visibility
+  
   const updateSignatureVisibility = async (signatureId, publicDisplay) => {
     if (!signatureId) {
       throw new Error('Signature ID is required');
     }
 
-    isCreatingSignature.value = true; // Reusing this state variable for update
+    isCreatingSignature.value = true; 
     error.value = null;
     
     try {
@@ -117,7 +117,7 @@ export function useSignature() {
         public_display: publicDisplay 
       });
       
-      // Update local signature data
+      
       if (response.data) {
         signature.value = response.data;
       }

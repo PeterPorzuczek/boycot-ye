@@ -7,7 +7,7 @@ export function useAuth() {
   const isLoading = ref(false);
   const error = ref(null);
 
-  // Extract user data from JWT token
+  
   const fetchUserData = async () => {
     if (!token.value) return;
     
@@ -15,7 +15,7 @@ export function useAuth() {
     error.value = null;
     
     try {
-      // Parse JWT token to get user data
+      
       const base64Url = token.value.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -25,9 +25,9 @@ export function useAuth() {
       const tokenData = JSON.parse(jsonPayload);
       console.log('JWT token data:', tokenData);
       
-      // Create a proper user object with standard fields
+      
       user.value = {
-        id: tokenData.sub || tokenData.id || tokenData.userId, // 'sub' is standard JWT claim for subject/user ID
+        id: tokenData.sub || tokenData.id || tokenData.userId, 
         email: tokenData.email || '',
         name: tokenData.name || tokenData.username || ''
       };
@@ -38,7 +38,7 @@ export function useAuth() {
       console.error('Error extracting user data from token:', err);
       error.value = 'Could not extract user data from token';
       
-      // If token is invalid, clear it
+      
       localStorage.removeItem('token');
       token.value = null;
     } finally {
@@ -46,7 +46,7 @@ export function useAuth() {
     }
   };
 
-  // Check authentication state on initialization
+  
   onMounted(() => {
     if (token.value) {
       fetchUserData();

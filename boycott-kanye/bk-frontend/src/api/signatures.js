@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Konfiguracja axios z bazowym URL dla API
+// Axios configuration with base URL for API
 const apiClient = axios.create({
   baseURL: 'http://localhost:3000/api',
   headers: {
@@ -8,7 +8,7 @@ const apiClient = axios.create({
   }
 });
 
-// Dodanie interceptora dla tokena autoryzacyjnego
+// Add interceptor for authorization token
 apiClient.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -17,38 +17,36 @@ apiClient.interceptors.request.use(config => {
   return config;
 });
 
-// Interceptor dla obsługi błędów autoryzacji
 apiClient.interceptors.response.use(
   response => response,
   error => {
     if (error.response && error.response.status === 401) {
-      // Token wygasł lub jest nieprawidłowy - wyloguj użytkownika
+      
       localStorage.removeItem('token');
-      // Przekieruj do strony logowania
+      
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
 
-// Metody API dla podpisów
 export const signatureApi = {
-  // Pobieranie wszystkich podpisów (publiczny endpoint)
+  
   getAllSignatures() {
     return apiClient.get('/signatures/all');
   },
   
-  // Pobieranie podpisu aktualnie zalogowanego użytkownika
+  
   getCurrentUserSignature() {
     return apiClient.get('/signatures/me');
   },
   
-  // Utworzenie nowego podpisu
+  
   createSignature(signatureData) {
     return apiClient.post('/signatures', signatureData);
   },
   
-  // Aktualizacja ustawień podpisu
+  
   updateSignature(id, updateData) {
     console.log('updateSignature - ID:', id);
     console.log('updateSignature - Data:', JSON.stringify(updateData));
@@ -73,8 +71,25 @@ export const signatureApi = {
       });
   },
   
-  // Usunięcie podpisu
+  
   deleteSignature(id) {
     return apiClient.delete(`/signatures/${id}`);
+  },
+
+  
+  async getUserSignature() {
+    try {
+      const response = await apiClient.get('/signatures/me');
+      return response.data;
+    } catch (error) {
+      console.error('Error in getUserSignature:', error);
+
+      if (error.response && error.response.status === 401) {
+        
+        localStorage.removeItem('token');
+      }
+      
+      return null;
+    }
   }
 }; 
