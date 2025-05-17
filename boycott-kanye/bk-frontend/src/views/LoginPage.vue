@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '../api/axios-client';
 
 export default {
   name: 'LoginPage',
@@ -99,7 +99,7 @@ export default {
       this.error = '';
       
       try {
-        const response = await axios.post('http://localhost:3000/api/auth/login', {
+        const response = await apiClient.post('/auth/login', {
           email: this.email,
           password: this.password
         });

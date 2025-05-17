@@ -113,7 +113,7 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTranslation } from '../composables/useTranslation';
-import axios from 'axios';
+import apiClient from '../api/axios-client';
 
 export default {
   name: 'RegisterPage',
@@ -142,7 +142,7 @@ export default {
       
       try {
         // Call the registration API endpoint
-        const response = await axios.post('http://localhost:3000/api/auth/register', {
+        const response = await apiClient.post('/auth/register', {
           email: email.value,
           password: password.value,
           passwordConfirm: confirmPassword.value,
@@ -151,7 +151,7 @@ export default {
         
         // If registration successful, log the user in
         if (response.status === 201) {
-          const loginResponse = await axios.post('http://localhost:3000/api/auth/login', {
+          const loginResponse = await apiClient.post('/auth/login', {
             email: email.value,
             password: password.value
           });

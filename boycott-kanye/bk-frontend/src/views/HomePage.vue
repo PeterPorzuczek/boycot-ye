@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '../api/axios-client';
 
 export default {
   name: 'HomePage',
@@ -109,7 +109,7 @@ export default {
       this.error = null;
       
       try {
-        const response = await axios.get('http://localhost:3000/api/signatures/all');
+        const response = await apiClient.get('/signatures/all');
         this.signatures = response.data;
       } catch (err) {
         this.error = 'Failed to load signatures';

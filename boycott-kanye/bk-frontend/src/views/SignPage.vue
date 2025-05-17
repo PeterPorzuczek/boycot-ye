@@ -45,8 +45,9 @@
 </template>
 
 <script>
-import axios from 'axios';
+import apiClient from '../api/axios-client';
 import SignForm from '../components/SignForm.vue';
+import config from '../config';
 
 export default {
   name: 'SignPage',
@@ -103,7 +104,8 @@ export default {
           this.$router.push('/login');
         } else {
           if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
-            this.error = 'Cannot connect to API server. Please make sure the backend is running at http://localhost:3000';
+            const baseApiUrl = config.apiBaseUrl.replace(/\/api$/, '');
+            this.error = `Cannot connect to API server. Please make sure the backend is running at ${baseApiUrl}`;
           } else if (err.response) {
             this.error = `Failed to process user data: ${err.response.status} ${err.response.statusText}`;
           } else {
@@ -116,11 +118,7 @@ export default {
     },
     async checkExistingSignature() {
       try {
-        const response = await axios.get('http://localhost:3000/api/signatures/me', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        const response = await apiClient.get('/signatures/me');
         
         if (response.data && response.data.id) {
           this.signature = response.data;
@@ -149,12 +147,7 @@ export default {
           publicDisplay: signatureData.publicDisplay
         };
         
-        await axios.post('http://localhost:3000/api/signatures', apiData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        await apiClient.post('/signatures', apiData);
         
         this.$router.push('/thank-you');
       } catch (err) {

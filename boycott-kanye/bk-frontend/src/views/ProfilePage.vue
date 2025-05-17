@@ -125,7 +125,7 @@ import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 import { useSignature } from '../composables/useSignature';
 import { useTranslation } from '../composables/useTranslation';
-import axios from 'axios';
+import apiClient from '../api/axios-client';
 
 export default {
   name: 'ProfilePage',
@@ -196,17 +196,9 @@ export default {
       
       try {
         // The API expects publicDisplay (camelCase) in request body according to UpdateSignatureDto
-        const token = localStorage.getItem('token');
-        
-        const response = await axios.put(
-          `http://localhost:3000/api/signatures/${signature.value.id}`,
-          { publicDisplay: publicDisplay.value }, // Using camelCase in the request!
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            }
-          }
+        const response = await apiClient.put(
+          `/signatures/${signature.value.id}`,
+          { publicDisplay: publicDisplay.value } // Using camelCase in the request!
         );
         
         if (response.status === 200) {
