@@ -242,12 +242,25 @@ export class PocketbaseService implements OnModuleInit {
         );
       }
 
+      // Fetch user data for anonymization
+      const userData = await this.pb.collection('users').getOne(userId);
+
+      // Anonymize user data
+      const anonymizedEmail = userData.email
+        ? this.anonymizeEmail(userData.email)
+        : '';
+      const anonymizedName = userData.name ? userData.name : '';
+
       // Prepare data for update - convert boolean to number if needed for PocketBase
       const data = { ...updateData };
       if ('publicDisplay' in data) {
         data.public_display = data.publicDisplay;
         delete data.publicDisplay;
       }
+
+      // Add anonymized user data to the update
+      data.anonymized_email = anonymizedEmail;
+      data.anonymized_name = anonymizedName;
 
       const updated = await this.pb
         .collection('signatures')
