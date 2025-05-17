@@ -177,7 +177,6 @@ export default {
           publicDisplay.value = !!result.public_display;
         }
       } catch (err) {
-        console.error('Error fetching signature in ProfilePage:', err);
         error.value = t('errors.fetchSignatureFailed');
       } finally {
         isLoading.value = false;
@@ -224,7 +223,6 @@ export default {
           }, 3000);
         }
       } catch (err) {
-        console.error('Failed to update visibility:', err);
         error.value = t('errors.updateSignatureFailed');
         // Reset checkbox state on error
         if (signature.value && signature.value.public_display !== undefined) {
@@ -268,7 +266,6 @@ export default {
           error.value = t('errors.deleteSignatureFailed');
         }
       } catch (err) {
-        console.error('Failed to withdraw signature:', err);
         error.value = t('errors.deleteSignatureFailed');
       } finally {
         isWithdrawing.value = false;

@@ -1,6 +1,5 @@
 import { ref, computed } from 'vue';
-import { signatureApi } from '../api/signatures';
-import { useRouter } from 'vue-router';
+import { signatureApi } from '@/api/signatures';
 
 export function useSignature() {
   const signature = ref(null);
@@ -8,7 +7,6 @@ export function useSignature() {
   const isCreatingSignature = ref(false);
   const isFetchingSignature = ref(false);
   const error = ref(null);
-  const router = useRouter();
 
   
   const fetchUserSignature = async () => {
@@ -18,14 +16,11 @@ export function useSignature() {
     try {
       const response = await signatureApi.getCurrentUserSignature();
       signature.value = response.data;
-      console.log('Fetched signature:', signature.value); 
+      hasUserSigned.value = !!signature.value;
       return signature.value;
     } catch (err) {
-      
-      if (err.response && err.response.status !== 404) {
-        console.error('Error fetching signature:', err);
-        error.value = 'Failed to retrieve signature information';
-      }
+      hasUserSigned.value = false;
+      error.value = 'Failed to fetch signature';
       return null;
     } finally {
       isFetchingSignature.value = false;
@@ -40,29 +35,11 @@ export function useSignature() {
     try {
       const response = await signatureApi.createSignature(signatureData);
       signature.value = response.data;
-      
-      
-      router.push('/thank-you');
-      
-      return signature.value;
+      hasUserSigned.value = true;
+      return true;
     } catch (err) {
-      console.error('Error creating signature:', err);
-      
-      if (err.response) {
-        if (err.response.status === 409) {
-          error.value = 'You have already signed this petition';
-          
-          router.push('/profile');
-        } else if (err.response.status === 400) {
-          error.value = 'Invalid form data. Please check that all fields are filled correctly.';
-        } else {
-          error.value = 'An error occurred while submitting your signature. Please try again later.';
-        }
-      } else {
-        error.value = 'Connection problem. Please check your internet connection.';
-      }
-      
-      return null;
+      error.value = 'Failed to create signature';
+      return false;
     } finally {
       isCreatingSignature.value = false;
     }
@@ -80,22 +57,11 @@ export function useSignature() {
     try {
       await signatureApi.deleteSignature(signatureId);
       signature.value = null; 
+      hasUserSigned.value = false;
       
       return true;
     } catch (err) {
-      console.error('Error deleting signature:', err);
-      
-      if (err.response) {
-        if (err.response.status === 403) {
-          error.value = 'You are not authorized to delete this signature';
-        } else if (err.response.status === 404) {
-          error.value = 'Signature not found';
-        } else {
-          error.value = 'Failed to withdraw signature';
-        }
-      } else {
-        error.value = 'Connection error. Please check your internet connection.';
-      }
+      error.value = 'Failed to delete signature';
       
       return false;
     } finally {
@@ -124,19 +90,7 @@ export function useSignature() {
       
       return true;
     } catch (err) {
-      console.error('Error updating signature visibility:', err);
-      
-      if (err.response) {
-        if (err.response.status === 403) {
-          error.value = 'You are not authorized to update this signature';
-        } else if (err.response.status === 404) {
-          error.value = 'Signature not found';
-        } else {
-          error.value = 'Failed to update signature visibility';
-        }
-      } else {
-        error.value = 'Connection error. Please check your internet connection.';
-      }
+      error.value = 'Failed to update signature visibility';
       
       return false;
     } finally {

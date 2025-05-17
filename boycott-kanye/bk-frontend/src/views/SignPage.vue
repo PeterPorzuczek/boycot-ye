@@ -98,7 +98,6 @@ export default {
         
         await this.checkExistingSignature();
       } catch (err) {
-        console.error('Error processing user data:', err);
         if (err.response && err.response.status === 401) {
           localStorage.removeItem('token');
           this.$router.push('/login');
@@ -133,10 +132,8 @@ export default {
         if (err.response && err.response.status === 404) {
           this.hasUserSigned = false;
         } else if (err.response) {
-          console.error('Error checking signature:', err);
           this.error = `Failed to check if you have already signed: ${err.response.status} ${err.response.statusText}`;
         } else {
-          console.error('Error checking signature:', err);
           this.error = 'Failed to connect to the server. Please try again later.';
         }
       }
@@ -152,21 +149,15 @@ export default {
           publicDisplay: signatureData.publicDisplay
         };
         
-        const response = await axios.post('http://localhost:3000/api/signatures', apiData, {
+        await axios.post('http://localhost:3000/api/signatures', apiData, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
           }
         });
         
-        if (response && response.data && response.data.id) {
-          console.debug('Created signature with ID:', response.data.id);
-        }
-        
         this.$router.push('/thank-you');
       } catch (err) {
-        console.error('Failed to create signature:', err);
-        
         if (err.response) {
           if (err.response.status === 409) {
             this.hasUserSigned = true;

@@ -23,14 +23,12 @@ export function useTranslation() {
       if (value && Object.prototype.hasOwnProperty.call(value, key)) {
         value = value[key];
       } else {
-        console.warn(`Translation key not found: ${path}`);
         return path;
       }
     }
     
     
     if (typeof value !== 'string') {
-      console.warn(`Translation value is not a string: ${path}`);
       return path;
     }
     
@@ -62,14 +60,12 @@ export const i18nPlugin = {
         if (value && Object.prototype.hasOwnProperty.call(value, key)) {
           value = value[key];
         } else {
-          console.warn(`Translation key not found: ${path}`);
           return path;
         }
       }
       
       
       if (typeof value !== 'string') {
-        console.warn(`Translation value is not a string: ${path}`);
         return path;
       }
       

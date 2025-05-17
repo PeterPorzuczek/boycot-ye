@@ -32,9 +32,6 @@ export default {
       required: true
     }
   },
-  mounted() {
-    console.log('UserInfoSection received user:', this.user);
-  }
 }
 </script>
 

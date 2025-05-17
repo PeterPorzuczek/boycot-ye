@@ -99,17 +99,14 @@ export default {
       this.error = '';
       
       try {
-        // Call the actual login API endpoint
         const response = await axios.post('http://localhost:3000/api/auth/login', {
           email: this.email,
           password: this.password
         });
         
-        // Store the real token from response
         if (response.data && response.data.token) {
           localStorage.setItem('token', response.data.token);
           
-          // Redirect to the page the user was trying to access, or to home
           const redirectPath = this.$route.query.redirect || '/';
           this.$router.push(redirectPath);
         } else {
@@ -117,7 +114,6 @@ export default {
         }
         
       } catch (err) {
-        console.error('Login error:', err);
         this.error = this.$t('errors.invalidCredentials');
       } finally {
         this.isLoading = false;

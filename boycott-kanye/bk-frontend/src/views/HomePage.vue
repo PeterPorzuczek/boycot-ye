@@ -112,7 +112,6 @@ export default {
         const response = await axios.get('http://localhost:3000/api/signatures/all');
         this.signatures = response.data;
       } catch (err) {
-        console.error('Error fetching signatures:', err);
         this.error = 'Failed to load signatures';
       } finally {
         this.isLoading = false;
@@ -133,7 +132,6 @@ export default {
           day: 'numeric'
         });
       } catch (err) {
-        console.error('Error parsing date:', err);
         return date;
       }
     }

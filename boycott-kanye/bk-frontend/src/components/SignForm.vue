@@ -69,7 +69,9 @@ export default {
       },
       formErrors: {
         agreeCheckbox: ''
-      }
+      },
+      userName: '',
+      userEmail: ''
     };
   },
   computed: {
@@ -77,8 +79,11 @@ export default {
       return this.formState.agreeCheckbox;
     }
   },
-  mounted() {
-    console.log('SignForm user prop:', this.user);
+  created() {
+    if (this.user) {
+      this.userName = this.user.name || '';
+      this.userEmail = this.user.email || '';
+    }
   },
   methods: {
     validateForm() {
@@ -113,8 +118,6 @@ export default {
         publicDisplay: this.formState.publicDisplay
       };
       
-      console.log('Emitting signature data:', signatureData);
-      
       this.$emit('submit', signatureData);
       
       setTimeout(() => {
@@ -122,6 +125,20 @@ export default {
           this.formState.isSubmitting = false;
         }
       }, 5000);
+    },
+    submitForm() {
+      if (!this.formState.agreeCheckbox) {
+        this.formErrors.agreeCheckbox = t('signPage.form.consentError');
+        return;
+      }
+      
+      const signatureData = {
+        userId: this.user.id,
+        agreeCheckbox: this.formState.agreeCheckbox,
+        publicDisplay: this.formState.publicDisplay
+      };
+      
+      this.$emit('submit', signatureData);
     }
   }
 }

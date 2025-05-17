@@ -48,25 +48,11 @@ export const signatureApi = {
   
   
   updateSignature(id, updateData) {
-    console.log('updateSignature - ID:', id);
-    console.log('updateSignature - Data:', JSON.stringify(updateData));
     return apiClient.put(`/signatures/${id}`, updateData)
       .then(response => {
-        console.log('updateSignature - Success response:', response);
         return response;
       })
       .catch(error => {
-        console.error('updateSignature - Error details:', {
-          status: error.response?.status,
-          data: error.response?.data,
-          message: error.message,
-          config: {
-            url: error.config?.url,
-            method: error.config?.method,
-            headers: error.config?.headers,
-            data: error.config?.data
-          }
-        });
         throw error;
       });
   },
@@ -82,10 +68,8 @@ export const signatureApi = {
       const response = await apiClient.get('/signatures/me');
       return response.data;
     } catch (error) {
-      console.error('Error in getUserSignature:', error);
-
       if (error.response && error.response.status === 401) {
-        
+        // Token expired or invalid - logout the user
         localStorage.removeItem('token');
       }
       

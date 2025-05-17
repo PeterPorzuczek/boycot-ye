@@ -15,32 +15,21 @@ export function useAuth() {
     error.value = null;
     
     try {
+      const tokenData = JSON.parse(atob(token.value.split('.')[1]));
       
-      const base64Url = token.value.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      
-      const tokenData = JSON.parse(jsonPayload);
-      console.log('JWT token data:', tokenData);
-      
-      
+      // Extract user data from token
       user.value = {
-        id: tokenData.sub || tokenData.id || tokenData.userId, 
-        email: tokenData.email || '',
-        name: tokenData.name || tokenData.username || ''
+        id: tokenData.sub,
+        email: tokenData.email,
+        name: tokenData.name,
+        iat: tokenData.iat,
+        exp: tokenData.exp
       };
-      
-      console.log('Created user object:', user.value);
-      
     } catch (err) {
-      console.error('Error extracting user data from token:', err);
-      error.value = 'Could not extract user data from token';
-      
-      
+      // Clear token if parsing fails
       localStorage.removeItem('token');
-      token.value = null;
+      isLoggedIn.value = false;
+      user.value = null;
     } finally {
       isLoading.value = false;
     }

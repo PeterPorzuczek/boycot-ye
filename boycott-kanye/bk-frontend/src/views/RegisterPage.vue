@@ -167,7 +167,6 @@ export default {
           }
         }
       } catch (err) {
-        console.error('Registration error:', err);
         error.value = t('errors.registrationFailed');
       } finally {
         isLoading.value = false;
