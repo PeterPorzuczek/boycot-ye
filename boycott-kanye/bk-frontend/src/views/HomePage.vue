@@ -26,10 +26,10 @@
         <div v-else class="signatures-grid">
           <div v-for="signature in signatures" :key="signature.id" class="signature-item">
             <div class="signature-name">
-              {{ getSignatureDisplay(signature) }}
+              {{ signature.displayName }}
             </div>
-            <div v-if="isPublic(signature) && signature.expand && signature.expand.user" class="signature-email">
-              {{ maskEmail(signature.expand.user.email) }}
+            <div class="signature-date">
+              {{ formatDate(signature.created) }}
             </div>
           </div>
         </div>
@@ -46,14 +46,14 @@ export default {
   data() {
     return {
       signatures: [],
+      totalSignatureCount: 0,
       isLoading: true,
       error: null
     }
   },
   computed: {
     consentingSignaturesCount() {
-      // Count only signatures that have agreed to the petition
-      return this.signatures.filter(signature => this.hasConsent(signature)).length;
+      return this.totalSignatureCount;
     }
   },
   created() {
@@ -65,21 +65,17 @@ export default {
       this.error = null;
       
       try {
-        const response = await axios.get('http://localhost:3000/api/signatures/all');
+        // Fetch formatted signatures for display
+        const response = await axios.get('http://localhost:3000/api/signatures/display-list');
         this.signatures = response.data;
         
-        // Log detailed information about signatures to understand structure
+        // Set the total count from the length of the signatures array
+        // This is correct because only consenting signatures are returned from the API
+        this.totalSignatureCount = this.signatures.length;
+        
         console.log('Total signatures received:', this.signatures.length);
         if (this.signatures.length > 0) {
           console.log('First signature sample:', JSON.stringify(this.signatures[0], null, 2));
-          
-          // Count signatures with consent
-          const consentingCount = this.signatures.filter(sig => this.hasConsent(sig)).length;
-          console.log('Signatures with consent:', consentingCount);
-          
-          // Count public signatures
-          const publicCount = this.signatures.filter(sig => this.isPublic(sig)).length;
-          console.log('Public signatures:', publicCount);
         }
       } catch (err) {
         console.error('Error fetching signatures:', err);
@@ -88,53 +84,15 @@ export default {
         this.isLoading = false;
       }
     },
-    getSignatureDisplay(signature) {
-      if (signature.expand && signature.expand.user) {
-        if (this.isPublic(signature)) {
-          return signature.expand.user.name;
-        } else {
-          return 'Anonymous';
-        }
-      } else {
-        return 'Anonymous';
-      }
-    },
-    maskEmail(email) {
-      if (!email) return 'No email provided';
+    formatDate(date) {
+      if (!date) return '';
       
-      const [local, domain] = email.split('@');
-      
-      // Keep first character, mask the rest of local part
-      const firstChar = local.charAt(0);
-      const maskedLocal = firstChar + '*'.repeat(Math.min(local.length - 1, 3));
-      
-      // Split domain into parts (e.g., "example.com" => ["example", "com"])
-      const domainParts = domain.split('.');
-      const tld = domainParts.pop(); // Top-level domain (e.g., "com")
-      const domainName = domainParts.join('.'); // Rest of domain
-      
-      // Keep first character of domain name, mask the rest
-      const firstDomainChar = domainName.charAt(0);
-      const maskedDomain = firstDomainChar + '*'.repeat(Math.min(domainName.length - 1, 3));
-      
-      return `${maskedLocal}@${maskedDomain}.${tld}`;
-    },
-    // Helper method to check if a signature has consent
-    hasConsent(signature) {
-      // Check for both naming conventions (with/without underscore)
-      return (
-        (signature.agree_checkbox === true) || 
-        (signature.agreeCheckbox === true)
-      );
-    },
-    
-    // Helper method to check if a signature is public
-    isPublic(signature) {
-      // Check for both naming conventions (with/without underscore)
-      return (
-        (signature.public_display === true) || 
-        (signature.publicDisplay === true)
-      );
+      const dateObj = new Date(date);
+      return dateObj.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
     }
   }
 }
@@ -240,7 +198,7 @@ export default {
   font-weight: bold;
 }
 
-.signature-email {
+.signature-date {
   font-size: 0.9rem;
   color: #666;
   margin-top: 0.5rem;

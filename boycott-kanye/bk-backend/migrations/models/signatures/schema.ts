@@ -24,6 +24,18 @@ export const signaturesCollectionDefinition = {
       required: false,
       options: {},
     },
+    {
+      name: 'full_name',
+      type: 'text',
+      required: false,
+      options: {},
+    },
+    {
+      name: 'email',
+      type: 'text',
+      required: false,
+      options: {},
+    },
   ],
   // API access rules
   listRule: '', // Dostępne publicznie dla wszystkich

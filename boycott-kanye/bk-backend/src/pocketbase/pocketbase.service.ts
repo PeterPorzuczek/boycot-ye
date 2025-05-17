@@ -117,26 +117,42 @@ export class PocketbaseService implements OnModuleInit {
     }
   }
 
-  async getSignaturesWithDisplayNames(): Promise<any[]> {
+  async getSignaturesWithDisplayNames(page = 1, perPage = 20): Promise<any> {
     try {
-      // Get all signatures - no fancy queries
-      const records = await this.pb.collection('signatures').getFullList();
+      this.logger.debug(
+        `Fetching display signatures: page ${page}, perPage ${perPage}`,
+      );
+      const signaturesResult = await this.pb
+        .collection('signatures')
+        .getList(page, perPage, {
+          sort: '-created',
+        });
 
-      // Just map to the format we need
-      return records.map((record) => {
+      const items = signaturesResult.items.map((record) => {
+        // The full_name and email fields are now pre-processed on creation
+        // according to the public_display flag at that time.
         return {
           id: record.id,
-          displayName: record.public_display ? 'User' : 'Anonymous',
+          displayName: record.full_name, // This is either actual name or "Anonymous"
+          email: record.email, // This is either anonymized email or "anonymous@example.com"
           created: record.created,
         };
       });
+
+      return {
+        page: signaturesResult.page,
+        perPage: signaturesResult.perPage,
+        totalItems: signaturesResult.totalItems,
+        totalPages: signaturesResult.totalPages,
+        items,
+      };
     } catch (error) {
       this.logger.error(
-        `Failed to get signatures: ${error.message || 'Unknown error'}`,
+        `Failed to get display signatures: ${error.message || JSON.stringify(error)}`,
       );
       throw new HttpException(
-        'Failed to retrieve signatures',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        `Failed to retrieve display signatures: ${error.message}`,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
@@ -144,9 +160,10 @@ export class PocketbaseService implements OnModuleInit {
   async createSignature(createSignatureDto: CreateSignatureDto): Promise<any> {
     try {
       const { userId, agreeCheckbox, publicDisplay } = createSignatureDto;
-      this.logger.debug(`Creating signature for user: ${userId}`);
+      this.logger.debug(
+        `Creating signature for user: ${userId}, public: ${publicDisplay}`,
+      );
 
-      // Check if user already has a signature
       const existingSignature = await this.getUserSignature(userId);
       if (existingSignature) {
         throw new HttpException(
@@ -155,16 +172,47 @@ export class PocketbaseService implements OnModuleInit {
         );
       }
 
-      // Directly try to create the signature
-      // PocketBase will handle the error if collection doesn't exist
+      let fullName = 'Anonymous'; // Default to Anonymous
+      let signatureEmail = 'anonymous@example.com'; // Default to anonymous email
 
-      const signature = await this.pb.collection('signatures').create({
-        author_id: userId, // Poprawiona nazwa pola zgodnie ze schematem
+      if (userId) {
+        // Ensure userId is present before trying to fetch user
+        try {
+          const user = await this.pb.collection('users').getOne(userId);
+          if (publicDisplay === true) {
+            fullName = user.name || 'User'; // Use actual name or 'User' if name is empty
+            if (user.email && user.email.includes('@')) {
+              signatureEmail = this.anonymizeEmail(user.email); // Anonymize the user's actual email
+            } else {
+              signatureEmail = 'invalid-email@example.com'; // Fallback for malformed email
+            }
+          } else {
+            // For publicDisplay === false, fullName and signatureEmail remain their default anonymous values
+            // as per the requirement: "zapisuj anonymous i mail ananonymous"
+          }
+        } catch (userError) {
+          this.logger.warn(
+            `Could not fetch user details for ${userId} during signature creation: ${userError.message}`,
+          );
+          // If user fetch fails, and publicDisplay was true, it will fall back to Anonymous/anonymous@example.com
+          // If publicDisplay was false, it was already set to Anonymous/anonymous@example.com
+        }
+      }
+
+      const signatureData = {
+        author_id: userId,
         agree_checkbox: agreeCheckbox,
         public_display: publicDisplay,
-      });
+        full_name: fullName,
+        email: signatureEmail,
+      };
 
-      this.logger.log(`Signature created successfully for user: ${userId}`);
+      const signature = await this.pb
+        .collection('signatures')
+        .create(signatureData);
+      this.logger.log(
+        `Signature created successfully for user: ${userId} with ID: ${signature.id}`,
+      );
       return signature;
     } catch (error) {
       this.logger.error(`Failed to create signature: ${JSON.stringify(error)}`);
@@ -284,6 +332,19 @@ export class PocketbaseService implements OnModuleInit {
 
   private generateAsterisks(length: number): string {
     return '*'.repeat(Math.min(length, 5));
+  }
+
+  private anonymizeEmail(email: string): string {
+    const [localPart, domain] = email.split('@');
+
+    if (localPart.length <= 1) {
+      return `${localPart}@${domain}`;
+    }
+
+    const firstChar = localPart[0];
+    const lastChar = localPart[localPart.length - 1];
+
+    return `${firstChar}...${lastChar}@${domain}`;
   }
 
   private handlePocketBaseError(error: any, message: string): never {

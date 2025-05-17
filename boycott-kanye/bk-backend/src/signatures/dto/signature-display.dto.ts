@@ -15,6 +15,12 @@ export class SignatureDisplayDto {
   displayName: string;
 
   @ApiProperty({
+    description: 'Email address (full if public, anonymized if private)',
+    example: 'john@example.com OR j...n@example.com',
+  })
+  email: string;
+
+  @ApiProperty({
     description: 'Date when the signature was created',
     example: '2023-08-15T12:30:45.123Z',
   })

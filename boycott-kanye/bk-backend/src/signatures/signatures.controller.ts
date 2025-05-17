@@ -12,6 +12,7 @@ import {
   UseGuards,
   Request,
   HttpException,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -52,8 +53,14 @@ export class SignaturesController {
       'Returns signatures with display names (anonymous for private signatures)',
     type: [SignatureDisplayDto],
   })
-  async getSignaturesWithDisplayNames(): Promise<SignatureDisplayDto[]> {
-    return this.pocketbaseService.getSignaturesWithDisplayNames();
+  async getSignaturesWithDisplayNames(
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number,
+  ) {
+    return this.pocketbaseService.getSignaturesWithDisplayNames(
+      page ? Number(page) : 1,
+      perPage ? Number(perPage) : 20,
+    );
   }
 
   @Post()
