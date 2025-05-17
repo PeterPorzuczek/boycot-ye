@@ -94,5 +94,130 @@
     "alreadySigned": "You have already signed this petition",
     "formValidation": "Please check that all fields are filled correctly",
     "connectionError": "Connection error. Please check your internet connection."
+  },
+  "general": {
+    "siteTitle": "Boycott Kanye",
+    "copyright": "© {year} Boycott Kanye Movement. All rights reserved."
+  },
+  "nav": {
+    "home": "Home",
+    "login": "Log In",
+    "register": "Join Us",
+    "sign": "Sign",
+    "profile": "Profile",
+    "logout": "Log Out"
+  },
+  "navigation": {
+    "home": "Home",
+    "signPetition": "Sign Petition",
+    "profile": "Profile",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "homePage": {
+    "hero": {
+      "title": "BOYCOTT YE PETITION",
+      "description": "Join our movement to stand against antisemitism and hate speech. Sign the petition to show your support for a world free of discrimination.",
+      "signButton": "Sign Petition",
+      "viewButton": "View Signatures",
+      "counterLabel": "Signatures"
+    },
+    "signatures": {
+      "title": "VOICES AGAINST HATE",
+      "loading": "Loading signatures...",
+      "empty": "Be the first to sign this petition!",
+      "anonymous": "Anonymous",
+      "signNowButton": "Sign Now",
+      "addVoiceButton": "ADD YOUR VOICE"
+    },
+    "quote": {
+      "text": "We must unite against discrimination and hate speech in all its forms.",
+      "author": "Boycott Movement"
+    }
+  },
+  "signPage": {
+    "title": "Sign Our Petition",
+    "description": "Add your voice to the movement against hate speech and antisemitism.",
+    "loading": "Preparing the signing form...",
+    "errorTitle": "Error Loading Form",
+    "alreadySigned": {
+      "title": "You've Already Signed!",
+      "description": "Thank you for your support. You can view or manage your signature in your profile.",
+      "viewProfileButton": "View Profile",
+      "homeButton": "Return Home"
+    },
+    "form": {
+      "nameLabel": "Your Name",
+      "emailLabel": "Your Email",
+      "consentLabel": "I stand against hate speech and antisemitism",
+      "publicDisplayLabel": "Make my signature public",
+      "publicDisplayDescription": "Your name and email will be visible to others",
+      "submitButton": "Sign Petition",
+      "submitting": "Signing...",
+      "consentError": "You must agree to the petition statement",
+      "formError": "There was a problem with your submission. Please try again."
+    }
+  },
+  "login": {
+    "title": "LOG IN",
+    "subtitle": "Access your account to manage your signature",
+    "welcomeBack": "WELCOME BACK",
+    "loginToSign": "SIGN IN TO MAKE YOUR VOICE HEARD",
+    "email": "Email Address",
+    "password": "Password",
+    "loginButton": "LOG IN",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "registerLink": "REGISTER NOW"
+  },
+  "register": {
+    "title": "JOIN THE MOVEMENT",
+    "subtitle": "Create your account to sign the petition",
+    "joinMovement": "ADD YOUR VOICE",
+    "createToSign": "CREATE YOUR ACCOUNT",
+    "name": "Full Name",
+    "email": "Email Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "passwordMismatch": "Passwords do not match",
+    "termsText": "By registering, you agree to our Terms of Service and Privacy Policy.",
+    "registerButton": "ADD YOUR VOICE",
+    "haveAccount": "Already have an account?",
+    "loginLink": "LOG IN",
+    "unityBanner": "UNITED AGAINST HATE"
+  },
+  "profile": {
+    "title": "YOUR PROFILE",
+    "signatureStatus": "Signature Status",
+    "signed": "You have signed the petition",
+    "notSigned": "You haven't signed yet",
+    "visibilityTitle": "Signature Visibility",
+    "visibilityLabel": "Public Display",
+    "updateSuccess": "Visibility updated successfully",
+    "withdrawTitle": "Withdraw Signature",
+    "withdrawButton": "Withdraw My Signature",
+    "withdrawConfirm": "Are you sure you want to withdraw your signature? This action cannot be undone."
+  },
+  "signForm": {
+    "userInfo": {
+      "title": "Your Information",
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "error": "User information is incomplete",
+      "errorHelp": "Please make sure you are logged in with a valid account",
+      "note": "This information comes from your account and will be associated with your signature."
+    },
+    "petition": {
+      "title": "Petition Statement",
+      "text": "I stand against antisemitism, hate speech, and all forms of discrimination. I believe in a world where everyone is treated with dignity and respect, regardless of their religion, race, gender, or background."
+    },
+    "visibility": {
+      "title": "Signature Visibility",
+      "public": "Public",
+      "private": "Private",
+      "description": "Choose how your signature will appear on the public list."
+    }
   }
 } 

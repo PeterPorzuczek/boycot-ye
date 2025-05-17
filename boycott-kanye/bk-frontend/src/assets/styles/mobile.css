@@ -1,0 +1,230 @@
+/* Mobile and Responsive Styles */
+
+/* ===== Base mobile styles (small phones) ===== */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .container {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+
+  /* Adjust headings for mobile */
+  h1 {
+    font-size: var(--font-size-xl) !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  h2 {
+    font-size: var(--font-size-lg) !important;
+  }
+
+  /* Reduce padding and margin for small screens */
+  .page-header {
+    margin-bottom: var(--spacing-lg) !important;
+    padding-top: var(--spacing-lg) !important;
+  }
+
+  /* Fix buttons on mobile */
+  .btn {
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+    white-space: normal;
+  }
+
+  /* Improve forms */
+  .input-wrapper input,
+  .input-wrapper textarea,
+  .input-wrapper select {
+    padding: var(--spacing-sm) !important;
+    font-size: var(--font-size-md) !important;
+  }
+
+  /* Fix ribbon elements that might overflow */
+  .stop-hate-ribbon {
+    padding: 6px 30px !important;
+    font-size: 10px !important;
+    right: -40px !important;
+  }
+}
+
+/* ===== Medium mobile styles (large phones) ===== */
+@media (min-width: 481px) and (max-width: 767px) {
+  .container {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+  }
+
+  /* Adjust headings for medium screens */
+  h1 {
+    font-size: var(--font-size-xxl) !important;
+  }
+
+  /* Fix buttons on medium mobile */
+  .cta-group {
+    flex-direction: column !important;
+    width: 100%;
+  }
+
+  .cta-group .btn {
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+  }
+}
+
+/* ===== Tablet styles ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+  }
+}
+
+/* ===== Navigation adjustments for mobile ===== */
+@media (max-width: 767px) {
+  .app-header .nav-links {
+    flex-direction: column !important;
+    width: 100%;
+    gap: var(--spacing-xs) !important;
+  }
+
+  .app-header .container {
+    flex-direction: column !important;
+    padding: var(--spacing-sm) !important;
+  }
+
+  .app-header .logo-container {
+    margin-bottom: var(--spacing-sm) !important;
+  }
+
+  .app-header .nav-link {
+    text-align: center;
+    width: 100%;
+    padding: var(--spacing-xs) 0 !important;
+  }
+}
+
+/* ===== Auth Forms ===== */
+@media (max-width: 767px) {
+  .login-page,
+  .register-page {
+    padding: 0 var(--spacing-sm) !important;
+  }
+
+  .form-container {
+    border-radius: var(--border-radius-md) !important;
+  }
+
+  .form-options {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: var(--spacing-sm) !important;
+  }
+
+  .form-actions {
+    margin-top: var(--spacing-sm) !important;
+  }
+}
+
+/* ===== Profile Page ===== */
+@media (max-width: 767px) {
+  .profile-content {
+    gap: var(--spacing-lg) !important;
+  }
+
+  .profile-section {
+    padding: var(--spacing-md) !important;
+  }
+
+  .visibility-option-container {
+    grid-template-columns: 1fr !important;
+  }
+
+  .signed-status,
+  .not-signed-status {
+    flex-direction: column !important;
+    text-align: center;
+  }
+
+  .status-icon {
+    margin: 0 auto var(--spacing-sm) !important;
+  }
+}
+
+/* ===== Home Page ===== */
+@media (max-width: 767px) {
+  .hero-content {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-lg) !important;
+  }
+
+  .hero-visual {
+    order: -1 !important;
+  }
+
+  .quote-box {
+    transform: rotate(0) !important;
+    padding: var(--spacing-md) !important;
+  }
+
+  .album-reference {
+    font-size: var(--font-size-lg) !important;
+  }
+
+  .cta-banner {
+    flex-direction: column !important;
+    padding: var(--spacing-md) !important;
+  }
+
+  .signatures-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== Sign Page ===== */
+@media (max-width: 767px) {
+  .sign-form {
+    padding: var(--spacing-md) !important;
+  }
+
+  .form-section {
+    padding: var(--spacing-md) !important;
+  }
+
+  .action-links {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .action-links .btn {
+    width: 100% !important;
+    margin-bottom: var(--spacing-sm) !important;
+  }
+}
+
+/* ===== Floating action button for mobile ===== */
+.mobile-fab {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-fab {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    z-index: 1000;
+  }
+} 

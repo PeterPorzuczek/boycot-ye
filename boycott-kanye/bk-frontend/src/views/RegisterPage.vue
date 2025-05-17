@@ -162,6 +162,11 @@ export default {
             
             // Redirect to sign page after successful registration and login
             router.push('/sign');
+            
+            // Force page reload to update authentication state
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
           } else {
             throw new Error('No token received from server');
           }

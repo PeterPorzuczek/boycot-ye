@@ -1,0 +1,63 @@
+/* CSS Variables */
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  /* Updated color palette inspired by anti-hate theme and Kanye references */
+  --primary: #121212;
+  --primary-dark: #000000;
+  --secondary: #FF0000; /* Strong red for stopping hate */
+  --accent: #F7C548; /* Gold accent for Kanye's albums/persona */
+  --accent-2: #5D21D2; /* Purple for creativity/unity */
+  --accent-3: #E6D3A3; /* Pablo album beige */
+  --accent-4: #FB3958; /* MBDTF red */
+  --light: #F8F8F8;
+  --off-white: #F2F2F2;
+  --grey-light: #E8E8E8;
+  --grey-mid: #B0B0B0;
+  --grey-dark: #707070;
+  --success: #00C170;
+  --error: #FF3A5E;
+  --warning: #FF9F1C;
+  --background: var(--light);
+  
+  /* Updated gradients */
+  --gradient-primary: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%); /* Red to gold */
+  --gradient-dark: linear-gradient(135deg, var(--primary-dark) 0%, #191919 90%);
+  --gradient-light: linear-gradient(135deg, var(--light) 0%, var(--grey-light) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%); /* Gold to purple */
+  --gradient-pablo: linear-gradient(135deg, var(--accent-3) 0%, var(--accent) 70%); /* Pablo album inspired */
+  --gradient-mbdtf: linear-gradient(135deg, var(--accent-4) 0%, var(--primary-dark) 100%); /* MBDTF inspired */
+  
+  /* Refined spacing and sizing */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* Typography scale */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
+  --font-size-jumbo: 3.5rem;
+  --line-height: 1.5;
+  
+  /* Z-index layers */
+  --z-index-header: 1000;
+  --z-index-nav: 900;
+  --z-index-modal: 2000;
+  --z-index-fab: 800;
+} 

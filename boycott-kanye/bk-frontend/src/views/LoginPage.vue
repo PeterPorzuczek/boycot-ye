@@ -109,6 +109,11 @@ export default {
           
           const redirectPath = this.$route.query.redirect || '/';
           this.$router.push(redirectPath);
+          
+          // Force page reload to update authentication state
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
         } else {
           throw new Error('No token received from server');
         }

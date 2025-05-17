@@ -1,0 +1,188 @@
+/* Main Styles */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Jost', sans-serif;
+  line-height: var(--line-height);
+  background-color: var(--background);
+  color: var(--primary);
+  font-size: var(--font-size-md);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* Button Styles */
+.btn {
+  display: inline-block;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--border-radius-md);
+  border: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: var(--font-size-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: height 0.3s;
+  z-index: -1;
+}
+
+.btn:hover::after {
+  height: 100%;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 2px solid var(--secondary);
+  color: var(--secondary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary);
+  color: white;
+  transform: translateY(-3px);
+}
+
+.btn-pablo {
+  background: var(--gradient-pablo);
+  color: var(--primary-dark);
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.btn-mbdtf {
+  background: var(--gradient-mbdtf);
+  color: white;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+/* Form Elements */
+input, textarea, select {
+  font-family: 'Jost', sans-serif;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--grey-mid);
+  font-size: var(--font-size-md);
+  width: 100%;
+  transition: all 0.3s;
+  background-color: var(--off-white);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(58, 102, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  letter-spacing: 1px;
+}
+
+/* Typography Styles */
+.section-title {
+  position: relative;
+  display: inline-block;
+  text-transform: uppercase;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  margin-bottom: var(--spacing-lg);
+  letter-spacing: -1px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 4px;
+  background: var(--gradient-primary);
+  bottom: -8px;
+  left: 0;
+}
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--spacing-xs); }
+.mt-2 { margin-top: var(--spacing-sm); }
+.mt-3 { margin-top: var(--spacing-md); }
+.mt-4 { margin-top: var(--spacing-lg); }
+.mt-5 { margin-top: var(--spacing-xl); }
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--spacing-xs); }
+.mb-2 { margin-bottom: var(--spacing-sm); }
+.mb-3 { margin-bottom: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+.mb-5 { margin-bottom: var(--spacing-xl); }
+
+/* Theme-specific text styles */
+.text-ye {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.text-pablo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 1.2em;
+  letter-spacing: -1px;
+  background: var(--gradient-pablo);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-mbdtf {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 1.2em;
+  letter-spacing: -1px;
+  background: var(--gradient-mbdtf);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+} 
