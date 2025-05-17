@@ -86,48 +86,6 @@
         ]
       }
     },
-    "/api/signatures/display-list": {
-      "get": {
-        "operationId": "SignaturesController_getSignaturesWithDisplayNames",
-        "parameters": [
-          {
-            "name": "page",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "perPage",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns signatures with display names (anonymous for private signatures)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SignatureDisplayDto"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get a list of signatures with display names",
-        "tags": [
-          "signatures"
-        ]
-      }
-    },
     "/api/signatures": {
       "post": {
         "operationId": "SignaturesController_createSignature",
@@ -339,37 +297,6 @@
         "required": [
           "email",
           "password"
-        ]
-      },
-      "SignatureDisplayDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier of the signature",
-            "example": "abc123xyz456"
-          },
-          "displayName": {
-            "type": "string",
-            "description": "Display name of the signer (full name if public, \"Anonymous\" if private)",
-            "example": "John Doe"
-          },
-          "email": {
-            "type": "string",
-            "description": "Email address (full if public, anonymized if private)",
-            "example": "john@example.com OR j...n@example.com"
-          },
-          "created": {
-            "type": "string",
-            "description": "Date when the signature was created",
-            "example": "2023-08-15T12:30:45.123Z"
-          }
-        },
-        "required": [
-          "id",
-          "displayName",
-          "email",
-          "created"
         ]
       },
       "CreateSignatureDto": {

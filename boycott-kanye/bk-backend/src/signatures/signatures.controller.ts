@@ -25,7 +25,6 @@ import { PocketbaseService } from '../pocketbase/pocketbase.service';
 import { CreateSignatureDto } from './dto/create-signature.dto';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { SignatureDto } from './dto/signature.dto';
-import { SignatureDisplayDto } from './dto/signature-display.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
 @ApiTags('signatures')
@@ -43,24 +42,6 @@ export class SignaturesController {
   })
   async getSignatures(): Promise<any[]> {
     return this.pocketbaseService.getSignatures();
-  }
-
-  @Get('display-list')
-  @ApiOperation({ summary: 'Get a list of signatures with display names' })
-  @ApiResponse({
-    status: 200,
-    description:
-      'Returns signatures with display names (anonymous for private signatures)',
-    type: [SignatureDisplayDto],
-  })
-  async getSignaturesWithDisplayNames(
-    @Query('page') page?: number,
-    @Query('perPage') perPage?: number,
-  ) {
-    return this.pocketbaseService.getSignaturesWithDisplayNames(
-      page ? Number(page) : 1,
-      perPage ? Number(perPage) : 20,
-    );
   }
 
   @Post()

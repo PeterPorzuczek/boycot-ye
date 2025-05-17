@@ -117,46 +117,6 @@ export class PocketbaseService implements OnModuleInit {
     }
   }
 
-  async getSignaturesWithDisplayNames(page = 1, perPage = 20): Promise<any> {
-    try {
-      this.logger.debug(
-        `Fetching display signatures: page ${page}, perPage ${perPage}`,
-      );
-      const signaturesResult = await this.pb
-        .collection('signatures')
-        .getList(page, perPage, {
-          sort: '-created',
-        });
-
-      const items = signaturesResult.items.map((record) => {
-        // The full_name and email fields are now pre-processed on creation
-        // according to the public_display flag at that time.
-        return {
-          id: record.id,
-          displayName: record.full_name, // This is either actual name or "Anonymous"
-          email: record.email, // This is either anonymized email or "anonymous@example.com"
-          created: record.created,
-        };
-      });
-
-      return {
-        page: signaturesResult.page,
-        perPage: signaturesResult.perPage,
-        totalItems: signaturesResult.totalItems,
-        totalPages: signaturesResult.totalPages,
-        items,
-      };
-    } catch (error) {
-      this.logger.error(
-        `Failed to get display signatures: ${error.message || JSON.stringify(error)}`,
-      );
-      throw new HttpException(
-        `Failed to retrieve display signatures: ${error.message}`,
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
   async createSignature(createSignatureDto: CreateSignatureDto): Promise<any> {
     try {
       const { userId, agreeCheckbox, publicDisplay } = createSignatureDto;
