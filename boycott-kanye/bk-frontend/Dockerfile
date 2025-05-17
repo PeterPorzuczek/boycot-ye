@@ -34,10 +34,10 @@ COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Create a shell script to replace environment variables in JS files
-RUN echo "#!/bin/sh \n\
-find /usr/share/nginx/html -type f -name '*.js' -exec sed -i \"s|VUE_APP_API_URL_PLACEHOLDER|'\${API_URL:-http://localhost:3000/api}'|g\" {} \\; \n\
-exec \"\$@\"" > /docker-entrypoint.sh && \
-chmod +x /docker-entrypoint.sh
+RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
+    echo 'find /usr/share/nginx/html -type f -name "*.js" -exec sed -i "s|VUE_APP_API_URL_PLACEHOLDER|${API_URL:-http://172.17.0.1:3000/api}|g" {} \;' >> /docker-entrypoint.sh && \
+    echo 'exec "$@"' >> /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
 
 # Make directories writable for nginx
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
