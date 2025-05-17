@@ -1,10 +1,9 @@
 <template>
   <div class="profile-page">
-    <div class="ye-ribbon">
-      <div class="ye-ribbon-text">STOP HATE</div>
+    <div class="page-header">
+      <div class="stop-hate-ribbon">STOP HATE</div>
+      <h1 class="text-ye">{{ t('profile.title') }}</h1>
     </div>
-    
-    <h1 class="page-title text-ye">{{ t('profilePage.title') }}</h1>
     
     <div v-if="isLoading" class="loading-container">
       <div class="loader"></div>
@@ -302,54 +301,44 @@ export default {
   position: relative;
 }
 
-.ye-ribbon {
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  width: 150px;
-  height: 150px;
-  overflow: hidden;
-  z-index: 5;
-}
-
-.ye-ribbon::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 200px;
-  height: 40px;
-  background: var(--gradient-pablo);
-  transform: rotate(45deg) translateY(-60px) translateX(10px);
-  z-index: 5;
-  box-shadow: var(--shadow-md);
-}
-
-.ye-ribbon-text {
-  position: absolute;
-  top: 11px;
-  right: -25px;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 900;
-  font-size: var(--font-size-sm);
-  color: var(--primary-dark);
-  transform: rotate(45deg);
-  z-index: 10;
+.page-header {
   text-align: center;
-  letter-spacing: 0.5px;
-}
-
-.page-title {
-  text-align: center;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-xxl);
   position: relative;
   padding-top: var(--spacing-xl);
 }
 
-.page-title::after {
+.stop-hate-ribbon {
+  position: absolute;
+  top: 0;
+  right: -50px;
+  background: var(--gradient-pablo);
+  color: var(--primary-dark);
+  padding: 8px 40px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: var(--font-size-sm);
+  transform: rotate(45deg) translateX(30px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-md);
+  z-index: 1;
+}
+
+.page-header h1 {
+  font-size: var(--font-size-xxl);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  position: relative;
+  display: inline-block;
+  margin-bottom: var(--spacing-md);
+}
+
+.page-header h1::after {
   content: '';
   position: absolute;
-  width: 80px;
+  width: 60px;
   height: 4px;
   background: var(--gradient-primary);
   bottom: -10px;
