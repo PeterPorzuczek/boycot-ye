@@ -23,7 +23,7 @@
 import AppHeader from './components/AppHeader.vue';
 import AppFooter from './components/AppFooter.vue';
 import MobileBottomNav from './components/MobileBottomNav.vue';
-import { computed, onMounted, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from './composables/useAuth';
 
@@ -47,20 +47,20 @@ export default {
       return isLoggedIn.value && isCurrentRouteAllowed && isMobileView;
     });
     
-    // Update button visibility when window is resized
-    const updateButtonVisibility = () => {
-      // This will trigger a re-evaluation of the computed property
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('resize'));
-      }
+    // Track window width changes
+    const windowWidth = ref(window.innerWidth);
+    
+    // Handle window resize without causing infinite recursion
+    const handleResize = () => {
+      windowWidth.value = window.innerWidth;
     };
     
     onMounted(() => {
-      window.addEventListener('resize', updateButtonVisibility);
+      window.addEventListener('resize', handleResize);
     });
     
     onUnmounted(() => {
-      window.removeEventListener('resize', updateButtonVisibility);
+      window.removeEventListener('resize', handleResize);
     });
     
     return {

@@ -83,19 +83,16 @@ export default {
       try {
         this.hasUserSigned = false;
         
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        
-        const tokenData = JSON.parse(jsonPayload);
-        
-        this.user = {
-          id: tokenData.sub || tokenData.id,
-          email: tokenData.email || '',
-          name: tokenData.name || ''
-        };
+        const response = await apiClient.get('/auth/me');
+        if (response.data) {
+          this.user = {
+            id: response.data.id,
+            email: response.data.email || '',
+            name: response.data.name || ''
+          };
+        } else {
+          throw new Error('Failed to get user data');
+        }
         
         await this.checkExistingSignature();
       } catch (err) {

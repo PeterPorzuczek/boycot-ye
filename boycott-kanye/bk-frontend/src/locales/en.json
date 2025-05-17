@@ -202,7 +202,7 @@
   },
   "signForm": {
     "userInfo": {
-      "title": "Your Information",
+      "title": "YOUR INFORMATION",
       "nameLabel": "Name",
       "emailLabel": "Email",
       "error": "User information is incomplete",
@@ -210,14 +210,21 @@
       "note": "This information comes from your account and will be associated with your signature."
     },
     "petition": {
-      "title": "Petition Statement",
-      "text": "I stand against antisemitism, hate speech, and all forms of discrimination. I believe in a world where everyone is treated with dignity and respect, regardless of their religion, race, gender, or background."
+      "title": "PETITION STATEMENT",
+      "text": "I stand against antisemitism, hate speech, and all forms of discrimination. I believe in a world where everyone is treated with dignity and respect, regardless of their religion, race, gender, or background.",
+      "checkbox": "I condemn antisemitic and Nazi views and wish to sign this petition."
     },
     "visibility": {
-      "title": "Signature Visibility",
+      "title": "SIGNATURE VISIBILITY",
       "public": "Public",
       "private": "Private",
-      "description": "Choose how your signature will appear on the public list."
+      "description": "Choose how your signature will appear on the public list.",
+      "toggle": "Show my name publicly in the signatures list",
+      "note": "Your email will always be partially masked for privacy.",
+      "preview": "Preview:",
+      "previewPublic": "Your Full Name",
+      "previewEmail": "y***e@example.com",
+      "previewPrivate": "Anonymous"
     }
   },
   "footer": {

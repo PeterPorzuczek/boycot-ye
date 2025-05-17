@@ -86,21 +86,6 @@
         ]
       }
     },
-    "/api/signatures/display": {
-      "get": {
-        "operationId": "SignaturesController_getAllSignatures",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Returns all signatures, with private ones having anonymous data"
-          }
-        },
-        "summary": "Get all signatures with anonymized private data",
-        "tags": [
-          "signatures"
-        ]
-      }
-    },
     "/api/signatures": {
       "post": {
         "operationId": "SignaturesController_createSignature",
@@ -242,6 +227,29 @@
         "summary": "Delete a signature",
         "tags": [
           "signatures"
+        ]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "operationId": "AuthController_getCurrentUser",
+        "summary": "Get current user information",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user data"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          }
+        },
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
         ]
       }
     }

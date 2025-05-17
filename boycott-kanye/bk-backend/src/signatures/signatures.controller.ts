@@ -51,17 +51,6 @@ export class SignaturesController {
     return this.pocketbaseService.getSignatures();
   }
 
-  @Get('display')
-  @ApiOperation({ summary: 'Get all signatures with anonymized private data' })
-  @ApiResponse({
-    status: 200,
-    description:
-      'Returns all signatures, with private ones having anonymous data',
-  })
-  async getAllSignatures(): Promise<any[]> {
-    return this.pocketbaseService.getSignatures();
-  }
-
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
