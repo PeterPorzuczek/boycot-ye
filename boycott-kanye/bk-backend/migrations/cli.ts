@@ -26,12 +26,14 @@ interface TestSignatureData {
 
 async function main() {
   try {
-    const pb = new PocketBase(process.env.PB_URL);
-    console.log(`Attempting to connect to PocketBase at ${process.env.PB_URL}`);
+    const pb = new PocketBase(process.env.POCKETBASE_URL);
+    console.log(
+      `Attempting to connect to PocketBase at ${process.env.POCKETBASE_URL}`,
+    );
 
     await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL || '',
-      process.env.PB_ADMIN_PASSWORD || '',
+      process.env.POCKETBASE_ADMIN_EMAIL || '',
+      process.env.POCKETBASE_ADMIN_PASSWORD || '',
     );
     console.log('✅ Admin authentication successful!');
 
