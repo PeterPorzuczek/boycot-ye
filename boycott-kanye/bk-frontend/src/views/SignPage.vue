@@ -74,9 +74,9 @@ export default {
         return;
       }
       
-      this.fetchUserData(token);
+      this.fetchUserData();
     },
-    async fetchUserData(token) {
+    async fetchUserData() {
       this.isLoading = true;
       this.error = null;
       
