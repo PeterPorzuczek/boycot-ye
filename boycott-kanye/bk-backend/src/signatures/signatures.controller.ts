@@ -9,8 +9,6 @@ import {
   Post,
   UseGuards,
   Request,
-  Logger,
-  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -26,8 +24,6 @@ import { AuthGuard } from '../auth/auth.guard.js';
 @ApiTags('signatures')
 @Controller('signatures')
 export class SignaturesController {
-  private readonly logger = new Logger(SignaturesController.name);
-
   constructor(private readonly pocketbaseService: PocketbaseService) {}
 
   @Get()
@@ -38,7 +34,6 @@ export class SignaturesController {
     type: [SignatureDto],
   })
   async getSignatures() {
-    this.logger.log('Getting all signatures');
     return this.pocketbaseService.getSignatures();
   }
 
@@ -64,13 +59,6 @@ export class SignaturesController {
     @Body() createSignatureDto: CreateSignatureDto,
     @Request() req,
   ) {
-    if (!req.user || !req.user.id) {
-      this.logger.error('Cannot create signature: User not authenticated');
-      throw new UnauthorizedException('User not authenticated');
-    }
-
-    this.logger.log(`Creating signature for user: ${req.user.id}`);
-
     // Override userId with the authenticated user's ID
     createSignatureDto.userId = req.user.id;
     return this.pocketbaseService.createSignature(createSignatureDto);
@@ -90,12 +78,6 @@ export class SignaturesController {
     description: 'User has not signed the petition yet',
   })
   async getCurrentUserSignature(@Request() req) {
-    if (!req.user || !req.user.id) {
-      this.logger.error('Cannot get user signature: User not authenticated');
-      throw new UnauthorizedException('User not authenticated');
-    }
-
-    this.logger.log(`Getting signature for user: ${req.user.id}`);
     return this.pocketbaseService.getUserSignature(req.user.id);
   }
 
@@ -116,12 +98,6 @@ export class SignaturesController {
     description: 'Signature not found',
   })
   async deleteSignature(@Param('id') id: string, @Request() req) {
-    if (!req.user || !req.user.id) {
-      this.logger.error('Cannot delete signature: User not authenticated');
-      throw new UnauthorizedException('User not authenticated');
-    }
-
-    this.logger.log(`Deleting signature ${id} for user: ${req.user.id}`);
     return this.pocketbaseService.deleteSignature(id, req.user.id);
   }
 }

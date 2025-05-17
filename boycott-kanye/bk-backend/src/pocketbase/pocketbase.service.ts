@@ -24,22 +24,24 @@ export class PocketbaseService implements OnModuleInit {
         'http://localhost:8090',
     );
     this.logger.log(`PocketBase initialized with URL: ${this.pb.baseUrl}`);
+    // Sprawdź połączenie z PocketBase
+    this.checkPocketBaseConnection();
+  }
+
+  // Sprawdź czy PocketBase jest dostępny
+  private async checkPocketBaseConnection() {
+    try {
+      const health = await this.pb.health.check();
+      this.logger.log(`PocketBase connection successful. Code: ${health.code}`);
+    } catch (error) {
+      this.logger.error(`PocketBase connection failed: ${error.message}`);
+    }
   }
 
   // Authentication methods
   async register(registerDto: RegisterDto) {
     try {
       const { email, password, passwordConfirm, name } = registerDto;
-      this.logger.log(`Attempting to register user: ${email}`);
-
-      // Ensure passwordConfirm matches password
-      if (password !== passwordConfirm) {
-        throw new HttpException(
-          'Passwords do not match',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
       const user = await this.pb.collection('users').create({
         email,
         password,
@@ -47,17 +49,13 @@ export class PocketbaseService implements OnModuleInit {
         name,
       });
 
-      this.logger.log(`User registered successfully with ID: ${user.id}`);
-
-      // Clean sensitive data
-      const userData = {
-        id: user.id || '',
-        email: user.email || '',
-        name: user.name || '',
-        created: user.created || new Date().toISOString(),
+      this.logger.log(`User registered successfully: ${email}`);
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        created: user.created,
       };
-
-      return userData;
     } catch (error) {
       this.handlePocketBaseError(error, 'User registration failed');
     }
@@ -66,35 +64,19 @@ export class PocketbaseService implements OnModuleInit {
   async login(loginDto: LoginDto) {
     try {
       const { email, password } = loginDto;
-      this.logger.log(`Attempting to login user: ${email}`);
-
       const authData = await this.pb
         .collection('users')
         .authWithPassword(email, password);
 
-      if (!authData || !this.pb.authStore.token) {
-        throw new HttpException(
-          'Authentication failed',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-
       this.logger.log(`User logged in successfully: ${email}`);
-      this.logger.log(
-        `Token provided: ${this.pb.authStore.token ? 'yes' : 'no'}`,
-      );
-
-      // Clean sensitive data
-      const userData = {
+      return {
         token: this.pb.authStore.token,
         user: {
-          id: authData.record?.id || '',
-          email: authData.record?.email || '',
-          name: authData.record?.name || '',
+          id: authData.record.id,
+          email: authData.record.email,
+          name: authData.record.name,
         },
       };
-
-      return userData;
     } catch (error) {
       this.handlePocketBaseError(error, 'Login failed');
     }
@@ -103,26 +85,34 @@ export class PocketbaseService implements OnModuleInit {
   // Signature methods
   async getSignatures() {
     try {
-      this.logger.log('Fetching signatures list');
+      this.logger.debug('Fetching signatures from PocketBase');
+
+      // Pobierz wszystkie sygnatury
       const records = await this.pb.collection('signatures').getList(1, 100, {
         expand: 'user',
-        sort: '-created',
       });
 
-      this.logger.log(`Found ${records.items.length} signatures`);
+      // Filtruj po public_display lokalnie
+      const publicRecords = records.items.filter(
+        (record) => record.public_display === true,
+      );
 
-      return records.items.map((record) => {
-        // Mask emails if signature is public
-        if (record.expand?.user && record.public_display) {
-          const email = record.expand.user.email || '';
+      this.logger.debug(
+        `Found ${publicRecords.length} public signatures out of ${records.items.length} total`,
+      );
+
+      return publicRecords.map((record) => {
+        // Zawsze maskuj email w publicznych sygnaturach
+        if (record.expand?.user) {
+          const email = record.expand.user.email;
           record.expand.user.email = this.maskEmail(email);
-        } else if (!record.public_display) {
-          // If signature is not public, hide user data
-          record.expand = { user: { name: 'Anonymous', email: '' } };
         }
         return record;
       });
     } catch (error) {
+      this.logger.error(
+        `Failed to retrieve signatures: ${JSON.stringify(error)}`,
+      );
       this.handlePocketBaseError(error, 'Failed to retrieve signatures');
     }
   }
@@ -130,83 +120,71 @@ export class PocketbaseService implements OnModuleInit {
   async createSignature(createSignatureDto: CreateSignatureDto) {
     try {
       const { userId, agreeCheckbox, publicDisplay } = createSignatureDto;
-      this.logger.log(`Creating signature for user: ${userId}`);
+      this.logger.debug(`Creating signature for user: ${userId}`);
 
       // Check if user already has a signature
       const existingSignature = await this.getUserSignature(userId);
       if (existingSignature) {
-        this.logger.warn(`User ${userId} already has a signature`);
         throw new HttpException(
           'User has already signed the petition',
           HttpStatus.CONFLICT,
         );
       }
 
-      // Validate the data
-      if (!agreeCheckbox) {
-        throw new HttpException(
-          'You must agree to sign the petition',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      // Directly try to create the signature
+      // PocketBase will handle the error if collection doesn't exist
 
       const signature = await this.pb.collection('signatures').create({
-        user: userId,
+        user: userId, // to jest połączenie z user-id
         agree_checkbox: agreeCheckbox,
         public_display: publicDisplay,
       });
 
-      this.logger.log(
-        `Signature created successfully with ID: ${signature.id}`,
-      );
+      this.logger.log(`Signature created successfully for user: ${userId}`);
       return signature;
     } catch (error) {
+      this.logger.error(`Failed to create signature: ${JSON.stringify(error)}`);
       this.handlePocketBaseError(error, 'Failed to create signature');
     }
   }
 
   async getUserSignature(userId: string) {
     try {
-      this.logger.log(`Searching for signature by user: ${userId}`);
+      this.logger.debug(`Getting signature for user: ${userId}`);
+
+      // Szukamy po polu 'user', które jest relacją do kolekcji users
       const records = await this.pb.collection('signatures').getList(1, 1, {
-        filter: `user = "${userId}"`,
+        filter: `user.id = "${userId}"`,
         expand: 'user',
       });
 
-      const found = records.items.length > 0;
-      this.logger.log(
-        `Signature for user ${userId}: ${found ? 'found' : 'not found'}`,
-      );
-
-      return found ? records.items[0] : null;
+      if (records.items.length > 0) {
+        this.logger.debug(`Found signature for user: ${userId}`);
+        return records.items[0];
+      } else {
+        this.logger.debug(`No signature found for user: ${userId}`);
+        return null;
+      }
     } catch (error) {
-      this.handlePocketBaseError(
-        error,
-        `Failed to retrieve signature for user: ${userId}`,
+      this.logger.error(
+        `Failed to retrieve signature for user: ${userId}: ${JSON.stringify(error)}`,
       );
+      return null; // Return null instead of throwing an error to prevent 500 errors
     }
   }
 
   async deleteSignature(signatureId: string, userId: string) {
     try {
-      this.logger.log(
-        `Attempting to delete signature ${signatureId} for user ${userId}`,
+      this.logger.debug(
+        `Deleting signature ${signatureId} for user: ${userId}`,
       );
 
-      // Verify the signature exists
-      let signature;
-      try {
-        signature = await this.pb.collection('signatures').getOne(signatureId);
-      } catch (err) {
-        this.logger.error(`Signature ${signatureId} not found`);
-        throw new HttpException('Signature not found', HttpStatus.NOT_FOUND);
-      }
-
       // Verify the signature belongs to the user
+      const signature = await this.pb
+        .collection('signatures')
+        .getOne(signatureId);
+
       if (signature.user !== userId) {
-        this.logger.error(
-          `User ${userId} not authorized to delete signature ${signatureId}`,
-        );
         throw new HttpException(
           'Unauthorized to delete this signature',
           HttpStatus.FORBIDDEN,
@@ -217,6 +195,9 @@ export class PocketbaseService implements OnModuleInit {
       this.logger.log(`Signature ${signatureId} deleted successfully`);
       return { success: true, message: 'Signature deleted successfully' };
     } catch (error) {
+      this.logger.error(
+        `Failed to delete signature: ${signatureId}: ${JSON.stringify(error)}`,
+      );
       this.handlePocketBaseError(
         error,
         `Failed to delete signature: ${signatureId}`,
@@ -226,11 +207,7 @@ export class PocketbaseService implements OnModuleInit {
 
   // Utility methods
   private maskEmail(email: string): string {
-    if (!email) return '';
-
     const [username, domain] = email.split('@');
-    if (!username || !domain) return email;
-
     if (username.length <= 2) {
       return `${username[0]}*@${domain}`;
     }
@@ -242,25 +219,19 @@ export class PocketbaseService implements OnModuleInit {
   }
 
   private handlePocketBaseError(error: any, message: string): never {
-    const errorMsg = error?.message || 'Unknown error';
-    this.logger.error(`${message}: ${errorMsg}`);
-
-    // Get any response data
-    const responseData = error?.response?.data || {};
+    this.logger.error(`${message}: ${error.message}`);
 
     // Handle common PocketBase errors
-    if (error?.status === 400) {
+    if (error.status === 400) {
       throw new HttpException(
         {
           message: 'Validation error',
-          details: responseData,
+          details: error.response?.data || error.message,
         },
         HttpStatus.BAD_REQUEST,
       );
-    } else if (error?.status === 401 || error?.status === 403) {
+    } else if (error.status === 401 || error.status === 403) {
       throw new HttpException('Unauthorized access', HttpStatus.UNAUTHORIZED);
-    } else if (error?.status === 404) {
-      throw new HttpException('Resource not found', HttpStatus.NOT_FOUND);
     } else if (error instanceof HttpException) {
       throw error;
     } else {

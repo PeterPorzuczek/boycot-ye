@@ -12,79 +12,50 @@ declare global {
         email: string;
         name: string;
       };
-      pb?: PocketBase;
     }
   }
 }
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
+  private pb: PocketBase;
   private readonly logger = new Logger(AuthMiddleware.name);
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) {
+    this.pb = new PocketBase(
+      this.configService.get<string>('POCKETBASE_URL') ||
+        'http://localhost:8090',
+    );
+  }
 
   async use(req: Request, res: Response, next: NextFunction) {
     try {
-      // Create a new PocketBase instance for each request
-      const pb = new PocketBase(
-        this.configService.get<string>('POCKETBASE_URL') ||
-          'http://localhost:8090',
-      );
-
-      // Attach PocketBase to request for later use
-      req.pb = pb;
-
       const token = this.extractTokenFromHeader(req);
-      this.logger.log(`Token extracted: ${token ? 'present' : 'missing'}`);
-
       if (token) {
+        this.pb.authStore.save(token, null);
         try {
-          // Try to refresh the auth with the token
-          pb.authStore.save(token, null);
-
-          // Try to refresh the auth (will throw if token is invalid)
-          if (pb.authStore.isValid) {
-            this.logger.log('Token is valid, attempting to get user data');
-
-            // If token is valid, set the user data in the request
-            const userData = pb.authStore.model;
-
-            if (userData) {
-              req.user = {
-                id: userData.id,
-                email: userData.email || '',
-                name: userData.name || '',
-              };
-              this.logger.log(`Authenticated user ID: ${req.user.id}`);
-            } else {
-              this.logger.warn('Token valid but no user data found');
-            }
-          } else {
-            this.logger.warn('Token is invalid');
-          }
-        } catch (error) {
-          this.logger.error(`Token validation error: ${error.message}`);
-          pb.authStore.clear();
+          // Wymuś pobranie modelu użytkownika na podstawie tokena
+          const user = await this.pb.collection('users').authRefresh();
+          req.user = {
+            id: user.record.id,
+            email: user.record.email,
+            name: user.record.name,
+          };
+          this.logger.debug(`Authenticated user: ${req.user.email}`);
+        } catch (err) {
+          req.user = undefined;
+          this.logger.debug('Invalid or expired token');
         }
-      } else {
-        this.logger.log('No token provided');
       }
     } catch (error) {
-      this.logger.error(
-        `Auth middleware error: ${error.message || 'Unknown error'}`,
-      );
+      this.logger.error(`Auth middleware error: ${error.message}`);
+      this.pb.authStore.clear();
     }
-
     next();
   }
 
   private extractTokenFromHeader(req: Request): string | undefined {
-    const authHeader = req.headers.authorization;
-    this.logger.log(`Authorization header: ${authHeader || 'not present'}`);
-
-    if (!authHeader) return undefined;
-
-    const [type, token] = authHeader.split(' ');
+    const [type, token] = req.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }
 }
