@@ -173,3 +173,11 @@ Note: Tests for other components are having issues due to:
 1. PocketBase compatibility with Jest testing
 2. Import paths and ES modules configuration
 The focus has been on ensuring the authentication middleware is working correctly, as this is a critical security component. 
+
+## Docker
+
+Build image
+`docker build -t boycott-kanye-backend .`
+
+Run image
+`docker run -p 3000:3000 boycott-kanye-backend`
