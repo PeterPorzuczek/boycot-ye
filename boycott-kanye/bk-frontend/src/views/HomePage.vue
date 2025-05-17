@@ -26,10 +26,10 @@
         <div v-else class="signatures-grid">
           <div v-for="signature in signatures" :key="signature.id" class="signature-item">
             <div class="signature-name">
-              {{ signature.expand && signature.expand.user && (signature.public_display || signature.publicDisplay) ? signature.expand.user.name : 'Anonymous' }}
+              {{ signature.public_display ? signature.full_name : 'Anonymous' }}
             </div>
-            <div v-if="(signature.public_display || signature.publicDisplay) && signature.expand && signature.expand.user && signature.expand.user.email" class="signature-email">
-              {{ maskEmail(signature.expand.user.email) }}
+            <div v-if="signature.public_display" class="signature-email">
+              {{ signature.email }}
             </div>
             <div class="signature-date">
               {{ formatDate(signature.created) }}
@@ -56,9 +56,7 @@ export default {
   computed: {
     consentingSignaturesCount() {
       // Count only signatures that have agreed to the petition
-      return this.signatures.filter(signature => 
-        (signature.agree_checkbox === true) || (signature.agreeCheckbox === true)
-      ).length;
+      return this.signatures.filter(signature => signature.agree_checkbox === true).length;
     }
   },
   created() {
@@ -71,6 +69,22 @@ export default {
       
       try {
         const response = await axios.get('http://localhost:3000/api/signatures/all');
+        console.log("DOKŁADNA ODPOWIEDŹ Z API:", JSON.stringify(response.data, null, 2));
+        
+        // Sprawdźmy każdy podpis, czy ma właściwe pola
+        if (response.data && response.data.length > 0) {
+          response.data.forEach((sig, index) => {
+            console.log(`Podpis ${index}:`, {
+              id: sig.id,
+              'public_display': sig.public_display,
+              'ma expand?': !!sig.expand,
+              'ma expand.user?': !!(sig.expand && sig.expand.user),
+              'expand.user.name': sig.expand?.user?.name,
+              'expand.user.email': sig.expand?.user?.email
+            });
+          });
+        }
+        
         this.signatures = response.data;
       } catch (err) {
         console.error('Error fetching signatures:', err);
@@ -95,8 +109,23 @@ export default {
     
     formatDate(date) {
       if (!date) return '';
-      const dateObj = new Date(date);
-      return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      
+      try {
+        const dateObj = new Date(date);
+        if (isNaN(dateObj.getTime())) {
+          return date; // Zwróć oryginalny string, jeśli nie da się sparsować
+        }
+        return dateObj.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch (err) {
+        console.error('Error parsing date:', err);
+        return date; // W przypadku błędu zwróć oryginalny string
+      }
     }
   }
 }
@@ -200,18 +229,20 @@ export default {
 
 .signature-name {
   font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.5rem;
 }
 
 .signature-email {
   font-size: 0.9rem;
   color: #666;
-  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .signature-date {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #777;
 }
 
 .no-signatures {
