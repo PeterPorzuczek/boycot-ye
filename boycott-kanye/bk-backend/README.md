@@ -180,4 +180,4 @@ Build image
 `docker build -t boycott-kanye-backend .`
 
 Run image
-`docker run -p 3000:3000 boycott-kanye-backend`
+`docker run -p 3000:3000 -e POCKETBASE_ADMIN_EMAIL= -e POCKETBASE_ADMIN_PASSWORD= boycott-kanye-backend`
