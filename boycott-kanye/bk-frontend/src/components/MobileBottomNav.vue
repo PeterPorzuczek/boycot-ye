@@ -3,37 +3,37 @@
     <!-- Home link (always visible) -->
     <router-link to="/" class="nav-item" exact-active-class="active">
       <div class="nav-icon">🏠</div>
-      <div class="nav-label">{{ $t('nav.home') }}</div>
+      <div class="nav-label">{{ t('nav.home') }}</div>
     </router-link>
     
     <!-- Sign petition link (visible only when logged in) -->
     <router-link v-if="isLoggedIn" to="/sign" class="nav-item" active-class="active">
       <div class="nav-icon">✒️</div>
-      <div class="nav-label">{{ $t('nav.sign') }}</div>
+      <div class="nav-label">{{ t('nav.sign') }}</div>
     </router-link>
     
     <!-- Profile link (visible only when logged in) -->
     <router-link v-if="isLoggedIn" to="/profile" class="nav-item profile-link" active-class="active">
       <div class="nav-icon profile-icon">👤</div>
-      <div class="nav-label">{{ $t('nav.profile') }}</div>
+      <div class="nav-label">{{ t('nav.profile') }}</div>
     </router-link>
     
     <!-- Logout button (visible only when logged in) -->
     <div v-if="isLoggedIn" class="nav-item" @click="handleLogout">
       <div class="nav-icon">🚪</div>
-      <div class="nav-label">{{ $t('nav.logout') }}</div>
+      <div class="nav-label">{{ t('nav.logout') }}</div>
     </div>
     
     <!-- Login link (visible only when NOT logged in) -->
     <router-link v-if="!isLoggedIn" to="/login" class="nav-item" active-class="active">
       <div class="nav-icon">🔑</div>
-      <div class="nav-label">{{ $t('nav.login') }}</div>
+      <div class="nav-label">{{ t('nav.login') }}</div>
     </router-link>
     
     <!-- Register link (visible only when NOT logged in) -->
     <router-link v-if="!isLoggedIn" to="/register" class="nav-item" active-class="active">
       <div class="nav-icon">✍️</div>
-      <div class="nav-label">{{ $t('nav.register') }}</div>
+      <div class="nav-label">{{ t('nav.register') }}</div>
     </router-link>
   </div>
 </template>
@@ -42,11 +42,13 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useAuth } from '../composables/useAuth';
 import { useRouter } from 'vue-router';
+import { useTranslation } from '../composables/useTranslation';
 
 export default {
   name: 'MobileBottomNav',
   setup() {
     const { isLoggedIn } = useAuth();
+    const { t } = useTranslation();
     const isMobile = ref(false);
     const showBottomNav = computed(() => isMobile.value && window.innerWidth <= 767);
     const router = useRouter();
@@ -78,7 +80,8 @@ export default {
     return {
       isLoggedIn,
       showBottomNav,
-      handleLogout
+      handleLogout,
+      t
     };
   }
 }

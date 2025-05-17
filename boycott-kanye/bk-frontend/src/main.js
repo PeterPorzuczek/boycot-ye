@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import i18n from './utils/i18n';
+import { i18nPlugin } from './composables/useTranslation';
 
 // Import MobileBottomNav for global registration
 import MobileBottomNav from './components/MobileBottomNav.vue';
@@ -16,7 +16,7 @@ app.component('AppHeader', AppHeader);
 
 // Use plugins
 app.use(router);
-app.use(i18n);
+app.use(i18nPlugin);
 
 // Mount app
 app.mount('#app');

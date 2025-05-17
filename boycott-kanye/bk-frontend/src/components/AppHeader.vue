@@ -18,30 +18,30 @@
       <nav class="nav-links" :class="{ 'mobile-menu-open': menuOpen }">
         <!-- Always visible links -->
         <router-link to="/" class="nav-link" @click="closeMenu">
-          {{ $t('nav.home') }}
+          {{ t('nav.home') }}
         </router-link>
         
         <!-- Visible only when not logged in -->
         <template v-if="!isLoggedIn">
           <router-link to="/login" class="nav-link" @click="closeMenu">
-            {{ $t('nav.login') }}
+            {{ t('nav.login') }}
           </router-link>
           <router-link to="/register" class="nav-link btn-primary-outline" @click="closeMenu">
-            {{ $t('nav.register') }}
+            {{ t('nav.register') }}
           </router-link>
         </template>
         
         <!-- Visible only when logged in -->
         <template v-else>
           <router-link to="/sign" class="nav-link" @click="closeMenu">
-            {{ $t('nav.sign') }}
+            {{ t('nav.sign') }}
           </router-link>
           <router-link to="/profile" class="nav-link profile-link" @click="closeMenu">
             <span class="profile-icon">👤</span>
-            {{ $t('nav.profile') }}
+            {{ t('nav.profile') }}
           </router-link>
           <button @click="handleLogout" class="nav-link btn-logout">
-            {{ $t('nav.logout') }}
+            {{ t('nav.logout') }}
           </button>
         </template>
       </nav>
@@ -53,12 +53,14 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
+import { useTranslation } from '../composables/useTranslation';
 
 export default {
   name: 'AppHeader',
   setup() {
     const router = useRouter();
     const { isLoggedIn } = useAuth();
+    const { t } = useTranslation();
     const menuOpen = ref(false);
     
     const toggleMenu = () => {
@@ -89,7 +91,8 @@ export default {
       menuOpen,
       toggleMenu,
       closeMenu,
-      handleLogout
+      handleLogout,
+      t
     };
   }
 }
