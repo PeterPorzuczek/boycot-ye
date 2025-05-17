@@ -80,10 +80,8 @@ export default {
       this.error = null;
       
       try {
-        // Reset hasUserSigned to false until we explicitly check
         this.hasUserSigned = false;
         
-        // Extract user data from JWT token
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -92,23 +90,19 @@ export default {
         
         const tokenData = JSON.parse(jsonPayload);
         
-        // Create user object with required properties
         this.user = {
-          id: tokenData.sub || tokenData.id, // 'sub' is standard JWT claim for subject/user ID
+          id: tokenData.sub || tokenData.id,
           email: tokenData.email || '',
           name: tokenData.name || ''
         };
         
-        // Check if user has already signed the petition
         await this.checkExistingSignature();
       } catch (err) {
         console.error('Error processing user data:', err);
         if (err.response && err.response.status === 401) {
-          // Invalid token - redirect to login
           localStorage.removeItem('token');
           this.$router.push('/login');
         } else {
-          // Provide more detailed error message
           if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
             this.error = 'Cannot connect to API server. Please make sure the backend is running at http://localhost:3000';
           } else if (err.response) {
@@ -129,7 +123,6 @@ export default {
           }
         });
         
-        // Only set hasUserSigned to true if we get a valid signature
         if (response.data && response.data.id) {
           this.signature = response.data;
           this.hasUserSigned = true;
@@ -137,9 +130,7 @@ export default {
           this.hasUserSigned = false;
         }
       } catch (err) {
-        // 404 means the user hasn't signed the petition yet
         if (err.response && err.response.status === 404) {
-          // This is expected for users who haven't signed
           this.hasUserSigned = false;
         } else if (err.response) {
           console.error('Error checking signature:', err);
@@ -155,7 +146,6 @@ export default {
       this.error = null;
       
       try {
-        // Make sure we send exactly what the API expects based on Swagger
         const apiData = {
           userId: signatureData.userId,
           agreeCheckbox: signatureData.agreeCheckbox,
@@ -169,19 +159,16 @@ export default {
           }
         });
         
-        // Log response ID silently
         if (response && response.data && response.data.id) {
           console.debug('Created signature with ID:', response.data.id);
         }
         
-        // After successful signature, redirect to thank you page
         this.$router.push('/thank-you');
       } catch (err) {
         console.error('Failed to create signature:', err);
         
         if (err.response) {
           if (err.response.status === 409) {
-            // User has already signed the petition
             this.hasUserSigned = true;
             this.$router.push('/profile');
           } else if (err.response.status === 400) {

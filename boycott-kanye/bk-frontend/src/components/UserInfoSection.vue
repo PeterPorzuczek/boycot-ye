@@ -33,7 +33,6 @@ export default {
     }
   },
   mounted() {
-    // Log received user data for debugging
     console.log('UserInfoSection received user:', this.user);
   }
 }

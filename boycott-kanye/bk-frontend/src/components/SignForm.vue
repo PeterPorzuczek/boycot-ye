@@ -77,21 +77,17 @@ export default {
     }
   },
   mounted() {
-    // Log the user object for debugging
     console.log('SignForm user prop:', this.user);
   },
   methods: {
     validateForm() {
-      // Clear previous errors
       this.formErrors.agreeCheckbox = '';
       
-      // Validate user data
       if (!this.user || !this.user.id) {
         this.formState.error = 'Missing user information. Please try logging in again.';
         return false;
       }
       
-      // Validate consent checkbox
       if (!this.formState.agreeCheckbox) {
         this.formErrors.agreeCheckbox = 'Please check this box to confirm your consent.';
         return false;
@@ -100,11 +96,9 @@ export default {
       return true;
     },
     handleSubmit() {
-      // Clear previous errors
       this.formErrors.agreeCheckbox = '';
       this.formState.error = null;
       
-      // Validate form
       const isValid = this.validateForm();
       if (!isValid) {
         return;
@@ -112,20 +106,16 @@ export default {
       
       this.formState.isSubmitting = true;
       
-      // Create signature data
       const signatureData = {
         userId: this.user.id,
         agreeCheckbox: this.formState.agreeCheckbox,
         publicDisplay: this.formState.publicDisplay
       };
       
-      // Log what we're sending for debugging
       console.log('Emitting signature data:', signatureData);
       
-      // Emit submit event with signature data
       this.$emit('submit', signatureData);
       
-      // Reset form submission state after a short delay if parent doesn't update it
       setTimeout(() => {
         if (this.formState.isSubmitting) {
           this.formState.isSubmitting = false;

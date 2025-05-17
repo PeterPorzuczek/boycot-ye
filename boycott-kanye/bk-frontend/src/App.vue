@@ -41,23 +41,18 @@ export default {
     }
   },
   created() {
-    // Initialize login state
     this.updateLoginState();
     
-    // Set up a listener for storage events (if token changes in another tab)
     window.addEventListener('storage', this.handleStorageChange);
   },
   mounted() {
-    // Check login state whenever the App component is mounted
     this.updateLoginState();
     
-    // Set up an interval to periodically check the login state
     this.loginCheckInterval = setInterval(() => {
       this.updateLoginState();
-    }, 1000); // Check every second
+    }, 1000);
   },
   beforeUnmount() {
-    // Clean up listeners
     window.removeEventListener('storage', this.handleStorageChange);
     clearInterval(this.loginCheckInterval);
   },
@@ -83,7 +78,6 @@ export default {
 </script>
 
 <style>
-/* Global styles */
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
 
 * {
@@ -142,7 +136,6 @@ body {
   padding: 0 var(--spacing-lg);
 }
 
-/* Header styles */
 .app-header {
   background-color: var(--light);
   box-shadow: var(--shadow-sm);
@@ -224,13 +217,11 @@ body {
   width: 100%;
 }
 
-/* Main content styles */
 .app-content {
   min-height: calc(100vh - 160px);
   padding: var(--spacing-xxl) 0;
 }
 
-/* Footer styles */
 .app-footer {
   background-color: var(--primary);
   color: var(--light);
@@ -238,7 +229,6 @@ body {
   text-align: center;
 }
 
-/* Button styles */
 .btn {
   display: inline-block;
   padding: var(--spacing-md) var(--spacing-xl);
@@ -277,7 +267,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Form styles */
 input, textarea, select {
   font-family: 'Jost', sans-serif;
   padding: var(--spacing-md);
@@ -301,7 +290,6 @@ label {
   color: var(--grey-dark);
 }
 
-/* Utilities */
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 .text-right { text-align: right; }
