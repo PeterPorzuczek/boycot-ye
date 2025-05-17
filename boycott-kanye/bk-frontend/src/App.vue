@@ -45,13 +45,26 @@ export default {
     // Set up a listener for storage events (if token changes in another tab)
     window.addEventListener('storage', this.handleStorageChange);
   },
+  mounted() {
+    // Check login state whenever the App component is mounted
+    this.updateLoginState();
+    
+    // Set up an interval to periodically check the login state
+    this.loginCheckInterval = setInterval(() => {
+      this.updateLoginState();
+    }, 1000); // Check every second
+  },
   beforeUnmount() {
-    // Clean up listener
+    // Clean up listeners
     window.removeEventListener('storage', this.handleStorageChange);
+    clearInterval(this.loginCheckInterval);
   },
   methods: {
     updateLoginState() {
-      this.isLoggedIn = !!localStorage.getItem('token');
+      const hasToken = !!localStorage.getItem('token');
+      if (this.isLoggedIn !== hasToken) {
+        this.isLoggedIn = hasToken;
+      }
     },
     handleStorageChange(event) {
       if (event.key === 'token') {

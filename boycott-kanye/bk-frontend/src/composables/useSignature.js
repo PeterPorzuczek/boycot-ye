@@ -18,6 +18,7 @@ export function useSignature() {
     try {
       const response = await signatureApi.getCurrentUserSignature();
       signature.value = response.data;
+      console.log('Fetched signature:', signature.value); // Debug log
       return signature.value;
     } catch (err) {
       // Ignore 404, as it means the user hasn't signed the petition yet
@@ -102,6 +103,47 @@ export function useSignature() {
     }
   };
 
+  // Update signature visibility
+  const updateSignatureVisibility = async (signatureId, publicDisplay) => {
+    if (!signatureId) {
+      throw new Error('Signature ID is required');
+    }
+
+    isCreatingSignature.value = true; // Reusing this state variable for update
+    error.value = null;
+    
+    try {
+      const response = await signatureApi.updateSignature(signatureId, { 
+        publicDisplay: publicDisplay 
+      });
+      
+      // Update local signature data
+      if (response.data) {
+        signature.value = response.data;
+      }
+      
+      return true;
+    } catch (err) {
+      console.error('Error updating signature visibility:', err);
+      
+      if (err.response) {
+        if (err.response.status === 403) {
+          error.value = 'You are not authorized to update this signature';
+        } else if (err.response.status === 404) {
+          error.value = 'Signature not found';
+        } else {
+          error.value = 'Failed to update signature visibility';
+        }
+      } else {
+        error.value = 'Connection error. Please check your internet connection.';
+      }
+      
+      return false;
+    } finally {
+      isCreatingSignature.value = false;
+    }
+  };
+
   return {
     signature,
     hasUserSigned,
@@ -110,6 +152,7 @@ export function useSignature() {
     error,
     fetchUserSignature,
     createSignature,
-    deleteSignature
+    deleteSignature,
+    updateSignatureVisibility
   };
 } 

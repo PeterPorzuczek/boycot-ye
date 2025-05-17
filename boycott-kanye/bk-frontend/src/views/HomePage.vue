@@ -10,7 +10,7 @@
     
     <div class="counter-section">
       <div class="signature-count">
-        <span class="count">{{ signatures.length }}</span>
+        <span class="count">{{ consentingSignaturesCount }}</span>
         <span class="label">signatures collected</span>
       </div>
     </div>
@@ -26,7 +26,10 @@
         <div v-else class="signatures-grid">
           <div v-for="signature in signatures" :key="signature.id" class="signature-item">
             <div class="signature-name">
-              {{ signature.expand && signature.expand.user ? (signature.public_display ? signature.expand.user.name : 'Anonymous') : 'Anonymous' }}
+              {{ getSignatureDisplay(signature) }}
+            </div>
+            <div v-if="isPublic(signature) && signature.expand && signature.expand.user" class="signature-email">
+              {{ maskEmail(signature.expand.user.email) }}
             </div>
           </div>
         </div>
@@ -47,6 +50,12 @@ export default {
       error: null
     }
   },
+  computed: {
+    consentingSignaturesCount() {
+      // Count only signatures that have agreed to the petition
+      return this.signatures.filter(signature => this.hasConsent(signature)).length;
+    }
+  },
   created() {
     this.fetchSignatures();
   },
@@ -58,12 +67,74 @@ export default {
       try {
         const response = await axios.get('http://localhost:3000/api/signatures/all');
         this.signatures = response.data;
+        
+        // Log detailed information about signatures to understand structure
+        console.log('Total signatures received:', this.signatures.length);
+        if (this.signatures.length > 0) {
+          console.log('First signature sample:', JSON.stringify(this.signatures[0], null, 2));
+          
+          // Count signatures with consent
+          const consentingCount = this.signatures.filter(sig => this.hasConsent(sig)).length;
+          console.log('Signatures with consent:', consentingCount);
+          
+          // Count public signatures
+          const publicCount = this.signatures.filter(sig => this.isPublic(sig)).length;
+          console.log('Public signatures:', publicCount);
+        }
       } catch (err) {
         console.error('Error fetching signatures:', err);
         this.error = 'Failed to load signatures';
       } finally {
         this.isLoading = false;
       }
+    },
+    getSignatureDisplay(signature) {
+      if (signature.expand && signature.expand.user) {
+        if (this.isPublic(signature)) {
+          return signature.expand.user.name;
+        } else {
+          return 'Anonymous';
+        }
+      } else {
+        return 'Anonymous';
+      }
+    },
+    maskEmail(email) {
+      if (!email) return 'No email provided';
+      
+      const [local, domain] = email.split('@');
+      
+      // Keep first character, mask the rest of local part
+      const firstChar = local.charAt(0);
+      const maskedLocal = firstChar + '*'.repeat(Math.min(local.length - 1, 3));
+      
+      // Split domain into parts (e.g., "example.com" => ["example", "com"])
+      const domainParts = domain.split('.');
+      const tld = domainParts.pop(); // Top-level domain (e.g., "com")
+      const domainName = domainParts.join('.'); // Rest of domain
+      
+      // Keep first character of domain name, mask the rest
+      const firstDomainChar = domainName.charAt(0);
+      const maskedDomain = firstDomainChar + '*'.repeat(Math.min(domainName.length - 1, 3));
+      
+      return `${maskedLocal}@${maskedDomain}.${tld}`;
+    },
+    // Helper method to check if a signature has consent
+    hasConsent(signature) {
+      // Check for both naming conventions (with/without underscore)
+      return (
+        (signature.agree_checkbox === true) || 
+        (signature.agreeCheckbox === true)
+      );
+    },
+    
+    // Helper method to check if a signature is public
+    isPublic(signature) {
+      // Check for both naming conventions (with/without underscore)
+      return (
+        (signature.public_display === true) || 
+        (signature.publicDisplay === true)
+      );
     }
   }
 }
@@ -167,6 +238,12 @@ export default {
 
 .signature-name {
   font-weight: bold;
+}
+
+.signature-email {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
 }
 
 .no-signatures {

@@ -172,6 +172,51 @@ export class PocketbaseService implements OnModuleInit {
     }
   }
 
+  async updateSignature(
+    signatureId: string,
+    userId: string,
+    updateData: any,
+  ): Promise<any> {
+    try {
+      this.logger.debug(
+        `Updating signature ${signatureId} for user: ${userId} with data: ${JSON.stringify(updateData)}`,
+      );
+
+      // Verify the signature belongs to the user
+      const signature = await this.pb
+        .collection('signatures')
+        .getOne(signatureId);
+
+      if (signature.author_id !== userId) {
+        throw new HttpException(
+          'Unauthorized to update this signature',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      // Prepare data for update - convert boolean to number if needed for PocketBase
+      const data = { ...updateData };
+      if ('publicDisplay' in data) {
+        data.public_display = data.publicDisplay;
+        delete data.publicDisplay;
+      }
+
+      const updated = await this.pb
+        .collection('signatures')
+        .update(signatureId, data);
+      this.logger.log(`Signature ${signatureId} updated successfully`);
+      return updated;
+    } catch (error) {
+      this.logger.error(
+        `Failed to update signature ${signatureId}: ${JSON.stringify(error)}`,
+      );
+      this.handlePocketBaseError(
+        error,
+        `Failed to update signature: ${signatureId}`,
+      );
+    }
+  }
+
   async deleteSignature(signatureId: string, userId: string) {
     try {
       this.logger.debug(

@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   UseGuards,
   Request,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { PocketbaseService } from '../pocketbase/pocketbase.service';
 import { CreateSignatureDto } from './dto/create-signature.dto';
+import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { SignatureDto } from './dto/signature.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
@@ -73,6 +75,35 @@ export class SignaturesController {
   })
   async getCurrentUserSignature(@Request() req): Promise<any | null> {
     return this.pocketbaseService.getUserSignature(req.user.id);
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update a signature' })
+  @ApiBody({ type: UpdateSignatureDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Signature updated successfully',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'User is not authorized to update this signature',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Signature not found',
+  })
+  async updateSignature(
+    @Param('id') id: string,
+    @Body() updateSignatureDto: UpdateSignatureDto,
+    @Request() req,
+  ) {
+    return this.pocketbaseService.updateSignature(
+      id,
+      req.user.id,
+      updateSignatureDto,
+    );
   }
 
   @Delete(':id')

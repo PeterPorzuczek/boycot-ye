@@ -21,7 +21,7 @@ export const signaturesCollectionDefinition = {
     {
       name: 'public_display',
       type: 'bool',
-      required: true,
+      required: false,
       options: {},
     },
   ],

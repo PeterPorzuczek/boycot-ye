@@ -48,6 +48,11 @@ export const signatureApi = {
     return apiClient.post('/signatures', signatureData);
   },
   
+  // Aktualizacja ustawień podpisu
+  updateSignature(id, updateData) {
+    return apiClient.put(`/signatures/${id}`, updateData);
+  },
+  
   // Usunięcie podpisu
   deleteSignature(id) {
     return apiClient.delete(`/signatures/${id}`);

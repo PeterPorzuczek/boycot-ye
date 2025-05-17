@@ -27,15 +27,19 @@
       
       <div v-if="hasUserSigned" class="profile-section signature-visibility">
         <h2>{{ t('profile.visibilityTitle') }}</h2>
-        <label class="toggle-container">
+        <label class="toggle-container" :class="{ 'disabled': isUpdatingVisibility }">
           <input
             type="checkbox"
             v-model="publicDisplay"
             @change="handleVisibilityChange"
+            :disabled="isUpdatingVisibility"
           />
           <span class="toggle-label">{{ t('profile.visibilityLabel') }}</span>
         </label>
-        <div v-if="updateSuccess" class="success-message">
+        <div v-if="isUpdatingVisibility" class="loading-message">
+          {{ t('common.updating') }}
+        </div>
+        <div v-else-if="updateSuccess" class="success-message">
           {{ t('profile.updateSuccess') }}
         </div>
       </div>
@@ -74,12 +78,14 @@ export default {
       isFetchingSignature,
       error: signatureError,
       fetchUserSignature,
-      deleteSignature
+      deleteSignature,
+      updateSignatureVisibility
     } = useSignature();
     
     const publicDisplay = ref(false);
     const isLoading = ref(true);
     const isWithdrawing = ref(false);
+    const isUpdatingVisibility = ref(false);
     const error = ref('');
     const updateSuccess = ref(false);
     
@@ -106,7 +112,11 @@ export default {
         isLoading.value = true;
         const result = await fetchUserSignature();
         if (result) {
-          publicDisplay.value = result.public_display;
+          // Handle both property formats that could come from the API
+          publicDisplay.value = 
+            result.public_display !== undefined ? result.public_display : 
+            result.publicDisplay !== undefined ? result.publicDisplay : 
+            false;
         }
       } catch (err) {
         error.value = t('errors.fetchSignatureFailed');
@@ -117,13 +127,45 @@ export default {
     
     // Handle visibility change
     const handleVisibilityChange = async () => {
-      // This would typically call an API to update the signature
-      updateSuccess.value = true;
+      if (!signature.value || !signature.value.id) {
+        error.value = t('errors.updateSignatureFailed');
+        return;
+      }
       
-      // Hide the success message after a few seconds
-      setTimeout(() => {
-        updateSuccess.value = false;
-      }, 3000);
+      isUpdatingVisibility.value = true;
+      error.value = null;
+      updateSuccess.value = false;
+      
+      console.log('Updating visibility to:', publicDisplay.value);
+      console.log('Signature ID:', signature.value.id);
+      
+      try {
+        // Call the API to update the signature visibility
+        const success = await updateSignatureVisibility(
+          signature.value.id, 
+          publicDisplay.value
+        );
+        
+        console.log('Update result:', success);
+        
+        if (success) {
+          updateSuccess.value = true;
+          
+          // Hide the success message after a few seconds
+          setTimeout(() => {
+            updateSuccess.value = false;
+          }, 3000);
+        } else {
+          error.value = t('errors.updateSignatureFailed');
+        }
+      } catch (err) {
+        console.error('Failed to update visibility:', err);
+        error.value = t('errors.updateSignatureFailed');
+        // Reset the checkbox to its previous state on error
+        publicDisplay.value = signature.value.public_display;
+      } finally {
+        isUpdatingVisibility.value = false;
+      }
     };
     
     // Confirm signature withdrawal
@@ -172,6 +214,7 @@ export default {
       publicDisplay,
       isLoading: computed(() => isLoading.value || isFetchingSignature.value),
       isWithdrawing,
+      isUpdatingVisibility,
       error: computed(() => error.value || signatureError.value),
       updateSuccess,
       formatDate,
@@ -273,6 +316,19 @@ export default {
 
 .toggle-container input[type="checkbox"] {
   margin-right: 0.5rem;
+}
+
+.toggle-container.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loading-message {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background-color: #e2e3e5;
+  color: #383d41;
+  border-radius: 4px;
 }
 
 .success-message {
