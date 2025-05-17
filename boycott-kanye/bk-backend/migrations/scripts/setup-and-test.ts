@@ -1,10 +1,7 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
 
-// Get directory path in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Use CommonJS __dirname directly
 const rootDir = path.join(__dirname, '..', '..');
 
 console.log('==== Starting PocketBase migration and verification ====\n');

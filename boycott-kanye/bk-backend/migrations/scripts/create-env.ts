@@ -1,15 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { fileURLToPath } from 'url';
 
-const currentModulePath = fileURLToPath(import.meta.url);
-const currentModuleDir = path.dirname(currentModulePath);
+// Use __dirname instead of import.meta.url
+const currentModuleDir = __dirname;
 
 // Determine project root. This script might be run from src or from dist.
 // If run from '.../dist/migrations/scripts/', project root is three levels up.
 // If run from '.../migrations/scripts/' (e.g. using ts-node), project root is two levels up.
 let projectRoot: string;
-if (currentModulePath.includes(path.sep + 'dist' + path.sep)) {
+if (currentModuleDir.includes(path.sep + 'dist' + path.sep)) {
   // Running from compiled version in dist (e.g. project_root/dist/migrations/scripts/create-env.js)
   projectRoot = path.resolve(currentModuleDir, '..', '..', '..');
 } else {

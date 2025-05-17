@@ -1,7 +1,7 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { ConfigService } from '@nestjs/config';
-import PocketBase from 'pocketbase';
+import PocketBase from '../pocketbase/pocketbase-cjs';
 
 // Extend Express Request type to include user
 declare global {

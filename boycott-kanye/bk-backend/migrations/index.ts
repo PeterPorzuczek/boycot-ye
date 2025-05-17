@@ -1,12 +1,12 @@
-import PocketBase from 'pocketbase';
+import PocketBase from './pocketbase-cjs';
 import {
   migratePostsCollection,
   postsCollectionDefinition,
-} from './migrate/posts/migrate.js';
+} from './migrate/posts/migrate';
 import {
   migrateSignaturesCollection,
   signaturesCollectionDefinition,
-} from './migrate/signatures/migrate.js';
+} from './migrate/signatures/migrate';
 
 interface MigrationResults {
   posts: boolean;

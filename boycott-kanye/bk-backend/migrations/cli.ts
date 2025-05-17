@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
-import PocketBase from 'pocketbase';
-import { runAllMigrations } from './index.js';
+import PocketBase from './pocketbase-cjs';
+import { runAllMigrations } from './index';
 
 dotenv.config();
 

@@ -6,10 +6,10 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import PocketBase from 'pocketbase';
-import { CreateSignatureDto } from '../signatures/dto/create-signature.dto.js';
-import { RegisterDto } from '../auth/dto/register.dto.js';
-import { LoginDto } from '../auth/dto/login.dto.js';
+import PocketBase from './pocketbase-cjs';
+import { CreateSignatureDto } from '../signatures/dto/create-signature.dto';
+import { RegisterDto } from '../auth/dto/register.dto';
+import { LoginDto } from '../auth/dto/login.dto';
 
 @Injectable()
 export class PocketbaseService implements OnModuleInit {
@@ -83,7 +83,7 @@ export class PocketbaseService implements OnModuleInit {
   }
 
   // Signature methods
-  async getSignatures() {
+  async getSignatures(): Promise<any[]> {
     try {
       this.logger.debug('Fetching signatures from PocketBase');
 
@@ -117,7 +117,7 @@ export class PocketbaseService implements OnModuleInit {
     }
   }
 
-  async createSignature(createSignatureDto: CreateSignatureDto) {
+  async createSignature(createSignatureDto: CreateSignatureDto): Promise<any> {
     try {
       const { userId, agreeCheckbox, publicDisplay } = createSignatureDto;
       this.logger.debug(`Creating signature for user: ${userId}`);
@@ -148,7 +148,7 @@ export class PocketbaseService implements OnModuleInit {
     }
   }
 
-  async getUserSignature(userId: string) {
+  async getUserSignature(userId: string): Promise<any | null> {
     try {
       this.logger.debug(`Getting signature for user: ${userId}`);
 

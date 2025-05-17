@@ -1,4 +1,4 @@
-import PocketBase from 'pocketbase';
+import PocketBase from '../../pocketbase-cjs';
 import { postsCollectionDefinition } from '../../models/posts/schema.js';
 
 interface PostsField {

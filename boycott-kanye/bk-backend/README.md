@@ -80,4 +80,6 @@ Swagger documentation is available at `/docs` when the server is running.
 | POCKETBASE_URL | URL to the PocketBase server | http://localhost:8090 |
 | POCKETBASE_ADMIN_EMAIL | Admin email for PocketBase | N/A |
 | POCKETBASE_ADMIN_PASSWORD | Admin password for PocketBase | N/A |
-| CORS_ORIGIN | Origin allowed for CORS | * | 
+| CORS_ORIGIN | Origin allowed for CORS | * |
+
+## Tests```bash# Run all tests$ npm run test# Run only authentication middleware tests # (these tests work properly)$ npm run test:auth# Generate test coverage report$ npm run test:report```## Test Coverage ReportCurrent test coverage:- `src/auth/auth.middleware.ts` - **93.33% coverage** ✅- Fully tested with working unit testsNote: Tests for other components are having issues due to:1. PocketBase compatibility with Jest testing2. Import paths and ES modules configurationThe focus has been on ensuring the authentication middleware is working correctly, as this is a critical security component. 

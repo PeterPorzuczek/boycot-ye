@@ -15,25 +15,25 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
-import { PocketbaseService } from '../pocketbase/pocketbase.service.js';
-import { CreateSignatureDto } from './dto/create-signature.dto.js';
-import { SignatureDto } from './dto/signature.dto.js';
-import { AuthGuard } from '../auth/auth.guard.js';
+import { PocketbaseService } from '../pocketbase/pocketbase.service';
+import { CreateSignatureDto } from './dto/create-signature.dto';
+import { SignatureDto } from './dto/signature.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @ApiTags('signatures')
 @Controller('signatures')
 export class SignaturesController {
   constructor(private readonly pocketbaseService: PocketbaseService) {}
 
-  @Get()
+  @Get('all')
   @ApiOperation({ summary: 'Get all signatures' })
   @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'List of all signatures',
-    type: [SignatureDto],
+    status: 200,
+    description: 'Returns all signatures in the system',
   })
-  async getSignatures() {
+  async getSignatures(): Promise<any[]> {
     return this.pocketbaseService.getSignatures();
   }
 
@@ -41,30 +41,24 @@ export class SignaturesController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new signature' })
+  @ApiBody({ type: CreateSignatureDto })
   @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Signature created successfully',
-    type: SignatureDto,
+    status: 201,
+    description: 'The signature has been successfully created',
   })
-  @ApiResponse({
-    status: HttpStatus.CONFLICT,
-    description: 'User has already signed the petition',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User is not authenticated',
-  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 409, description: 'User has already signed' })
   @HttpCode(HttpStatus.CREATED)
   async createSignature(
     @Body() createSignatureDto: CreateSignatureDto,
     @Request() req,
-  ) {
+  ): Promise<any> {
     // Override userId with the authenticated user's ID
     createSignatureDto.userId = req.user.id;
     return this.pocketbaseService.createSignature(createSignatureDto);
   }
 
-  @Get('user')
+  @Get('me')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Get the current user's signature" })
@@ -77,7 +71,7 @@ export class SignaturesController {
     status: HttpStatus.NOT_FOUND,
     description: 'User has not signed the petition yet',
   })
-  async getCurrentUserSignature(@Request() req) {
+  async getCurrentUserSignature(@Request() req): Promise<any | null> {
     return this.pocketbaseService.getUserSignature(req.user.id);
   }
 

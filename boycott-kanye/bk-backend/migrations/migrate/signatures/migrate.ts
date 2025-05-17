@@ -1,4 +1,4 @@
-import PocketBase from 'pocketbase';
+import PocketBase from '../../pocketbase-cjs';
 import { signaturesCollectionDefinition } from '../../models/signatures/schema.js';
 
 interface SignatureField {
