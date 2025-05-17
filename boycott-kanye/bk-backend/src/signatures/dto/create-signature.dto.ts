@@ -1,4 +1,10 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsString,
+  IsEmail,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSignatureDto {
@@ -9,6 +15,22 @@ export class CreateSignatureDto {
   @IsString()
   @IsNotEmpty()
   userId: string;
+
+  @ApiProperty({
+    description: 'Email address of the person signing the petition',
+    example: 'signer@example.com',
+  })
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @ApiProperty({
+    description: 'Name of the person signing the petition',
+    example: 'John Doe',
+  })
+  @IsString()
+  @IsOptional()
+  name?: string;
 
   @ApiProperty({
     description: 'Confirmation checkbox that the user agrees with the petition',

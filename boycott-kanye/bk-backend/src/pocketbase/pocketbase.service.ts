@@ -130,7 +130,8 @@ export class PocketbaseService implements OnModuleInit {
 
   async createSignature(createSignatureDto: CreateSignatureDto): Promise<any> {
     try {
-      const { userId, agreeCheckbox, publicDisplay } = createSignatureDto;
+      const { userId, agreeCheckbox, publicDisplay, email, name } =
+        createSignatureDto;
       this.logger.debug(
         `Creating signature for user: ${userId}, public: ${publicDisplay}`,
       );
@@ -146,27 +147,37 @@ export class PocketbaseService implements OnModuleInit {
       let fullName = 'Anonymous'; // Default to Anonymous
       let signatureEmail = 'anonymous@example.com'; // Default to anonymous email
 
-      if (userId) {
-        // Ensure userId is present before trying to fetch user
+      // If name is provided in DTO, use it
+      if (name) {
+        fullName = publicDisplay ? name : 'Anonymous';
+      }
+      // If email is provided in DTO, use it
+      if (email) {
+        signatureEmail = publicDisplay
+          ? this.anonymizeEmail(email)
+          : 'anonymous@example.com';
+      }
+
+      // If name or email is not provided in DTO, fetch from user record
+      if ((!name || !email) && userId) {
         try {
           const user = await this.pb.collection('users').getOne(userId);
           if (publicDisplay === true) {
-            fullName = user.name || 'User'; // Use actual name or 'User' if name is empty
-            if (user.email && user.email.includes('@')) {
-              signatureEmail = this.anonymizeEmail(user.email); // Anonymize the user's actual email
-            } else {
+            // Only use user data if explicitly requested fields weren't provided in the DTO
+            if (!name && user.name) {
+              fullName = user.name;
+            }
+            if (!email && user.email && user.email.includes('@')) {
+              signatureEmail = this.anonymizeEmail(user.email);
+            } else if (!email) {
               signatureEmail = 'invalid-email@example.com'; // Fallback for malformed email
             }
-          } else {
-            // For publicDisplay === false, fullName and signatureEmail remain their default anonymous values
-            // as per the requirement: "zapisuj anonymous i mail ananonymous"
           }
         } catch (userError) {
           this.logger.warn(
             `Could not fetch user details for ${userId} during signature creation: ${userError.message}`,
           );
-          // If user fetch fails, and publicDisplay was true, it will fall back to Anonymous/anonymous@example.com
-          // If publicDisplay was false, it was already set to Anonymous/anonymous@example.com
+          // If user fetch fails, we'll use the values already set above
         }
       }
 

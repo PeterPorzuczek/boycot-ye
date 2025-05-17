@@ -54,7 +54,11 @@ export class SignaturesController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new signature' })
+  @ApiOperation({
+    summary: 'Create a new signature',
+    description:
+      'Create a new petition signature with optional name and email fields. If not provided, they will be fetched from the user account.',
+  })
   @ApiBody({ type: CreateSignatureDto })
   @ApiResponse({
     status: 201,
@@ -69,6 +73,16 @@ export class SignaturesController {
   ): Promise<any> {
     // Override userId with the authenticated user's ID
     createSignatureDto.userId = req.user.id;
+
+    // If email and name weren't provided, get them from the current user
+    if (!createSignatureDto.email && req.user.email) {
+      createSignatureDto.email = req.user.email;
+    }
+
+    if (!createSignatureDto.name && req.user.name) {
+      createSignatureDto.name = req.user.name;
+    }
+
     return this.pocketbaseService.createSignature(createSignatureDto);
   }
 

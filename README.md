@@ -150,4 +150,4 @@ docker run -p 3000:3000 boycott-kanye-backend
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GNU General Public License (GPL) - see the LICENSE file for details.

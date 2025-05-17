@@ -182,3 +182,7 @@ Build image
 
 Run image
 `docker run -p 3000:3000 -e POCKETBASE_ADMIN_EMAIL= -e POCKETBASE_ADMIN_PASSWORD= boycott-kanye-backend`
+
+## License
+
+This project is licensed under the GNU General Public License (GPL) - see the LICENSE file for details.

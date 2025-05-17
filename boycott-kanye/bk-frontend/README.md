@@ -60,4 +60,4 @@ docker run -p 8080:80 boycott-kanye-frontend
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GNU General Public License (GPL) - see the LICENSE file for details.
