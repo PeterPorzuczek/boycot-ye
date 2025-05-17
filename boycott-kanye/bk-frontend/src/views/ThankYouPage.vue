@@ -11,7 +11,6 @@
       <div class="share-section">
         <h3>{{ t('thankYou.shareTitle') }}</h3>
         <div class="share-buttons">
-          <!-- Social media share buttons -->
           <a href="#" class="share-button facebook">Facebook</a>
           <a href="#" class="share-button twitter">Twitter</a>
         </div>

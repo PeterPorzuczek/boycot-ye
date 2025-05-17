@@ -1,13 +1,13 @@
 <template>
   <div class="login-page">
     <div class="page-header">
-      <h1>{{ t('login.title') }}</h1>
+      <h1>{{ $t('login.title') }}</h1>
     </div>
     
     <div class="form-container">
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
-          <label for="email">{{ t('login.email') }}</label>
+          <label for="email">{{ $t('login.email') }}</label>
           <input 
             type="email" 
             id="email" 
@@ -18,7 +18,7 @@
         </div>
         
         <div class="form-group">
-          <label for="password">{{ t('login.password') }}</label>
+          <label for="password">{{ $t('login.password') }}</label>
           <input 
             type="password" 
             id="password" 
@@ -38,15 +38,15 @@
             class="login-button" 
             :disabled="isLoading"
           >
-            <span v-if="isLoading">{{ t('common.loading') }}</span>
-            <span v-else>{{ t('login.loginButton') }}</span>
+            <span v-if="isLoading">{{ $t('common.loading') }}</span>
+            <span v-else>{{ $t('login.loginButton') }}</span>
           </button>
         </div>
         
         <div class="form-links">
           <p>
-            {{ t('login.noAccount') }} 
-            <router-link to="/register">{{ t('login.registerLink') }}</router-link>
+            {{ $t('login.noAccount') }} 
+            <router-link to="/register">{{ $t('login.registerLink') }}</router-link>
           </p>
         </div>
       </form>
@@ -55,51 +55,48 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { useTranslation } from '../composables/useTranslation';
+import axios from 'axios';
 
 export default {
   name: 'LoginPage',
-  setup() {
-    const { t } = useTranslation();
-    const router = useRouter();
-    const route = useRoute();
-    
-    const email = ref('');
-    const password = ref('');
-    const error = ref('');
-    const isLoading = ref(false);
-    
-    const handleLogin = async () => {
-      isLoading.value = true;
-      error.value = '';
+  data() {
+    return {
+      email: '',
+      password: '',
+      error: '',
+      isLoading: false
+    };
+  },
+  methods: {
+    async handleLogin() {
+      this.isLoading = true;
+      this.error = '';
       
       try {
-        // Simulate login - in real app, this would call an API
-        // This is just for demo purposes
-        localStorage.setItem('token', 'demo-token');
+        // Call the actual login API endpoint
+        const response = await axios.post('http://localhost:3000/api/auth/login', {
+          email: this.email,
+          password: this.password
+        });
         
-        // Redirect to the page the user was trying to access, or to home
-        const redirectPath = route.query.redirect || '/';
-        router.push(redirectPath);
+        // Store the real token from response
+        if (response.data && response.data.token) {
+          localStorage.setItem('token', response.data.token);
+          
+          // Redirect to the page the user was trying to access, or to home
+          const redirectPath = this.$route.query.redirect || '/';
+          this.$router.push(redirectPath);
+        } else {
+          throw new Error('No token received from server');
+        }
         
       } catch (err) {
         console.error('Login error:', err);
-        error.value = t('errors.invalidCredentials');
+        this.error = this.$t('errors.invalidCredentials');
       } finally {
-        isLoading.value = false;
+        this.isLoading = false;
       }
-    };
-    
-    return {
-      email,
-      password,
-      error,
-      isLoading,
-      handleLogin,
-      t
-    };
+    }
   }
 }
 </script>

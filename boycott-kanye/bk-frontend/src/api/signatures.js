@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Konfiguracja axios z bazowym URL z konfiguracji
+// Konfiguracja axios z bazowym URL dla API
 const apiClient = axios.create({
   baseURL: 'http://localhost:3000/api',
   headers: {
@@ -17,8 +17,27 @@ apiClient.interceptors.request.use(config => {
   return config;
 });
 
+// Interceptor dla obsługi błędów autoryzacji
+apiClient.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response && error.response.status === 401) {
+      // Token wygasł lub jest nieprawidłowy - wyloguj użytkownika
+      localStorage.removeItem('token');
+      // Przekieruj do strony logowania
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Metody API dla podpisów
 export const signatureApi = {
+  // Pobieranie wszystkich podpisów (publiczny endpoint)
+  getAllSignatures() {
+    return apiClient.get('/signatures/all');
+  },
+  
   // Pobieranie podpisu aktualnie zalogowanego użytkownika
   getCurrentUserSignature() {
     return apiClient.get('/signatures/me');

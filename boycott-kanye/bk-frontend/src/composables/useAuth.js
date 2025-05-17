@@ -1,5 +1,4 @@
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
 
 export function useAuth() {
   const user = ref(null);
@@ -8,7 +7,7 @@ export function useAuth() {
   const isLoading = ref(false);
   const error = ref(null);
 
-  // Pobieranie danych użytkownika na podstawie tokenu
+  // Extract user data from JWT token
   const fetchUserData = async () => {
     if (!token.value) return;
     
@@ -16,27 +15,38 @@ export function useAuth() {
     error.value = null;
     
     try {
-      const response = await axios.get('http://localhost:3000/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${token.value}`
-        }
-      });
-      user.value = response.data;
-    } catch (err) {
-      console.error('Błąd podczas pobierania danych użytkownika:', err);
-      error.value = 'Nie udało się pobrać danych użytkownika';
+      // Parse JWT token to get user data
+      const base64Url = token.value.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
       
-      // Jeśli błąd autoryzacji, wyczyść token
-      if (err.response && err.response.status === 401) {
-        localStorage.removeItem('token');
-        token.value = null;
-      }
+      const tokenData = JSON.parse(jsonPayload);
+      console.log('JWT token data:', tokenData);
+      
+      // Create a proper user object with standard fields
+      user.value = {
+        id: tokenData.sub || tokenData.id || tokenData.userId, // 'sub' is standard JWT claim for subject/user ID
+        email: tokenData.email || '',
+        name: tokenData.name || tokenData.username || ''
+      };
+      
+      console.log('Created user object:', user.value);
+      
+    } catch (err) {
+      console.error('Error extracting user data from token:', err);
+      error.value = 'Could not extract user data from token';
+      
+      // If token is invalid, clear it
+      localStorage.removeItem('token');
+      token.value = null;
     } finally {
       isLoading.value = false;
     }
   };
 
-  // Sprawdzenie stanu autentykacji przy inicjalizacji
+  // Check authentication state on initialization
   onMounted(() => {
     if (token.value) {
       fetchUserData();

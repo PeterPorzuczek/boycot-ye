@@ -2,16 +2,17 @@
   <div id="app">
     <header class="app-header">
       <div class="container">
-        <h1 class="site-title">{{ t('header.title') }}</h1>
+        <h1 class="site-title">Boycott Kanye</h1>
         <nav class="main-nav">
-          <router-link to="/" class="nav-link">{{ t('header.home') }}</router-link>
+          <router-link to="/" class="nav-link">Home</router-link>
           <template v-if="isLoggedIn">
-            <router-link to="/profile" class="nav-link">{{ t('header.profile') }}</router-link>
-            <a href="#" @click.prevent="handleLogout" class="nav-link">{{ t('header.logout') }}</a>
+            <router-link to="/sign" class="nav-link">Sign Petition</router-link>
+            <router-link to="/profile" class="nav-link">Profile</router-link>
+            <a href="#" @click.prevent="handleLogout" class="nav-link">Logout</a>
           </template>
           <template v-else>
-            <router-link to="/login" class="nav-link">{{ t('header.login') }}</router-link>
-            <router-link to="/register" class="nav-link">{{ t('header.register') }}</router-link>
+            <router-link to="/login" class="nav-link">Login</router-link>
+            <router-link to="/register" class="nav-link">Register</router-link>
           </template>
         </nav>
       </div>
@@ -23,37 +24,45 @@
 
     <footer class="app-footer">
       <div class="container">
-        <p>&copy; {{ new Date().getFullYear() }} Boycott Kanye</p>
+        <p>&copy; 2023 Boycott Kanye</p>
       </div>
     </footer>
   </div>
 </template>
 
 <script>
-import { useTranslation } from './composables/useTranslation';
-import { useAuth } from './composables/useAuth';
-import { useRouter } from 'vue-router';
-
 export default {
   name: 'App',
-  setup() {
-    const { t } = useTranslation();
-    const { isLoggedIn } = useAuth();
-    const router = useRouter();
-
-    const handleLogout = () => {
-      // Implementation of logout should be added to useAuth hook
-      localStorage.removeItem('token');
-      // Reload page to refresh auth state
-      router.push('/login');
-      window.location.reload();
-    };
-
+  data() {
     return {
-      t,
-      isLoggedIn,
-      handleLogout
-    };
+      isLoggedIn: false
+    }
+  },
+  created() {
+    // Initialize login state
+    this.updateLoginState();
+    
+    // Set up a listener for storage events (if token changes in another tab)
+    window.addEventListener('storage', this.handleStorageChange);
+  },
+  beforeUnmount() {
+    // Clean up listener
+    window.removeEventListener('storage', this.handleStorageChange);
+  },
+  methods: {
+    updateLoginState() {
+      this.isLoggedIn = !!localStorage.getItem('token');
+    },
+    handleStorageChange(event) {
+      if (event.key === 'token') {
+        this.updateLoginState();
+      }
+    },
+    handleLogout() {
+      localStorage.removeItem('token');
+      this.isLoggedIn = false;
+      this.$router.push('/login');
+    }
   }
 }
 </script>
@@ -90,7 +99,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 .site-title {
@@ -106,11 +114,15 @@ body {
 .nav-link {
   color: white;
   text-decoration: none;
-  transition: color 0.2s;
 }
 
 .nav-link:hover {
   color: #ddd;
+}
+
+.router-link-active {
+  color: #ffc107;
+  font-weight: bold;
 }
 
 /* Main content styles */
@@ -126,14 +138,4 @@ body {
   padding: 1rem 0;
   text-align: center;
 }
-
-/* Light theme variables */
-:root {
-  --background-color: #f4f4f4;
-  --text-color: #333;
-  --card-background: #fff;
-  --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Dark theme can be added with CSS variables */
 </style>

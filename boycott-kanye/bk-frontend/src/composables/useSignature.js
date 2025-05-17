@@ -10,7 +10,7 @@ export function useSignature() {
   const error = ref(null);
   const router = useRouter();
 
-  // Pobieranie podpisu użytkownika
+  // Fetch user's signature
   const fetchUserSignature = async () => {
     isFetchingSignature.value = true;
     error.value = null;
@@ -20,10 +20,10 @@ export function useSignature() {
       signature.value = response.data;
       return signature.value;
     } catch (err) {
-      // Ignorujemy 404, bo to oznacza, że użytkownik nie podpisał jeszcze petycji
+      // Ignore 404, as it means the user hasn't signed the petition yet
       if (err.response && err.response.status !== 404) {
-        console.error('Błąd podczas pobierania podpisu:', err);
-        error.value = 'Nie udało się pobrać informacji o podpisie';
+        console.error('Error fetching signature:', err);
+        error.value = 'Failed to retrieve signature information';
       }
       return null;
     } finally {
@@ -31,7 +31,7 @@ export function useSignature() {
     }
   };
 
-  // Tworzenie podpisu
+  // Create a signature
   const createSignature = async (signatureData) => {
     isCreatingSignature.value = true;
     error.value = null;
@@ -40,28 +40,63 @@ export function useSignature() {
       const response = await signatureApi.createSignature(signatureData);
       signature.value = response.data;
       
-      // Po udanym podpisaniu przekieruj na stronę podziękowania
+      // After successful signing, redirect to thank you page
       router.push('/thank-you');
       
       return signature.value;
     } catch (err) {
-      console.error('Błąd podczas tworzenia podpisu:', err);
+      console.error('Error creating signature:', err);
       
       if (err.response) {
         if (err.response.status === 409) {
-          error.value = 'Już podpisałeś tę petycję';
-          // Przekieruj do profilu, jeśli użytkownik już podpisał
+          error.value = 'You have already signed this petition';
+          // Redirect to profile if user has already signed
           router.push('/profile');
         } else if (err.response.status === 400) {
-          error.value = 'Nieprawidłowe dane formularza. Sprawdź czy wszystkie pola są poprawnie wypełnione.';
+          error.value = 'Invalid form data. Please check that all fields are filled correctly.';
         } else {
-          error.value = 'Wystąpił błąd podczas składania podpisu. Spróbuj ponownie później.';
+          error.value = 'An error occurred while submitting your signature. Please try again later.';
         }
       } else {
-        error.value = 'Wystąpił problem z połączeniem. Sprawdź swoje połączenie internetowe.';
+        error.value = 'Connection problem. Please check your internet connection.';
       }
       
       return null;
+    } finally {
+      isCreatingSignature.value = false;
+    }
+  };
+
+  // Delete a signature
+  const deleteSignature = async (signatureId) => {
+    if (!signatureId) {
+      throw new Error('Signature ID is required');
+    }
+
+    isCreatingSignature.value = true; // Reusing this state variable for deletion
+    error.value = null;
+    
+    try {
+      await signatureApi.deleteSignature(signatureId);
+      signature.value = null; // Clear the local signature data
+      
+      return true;
+    } catch (err) {
+      console.error('Error deleting signature:', err);
+      
+      if (err.response) {
+        if (err.response.status === 403) {
+          error.value = 'You are not authorized to delete this signature';
+        } else if (err.response.status === 404) {
+          error.value = 'Signature not found';
+        } else {
+          error.value = 'Failed to withdraw signature';
+        }
+      } else {
+        error.value = 'Connection error. Please check your internet connection.';
+      }
+      
+      return false;
     } finally {
       isCreatingSignature.value = false;
     }
@@ -74,6 +109,7 @@ export function useSignature() {
     isFetchingSignature,
     error,
     fetchUserSignature,
-    createSignature
+    createSignature,
+    deleteSignature
   };
 } 

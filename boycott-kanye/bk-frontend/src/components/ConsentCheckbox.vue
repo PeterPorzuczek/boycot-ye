@@ -1,12 +1,15 @@
 <template>
   <div class="consent-checkbox">
+    <div class="petition-text">
+      <p>I strongly condemn Kanye West's antisemitic statements and promotion of Nazi ideology. By signing this petition, I'm taking a stand against hate speech and discrimination.</p>
+    </div>
     <label class="checkbox-container">
       <input
         type="checkbox"
         :checked="modelValue"
         @change="$emit('update:modelValue', $event.target.checked)"
       />
-      <span class="checkbox-label">{{ t('sign.consentLabel') }}</span>
+      <span class="checkbox-label">{{ $t('sign.consentLabel') }}</span>
     </label>
     <div v-if="error" class="error-message">
       {{ error }}
@@ -15,8 +18,6 @@
 </template>
 
 <script>
-import { useTranslation } from '../composables/useTranslation';
-
 export default {
   name: 'ConsentCheckbox',
   props: {
@@ -29,17 +30,21 @@ export default {
       default: ''
     }
   },
-  emits: ['update:modelValue'],
-  setup() {
-    const { t } = useTranslation();
-    return { t };
-  }
+  emits: ['update:modelValue']
 }
 </script>
 
 <style scoped>
 .consent-checkbox {
   margin-bottom: 1.5rem;
+}
+
+.petition-text {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-left: 4px solid #007bff;
+  border-radius: 4px;
 }
 
 .checkbox-container {

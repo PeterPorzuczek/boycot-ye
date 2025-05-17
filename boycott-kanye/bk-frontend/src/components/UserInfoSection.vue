@@ -1,37 +1,38 @@
 <template>
   <div class="user-info-section">
-    <h3>{{ t('sign.yourInfo') }}</h3>
-    <div class="info-row">
-      <span class="label">{{ t('sign.nameLabel') }}:</span>
-      <span class="value">{{ user.name }}</span>
+    <h3>{{ $t('sign.yourInfo') }}</h3>
+    <div v-if="user && user.name && user.email">
+      <div class="info-row">
+        <span class="label">{{ $t('sign.nameLabel') }}:</span>
+        <span class="value">{{ user.name }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">{{ $t('sign.emailLabel') }}:</span>
+        <span class="value">{{ user.email }}</span>
+      </div>
     </div>
-    <div class="info-row">
-      <span class="label">{{ t('sign.emailLabel') }}:</span>
-      <span class="value">{{ user.email }}</span>
+    <div v-else class="error-info">
+      <p>User information is incomplete. This could be due to a login issue.</p>
+      <p>Please try logging out and logging in again.</p>
     </div>
     <div class="info-note">
-      <small>{{ t('sign.infoNote') }}</small>
+      <small>{{ $t('sign.infoNote') }}</small>
     </div>
   </div>
 </template>
 
 <script>
-import { useTranslation } from '../composables/useTranslation';
-
 export default {
   name: 'UserInfoSection',
   props: {
     user: {
       type: Object,
-      required: true,
-      validator: (value) => {
-        return value && value.name && value.email;
-      }
+      required: true
     }
   },
-  setup() {
-    const { t } = useTranslation();
-    return { t };
+  mounted() {
+    // Log received user data for debugging
+    console.log('UserInfoSection received user:', this.user);
   }
 }
 </script>
@@ -60,5 +61,13 @@ export default {
 .info-note {
   margin-top: 1rem;
   color: #666;
+}
+
+.error-info {
+  color: #721c24;
+  background-color: #f8d7da;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
 }
 </style> 

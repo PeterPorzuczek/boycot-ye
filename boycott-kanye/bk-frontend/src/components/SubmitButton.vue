@@ -5,17 +5,15 @@
     :disabled="isSubmitting || !isValid"
   >
     <span v-if="isSubmitting" class="loading-indicator">
-      {{ t('common.loading') }}
+      {{ $t('common.loading') }}
     </span>
     <span v-else>
-      {{ t('sign.signButton') }}
+      {{ $t('sign.signButton') }}
     </span>
   </button>
 </template>
 
 <script>
-import { useTranslation } from '../composables/useTranslation';
-
 export default {
   name: 'SubmitButton',
   props: {
@@ -27,10 +25,6 @@ export default {
       type: Boolean,
       default: true
     }
-  },
-  setup() {
-    const { t } = useTranslation();
-    return { t };
   }
 }
 </script>

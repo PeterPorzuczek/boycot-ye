@@ -72,8 +72,9 @@ export default {
       signature, 
       hasUserSigned, 
       isFetchingSignature,
-      error: signatureError, 
-      fetchUserSignature
+      error: signatureError,
+      fetchUserSignature,
+      deleteSignature
     } = useSignature();
     
     const publicDisplay = ref(false);
@@ -134,16 +135,31 @@ export default {
     
     // Withdraw signature
     const withdrawSignature = async () => {
-      // This would typically call an API to delete the signature
+      if (!signature.value || !signature.value.id) {
+        error.value = t('errors.deleteSignatureFailed');
+        return;
+      }
+      
       isWithdrawing.value = true;
+      error.value = null;
       
       try {
-        // Simulate deletion
-        setTimeout(() => {
-          // Refresh the page after withdrawal
-          window.location.reload();
-        }, 1000);
+        // Call the API to delete the signature
+        const success = await deleteSignature(signature.value.id);
+        
+        if (success) {
+          // Show a temporary success message
+          alert('Your signature has been successfully withdrawn');
+          
+          // Refresh the page after a short delay
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        } else {
+          error.value = t('errors.deleteSignatureFailed');
+        }
       } catch (err) {
+        console.error('Failed to withdraw signature:', err);
         error.value = t('errors.deleteSignatureFailed');
       } finally {
         isWithdrawing.value = false;

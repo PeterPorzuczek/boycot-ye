@@ -83,6 +83,7 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useTranslation } from '../composables/useTranslation';
+import axios from 'axios';
 
 export default {
   name: 'RegisterPage',
@@ -110,13 +111,31 @@ export default {
       error.value = '';
       
       try {
-        // Simulate registration - in real app, this would call an API
-        // This is just for demo purposes
-        localStorage.setItem('token', 'demo-token');
+        // Call the registration API endpoint
+        const response = await axios.post('http://localhost:3000/api/auth/register', {
+          email: email.value,
+          password: password.value,
+          passwordConfirm: confirmPassword.value,
+          name: name.value
+        });
         
-        // Redirect to sign page after registration
-        router.push('/sign');
-        
+        // If registration successful, log the user in
+        if (response.status === 201) {
+          const loginResponse = await axios.post('http://localhost:3000/api/auth/login', {
+            email: email.value,
+            password: password.value
+          });
+          
+          // Store token from login response
+          if (loginResponse.data && loginResponse.data.token) {
+            localStorage.setItem('token', loginResponse.data.token);
+            
+            // Redirect to sign page after successful registration and login
+            router.push('/sign');
+          } else {
+            throw new Error('No token received from server');
+          }
+        }
       } catch (err) {
         console.error('Registration error:', err);
         error.value = t('errors.registrationFailed');

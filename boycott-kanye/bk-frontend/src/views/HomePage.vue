@@ -1,41 +1,70 @@
 <template>
   <div class="home-page">
     <div class="hero-section">
-      <h1>{{ t('home.title') }}</h1>
-      <p class="description">{{ t('home.description') }}</p>
+      <h1>Stand Against Hate</h1>
+      <p class="description">Join us in publicly condemning Kanye West's antisemitic and Nazi views by signing this petition.</p>
       <div class="cta-button">
-        <router-link to="/sign" class="sign-button">{{ t('home.signButton') }}</router-link>
+        <router-link to="/sign" class="sign-button">Sign the petition</router-link>
       </div>
     </div>
     
     <div class="counter-section">
       <div class="signature-count">
-        <span class="count">0</span>
-        <span class="label">{{ t('home.counterText') }}</span>
+        <span class="count">{{ signatures.length }}</span>
+        <span class="label">signatures collected</span>
       </div>
     </div>
     
     <div class="signatures-section">
-      <h2>{{ t('home.recentSignatures') }}</h2>
+      <h2>Recent signatures</h2>
       <div class="signatures-list">
-        <p>Loading signatures...</p>
-        <!-- Signatures will be loaded here -->
+        <p v-if="isLoading">Loading...</p>
+        <p v-else-if="error" class="error-message">{{ error }}</p>
+        <div v-else-if="signatures.length === 0" class="no-signatures">
+          <p>No signatures yet. Be the first to sign!</p>
+        </div>
+        <div v-else class="signatures-grid">
+          <div v-for="signature in signatures" :key="signature.id" class="signature-item">
+            <div class="signature-name">
+              {{ signature.expand && signature.expand.user ? (signature.public_display ? signature.expand.user.name : 'Anonymous') : 'Anonymous' }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { useTranslation } from '../composables/useTranslation';
+import axios from 'axios';
 
 export default {
   name: 'HomePage',
-  setup() {
-    const { t } = useTranslation();
-    
+  data() {
     return {
-      t
-    };
+      signatures: [],
+      isLoading: true,
+      error: null
+    }
+  },
+  created() {
+    this.fetchSignatures();
+  },
+  methods: {
+    async fetchSignatures() {
+      this.isLoading = true;
+      this.error = null;
+      
+      try {
+        const response = await axios.get('http://localhost:3000/api/signatures/all');
+        this.signatures = response.data;
+      } catch (err) {
+        console.error('Error fetching signatures:', err);
+        this.error = 'Failed to load signatures';
+      } finally {
+        this.isLoading = false;
+      }
+    }
   }
 }
 </script>
@@ -76,7 +105,6 @@ export default {
   font-size: 1.2rem;
   font-weight: bold;
   text-decoration: none;
-  transition: background-color 0.2s;
 }
 
 .sign-button:hover {
@@ -122,5 +150,34 @@ export default {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   text-align: center;
+}
+
+.signatures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.signature-item {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.signature-name {
+  font-weight: bold;
+}
+
+.no-signatures {
+  padding: 2rem;
+  color: #666;
+}
+
+.error-message {
+  color: #721c24;
+  background-color: #f8d7da;
+  padding: 0.75rem;
+  border-radius: 4px;
 }
 </style> 

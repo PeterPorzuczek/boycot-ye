@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-// Lazy load dla komponentów
-const HomePage = () => import('../views/HomePage.vue');
-const SignPage = () => import('../views/SignPage.vue');
-const LoginPage = () => import('../views/LoginPage.vue');
-const RegisterPage = () => import('../views/RegisterPage.vue');
-const ThankYouPage = () => import('../views/ThankYouPage.vue');
-const ProfilePage = () => import('../views/ProfilePage.vue');
-const NotFoundPage = () => import('../views/NotFoundPage.vue');
+// Importy komponentów bez lazy loading, aby uniknąć potencjalnych problemów
+import HomePage from '../views/HomePage.vue';
+import SignPage from '../views/SignPage.vue';
+import LoginPage from '../views/LoginPage.vue';
+import RegisterPage from '../views/RegisterPage.vue';
+import ThankYouPage from '../views/ThankYouPage.vue';
+import ProfilePage from '../views/ProfilePage.vue';
+import NotFoundPage from '../views/NotFoundPage.vue';
 
 const routes = [
   {
@@ -55,13 +55,12 @@ const router = createRouter({
   routes
 });
 
-// Nawigacja guard dla ścieżek wymagających autoryzacji
+// Podstawowa nawigacja guard bez złożonej logiki
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
   
   if (to.meta.requiresAuth && !token) {
-    // Zapisz ścieżkę docelową, aby przekierować po zalogowaniu
-    next({ name: 'Login', query: { redirect: to.fullPath } });
+    next({ name: 'Login' });
   } else {
     next();
   }
