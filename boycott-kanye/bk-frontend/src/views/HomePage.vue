@@ -10,10 +10,6 @@
               <router-link to="/sign" class="btn btn-primary">{{ $t('homePage.hero.signButton') }}</router-link>
               <a href="#signatures" class="btn btn-secondary">{{ $t('homePage.hero.viewButton') }}</a>
             </div>
-            <div class="counter-badge">
-              <span class="count">{{ consentingSignaturesCount }}</span>
-              <span class="label">{{ $t('homePage.hero.counterLabel') }}</span>
-            </div>
           </div>
           <div class="hero-visual">
             <div class="quote-box">
@@ -27,6 +23,18 @@
     
     <div id="signatures" class="signatures-section">
       <div class="container">
+        <div class="cta-banner">
+          <div class="cta-content">
+            <h2 class="cta-title">ADD YOUR VOICE</h2>
+            <p class="cta-text">Join <span class="highlight">{{ consentingSignaturesCount }}</span> others in standing against hate and discrimination</p>
+            <div class="cta-counter">
+              <span class="count">{{ consentingSignaturesCount }}</span>
+              <span class="label">{{ $t('homePage.hero.counterLabel') }}</span>
+            </div>
+          </div>
+          <router-link to="/sign" class="cta-button btn btn-primary">{{ $t('homePage.hero.signButton') }}</router-link>
+        </div>
+      
         <h2 class="section-title">{{ $t('homePage.signatures.title') }}</h2>
         <div class="signatures-content">
           <div v-if="isLoading" class="signatures-loading">
@@ -141,24 +149,50 @@ export default {
   overflow: hidden;
 }
 
+.hero-section::before {
+  content: 'PETITION';
+  position: absolute;
+  top: 5%;
+  right: -5%;
+  font-size: calc(var(--font-size-jumbo) * 3);
+  font-weight: 800;
+  opacity: 0.03;
+  transform: rotate(-15deg);
+  color: var(--primary);
+  z-index: 0;
+  letter-spacing: -5px;
+}
+
 .hero-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-xl);
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-text {
   position: relative;
 }
 
+.hero-text::before {
+  content: '';
+  position: absolute;
+  width: 80px;
+  height: 5px;
+  background: var(--gradient-primary);
+  top: -20px;
+  left: 0;
+}
+
 .hero-title {
   font-size: var(--font-size-jumbo);
-  line-height: 1.1;
-  font-weight: 700;
+  line-height: 1;
+  font-weight: 800;
   margin-bottom: var(--spacing-lg);
   text-transform: uppercase;
-  letter-spacing: -1px;
+  letter-spacing: -2px;
   position: relative;
 }
 
@@ -172,12 +206,12 @@ export default {
   content: '';
   position: absolute;
   width: 110%;
-  height: 8px;
+  height: 12px;
   background-color: var(--secondary);
   bottom: 8px;
   left: -5%;
   z-index: -1;
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 .hero-description {
@@ -186,6 +220,9 @@ export default {
   max-width: 600px;
   line-height: 1.5;
   color: var(--grey-dark);
+  position: relative;
+  padding-left: var(--spacing-md);
+  border-left: 3px solid var(--secondary);
 }
 
 .cta-group {
@@ -201,11 +238,24 @@ export default {
   border: 2px solid var(--accent);
   border-radius: var(--border-radius-md);
   margin-top: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+  background: var(--light);
+}
+
+.counter-badge::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 3px;
+  background: var(--gradient-primary);
+  bottom: 0;
+  left: -25%;
 }
 
 .counter-badge .count {
   font-size: var(--font-size-xxl);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--accent);
   line-height: 1;
 }
@@ -221,10 +271,11 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .quote-box {
-  background-color: var(--primary);
+  background: var(--gradient-dark);
   color: var(--light);
   padding: var(--spacing-xl);
   border-radius: var(--border-radius-lg);
@@ -232,16 +283,17 @@ export default {
   max-width: 400px;
   transform: rotate(-2deg);
   box-shadow: var(--shadow-lg);
+  border-left: 5px solid var(--secondary);
 }
 
 .quote-box::before {
   content: '"';
   position: absolute;
-  top: -30px;
+  top: -40px;
   left: 20px;
-  font-size: 120px;
+  font-size: 150px;
   color: var(--secondary);
-  opacity: 0.5;
+  opacity: 0.3;
   font-family: Georgia, serif;
 }
 
@@ -257,18 +309,41 @@ export default {
   font-style: italic;
   color: var(--grey-mid);
   text-align: right;
+  position: relative;
+}
+
+.quote-author::before {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 2px;
+  background-color: var(--secondary);
+  top: 50%;
+  left: -50px;
 }
 
 /* Signatures Section */
 .signatures-section {
   padding: var(--spacing-xxl) 0;
   background-color: white;
+  position: relative;
+}
+
+.signatures-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--gradient-primary);
+  opacity: 0.5;
 }
 
 .section-title {
   font-size: var(--font-size-xxl);
   margin-bottom: var(--spacing-xl);
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: -0.5px;
@@ -276,12 +351,17 @@ export default {
   display: inline-block;
 }
 
+.container h2.section-title {
+  display: block;
+  text-align: center;
+}
+
 .section-title::after {
   content: '';
   position: absolute;
   width: 60px;
   height: 4px;
-  background-color: var(--secondary);
+  background: var(--gradient-primary);
   bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
@@ -321,17 +401,32 @@ export default {
   background-color: rgba(255, 58, 94, 0.1);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-md);
+  border-left: 5px solid var(--error);
 }
 
 .signatures-empty {
   padding: var(--spacing-xl);
-  background-color: var(--grey-light);
+  background-color: var(--off-white);
   border-radius: var(--border-radius-md);
+  border: 1px dashed var(--grey-mid);
+  position: relative;
+}
+
+.signatures-empty::before {
+  content: '"SIGN NOW"';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--secondary);
+  opacity: 0.7;
 }
 
 .signatures-empty p {
   margin-bottom: var(--spacing-lg);
   font-size: var(--font-size-lg);
+  font-weight: 500;
 }
 
 .signatures-grid {
@@ -346,11 +441,31 @@ export default {
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  border: 1px solid var(--grey-light);
 }
 
 .signature-item:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-md);
+  border-color: var(--secondary);
+}
+
+.signature-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--gradient-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.signature-item:hover::before {
+  transform: scaleX(1);
 }
 
 .signature-content {
@@ -359,9 +474,28 @@ export default {
 
 .signature-name {
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: var(--spacing-xs);
   color: var(--primary);
+  position: relative;
+  display: inline-block;
+}
+
+.signature-name::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: var(--secondary);
+  bottom: 0;
+  left: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.signature-item:hover .signature-name::after {
+  transform: scaleX(1);
 }
 
 .signature-email {
@@ -374,14 +508,139 @@ export default {
   font-size: var(--font-size-xs);
   color: var(--grey-mid);
   margin-top: var(--spacing-sm);
+  font-style: italic;
 }
 
 .signatures-cta {
   text-align: center;
   margin-top: var(--spacing-xl);
+  position: relative;
 }
 
-/* Responsive */
+.signatures-cta::before {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 1px;
+  background: var(--gradient-primary);
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* New CTA Banner */
+.cta-banner {
+  margin: 0 auto var(--spacing-xxl);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--gradient-dark);
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border-left: 5px solid var(--secondary);
+}
+
+.cta-banner::before {
+  content: 'SIGN NOW';
+  position: absolute;
+  right: -20px;
+  top: -30px;
+  font-size: calc(var(--font-size-jumbo) * 1.5);
+  font-weight: 800;
+  opacity: 0.05;
+  transform: rotate(-5deg);
+  color: var(--light);
+  letter-spacing: -5px;
+  z-index: 0;
+}
+
+.cta-content {
+  color: var(--light);
+  position: relative;
+  z-index: 1;
+}
+
+.cta-title {
+  font-size: var(--font-size-xxl);
+  font-weight: 800;
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  display: inline-block;
+}
+
+.cta-title::after {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 4px;
+  background: var(--gradient-primary);
+  bottom: -6px;
+  left: 0;
+}
+
+.cta-text {
+  font-size: var(--font-size-lg);
+  max-width: 500px;
+  margin-bottom: var(--spacing-md);
+}
+
+.highlight {
+  color: var(--secondary);
+  font-weight: 700;
+}
+
+.cta-counter {
+  display: inline-flex;
+  flex-direction: column;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-md);
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--spacing-sm);
+}
+
+.cta-counter::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 3px;
+  background: var(--gradient-primary);
+  bottom: 0;
+  left: -25%;
+}
+
+.cta-counter .count {
+  font-size: var(--font-size-xxl);
+  font-weight: 800;
+  color: var(--light);
+  line-height: 1;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cta-counter .label {
+  font-size: var(--font-size-sm);
+  color: var(--grey-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cta-button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   .hero-content {
     grid-template-columns: 1fr;
@@ -406,6 +665,34 @@ export default {
   
   .signatures-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .hero-section::before {
+    font-size: calc(var(--font-size-jumbo) * 1.5);
+  }
+  
+  .cta-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+  
+  .cta-title::after {
+    left: 25%;
+    width: 50%;
+  }
+  
+  .cta-text {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .cta-counter {
+    margin: 0 auto var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-xl);
+  }
+  
+  .cta-button {
+    width: 100%;
   }
 }
 </style> 

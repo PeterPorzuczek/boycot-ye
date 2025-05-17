@@ -191,37 +191,72 @@ export default {
 .sign-page {
   min-height: 100vh;
   padding: var(--spacing-xxl) 0;
+  position: relative;
+}
+
+.sign-page::before {
+  content: 'SIGN';
+  position: absolute;
+  top: 0;
+  right: 5%;
+  font-size: calc(var(--font-size-jumbo) * 2);
+  font-weight: 800;
+  opacity: 0.04;
+  color: var(--primary);
+  letter-spacing: -5px;
 }
 
 .page-header {
   text-align: center;
   margin-bottom: var(--spacing-xl);
+  position: relative;
 }
 
 .page-title {
   font-size: var(--font-size-xxl);
   margin-bottom: var(--spacing-md);
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: -0.5px;
   position: relative;
   display: inline-block;
 }
 
-.page-title::after {
-  content: '';
+.page-title::before {
+  content: '"';
   position: absolute;
-  width: 60px;
-  height: 4px;
-  background-color: var(--secondary);
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: -15px;
+  top: -5px;
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.page-title::after {
+  content: '"';
+  position: absolute;
+  right: -15px;
+  top: -5px;
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--secondary);
 }
 
 .page-description {
   max-width: 600px;
   margin: var(--spacing-lg) auto 0;
+  position: relative;
+}
+
+.page-description::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 3px;
+  background: var(--gradient-primary);
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .page-description p {
@@ -232,6 +267,7 @@ export default {
 .sign-content {
   max-width: 800px;
   margin: 0 auto;
+  position: relative;
 }
 
 .sign-loading,
@@ -247,6 +283,20 @@ export default {
   box-shadow: var(--shadow-md);
   margin: var(--spacing-xl) auto;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.sign-loading::after,
+.sign-error::after,
+.sign-already-signed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--gradient-primary);
 }
 
 .loader {
@@ -270,6 +320,17 @@ export default {
   align-items: flex-start;
 }
 
+.sign-error::before {
+  content: 'ERROR';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--error);
+  opacity: 0.1;
+}
+
 .error-icon {
   width: 30px;
   height: 30px;
@@ -291,6 +352,9 @@ export default {
 .error-content h3 {
   margin-bottom: var(--spacing-sm);
   color: var(--error);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .error-content p {
@@ -299,24 +363,40 @@ export default {
 
 .sign-already-signed {
   background-color: var(--light);
+  position: relative;
+}
+
+.sign-already-signed::before {
+  content: 'SIGNED';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--success);
+  opacity: 0.1;
 }
 
 .icon-check {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: var(--success);
+  background: var(--gradient-accent);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--font-size-xl);
   margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-md);
 }
 
 .sign-already-signed h3 {
   font-size: var(--font-size-lg);
   margin-bottom: var(--spacing-md);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .sign-already-signed p {
@@ -334,6 +414,18 @@ export default {
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
   overflow: hidden;
+  border: 1px solid var(--grey-light);
+  position: relative;
+}
+
+.sign-form-container::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 5px;
+  background: var(--gradient-primary);
+  top: 0;
+  left: 0;
 }
 
 @media (max-width: 768px) {
@@ -348,6 +440,11 @@ export default {
   
   .page-description p {
     font-size: var(--font-size-md);
+  }
+  
+  .sign-page::before {
+    font-size: calc(var(--font-size-jumbo) * 1.2);
+    opacity: 0.03;
   }
 }
 </style> 

@@ -5,53 +5,102 @@
     </div>
     
     <div v-if="isLoading" class="loading-container">
+      <div class="loader"></div>
       <p>{{ t('common.loading') }}</p>
     </div>
     
     <div v-else-if="error" class="error-container">
+      <div class="error-icon">!</div>
       <p>{{ error }}</p>
     </div>
     
     <div v-else class="profile-content">
       <div class="profile-section signature-status">
-        <h2>{{ t('profile.signatureStatus') }}</h2>
+        <h2 class="section-title">{{ t('profile.signatureStatus') }}</h2>
         <div v-if="hasUserSigned" class="signed-status">
-          <p class="status-text">{{ t('profile.signed') }}</p>
-          <p class="signature-date">Signed on: {{ formatDate(signature?.created) }}</p>
+          <div class="status-icon">✓</div>
+          <div class="status-content">
+            <p class="status-text">{{ t('profile.signed') }}</p>
+            <p class="signature-date">Signed on: {{ formatDate(signature?.created) }}</p>
+          </div>
         </div>
         <div v-else class="not-signed-status">
-          <p class="status-text">{{ t('profile.notSigned') }}</p>
-          <router-link to="/sign" class="sign-link">{{ t('home.signButton') }}</router-link>
+          <div class="status-icon">✗</div>
+          <div class="status-content">
+            <p class="status-text">{{ t('profile.notSigned') }}</p>
+            <router-link to="/sign" class="sign-link btn btn-primary">{{ t('home.signButton') }}</router-link>
+          </div>
         </div>
       </div>
       
       <div v-if="hasUserSigned" class="profile-section signature-visibility">
-        <h2>{{ t('profile.visibilityTitle') }}</h2>
-        <label class="toggle-container" :class="{ 'disabled': isUpdatingVisibility }">
-          <input
-            type="checkbox"
-            v-model="publicDisplay"
-            @change="handleVisibilityChange"
-            :disabled="isUpdatingVisibility"
-          />
-          <span class="toggle-label">{{ t('profile.visibilityLabel') }}</span>
-        </label>
-        <div v-if="isUpdatingVisibility" class="loading-message">
+        <h2 class="section-title">{{ t('profile.visibilityTitle') }}</h2>
+        
+        <div class="visibility-option-container">
+          <div class="visibility-toggle-wrapper">
+            <label class="visibility-toggle" :class="{ 'disabled': isUpdatingVisibility }">
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  v-model="publicDisplay"
+                  @change="handleVisibilityChange"
+                  :disabled="isUpdatingVisibility"
+                />
+                <span class="slider">
+                  <span class="slider-text on">ON</span>
+                  <span class="slider-text off">OFF</span>
+                </span>
+              </div>
+              <div class="toggle-label-group">
+                <span class="toggle-label">{{ t('profile.visibilityLabel') }}</span>
+                <span class="status-badge" :class="{ 'public': publicDisplay, 'private': !publicDisplay }">
+                  {{ publicDisplay ? 'PUBLIC' : 'PRIVATE' }}
+                </span>
+              </div>
+            </label>
+          </div>
+          
+          <div class="visibility-preview">
+            <div class="preview-header">
+              <span class="preview-label">PREVIEW</span>
+            </div>
+            <div class="preview-card">
+              <div class="preview-tag" :class="{ 'public': publicDisplay, 'private': !publicDisplay }">
+                {{ publicDisplay ? 'PUBLIC' : 'PRIVATE' }}
+              </div>
+              <div class="preview-icon">{{ publicDisplay ? '👤' : '🔒' }}</div>
+              <div class="preview-content">
+                <div class="preview-name">{{ publicDisplay ? 'Your Full Name' : 'Anonymous' }}</div>
+                <div v-if="publicDisplay" class="preview-email">y***@example.com</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div v-if="isUpdatingVisibility" class="status-message updating">
+          <div class="status-indicator"></div>
           {{ t('common.updating') }}
         </div>
-        <div v-else-if="updateSuccess" class="success-message">
+        <div v-else-if="updateSuccess" class="status-message success">
+          <div class="status-icon">✓</div>
           {{ t('profile.updateSuccess') }}
+        </div>
+        
+        <div class="visibility-note">
+          <span class="note-marker">*</span>
+          <span class="note-text">When private, your signature will appear as "Anonymous" in the public signatures list.</span>
         </div>
       </div>
       
       <div v-if="hasUserSigned" class="profile-section withdraw-signature">
-        <h2>{{ t('profile.withdrawTitle') }}</h2>
+        <h2 class="section-title">{{ t('profile.withdrawTitle') }}</h2>
+        <p class="withdraw-info">If you wish to remove your signature from this petition, you can withdraw it. This action cannot be undone.</p>
         <button 
           @click="confirmWithdraw" 
           class="withdraw-button"
           :disabled="isWithdrawing"
         >
-          <span v-if="isWithdrawing">{{ t('common.loading') }}</span>
+          <span v-if="isWithdrawing" class="loading-spinner"></span>
           <span v-else>{{ t('profile.withdrawButton') }}</span>
         </button>
       </div>
@@ -237,132 +286,536 @@ export default {
 .profile-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 var(--spacing-lg);
 }
 
 .page-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xxl);
+  position: relative;
+}
+
+.page-header h1 {
+  font-size: var(--font-size-xxl);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.page-header h1::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 4px;
+  background: var(--gradient-primary);
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .loading-container,
 .error-container {
   text-align: center;
-  padding: 2rem;
-  margin: 2rem auto;
+  padding: var(--spacing-xl);
+  margin: var(--spacing-xl) auto;
   max-width: 600px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--grey-light);
+  border-radius: 50%;
+  border-top-color: var(--secondary);
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-md);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .error-container {
-  color: #721c24;
-  background-color: #f8d7da;
+  text-align: left;
+  flex-direction: row;
+  align-items: flex-start;
+  border-left: 4px solid var(--error);
+}
+
+.error-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--error);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: var(--spacing-md);
 }
 
 .profile-content {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--spacing-xl);
 }
 
 .profile-section {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+  position: relative;
+  overflow: hidden;
 }
 
-.profile-section h2 {
+.profile-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+.section-title {
   margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 3px;
+  background: var(--gradient-primary);
+  bottom: -8px;
+  left: 0;
 }
 
 .signed-status,
 .not-signed-status {
-  padding: 1rem;
-  border-radius: 4px;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
 }
 
 .signed-status {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: rgba(0, 193, 112, 0.1);
+  color: var(--success);
+  border-left: 3px solid var(--success);
 }
 
 .not-signed-status {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: rgba(255, 58, 94, 0.1);
+  color: var(--error);
+  border-left: 3px solid var(--error);
+}
+
+.status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.signed-status .status-icon {
+  background: var(--gradient-accent);
+  color: white;
+}
+
+.not-signed-status .status-icon {
+  background: var(--error);
+  color: white;
+}
+
+.status-content {
+  flex: 1;
 }
 
 .status-text {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-lg);
 }
 
 .signature-date {
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
 }
 
 .sign-link {
   display: inline-block;
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
-  border-radius: 4px;
-  text-decoration: none;
+  margin-top: var(--spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.toggle-container {
+/* Visibility Section Styles */
+.visibility-option-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.visibility-toggle-wrapper {
+  background-color: var(--off-white);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--grey-light);
+}
+
+.visibility-toggle {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   cursor: pointer;
 }
 
-.toggle-container input[type="checkbox"] {
-  margin-right: 0.5rem;
-}
-
-.toggle-container.disabled {
-  opacity: 0.6;
+.visibility-toggle.disabled {
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
-.loading-message {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  background-color: #e2e3e5;
-  color: #383d41;
-  border-radius: 4px;
+.toggle-switch {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  margin-bottom: var(--spacing-md);
 }
 
-.success-message {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  background-color: #d4edda;
-  color: #155724;
-  border-radius: 4px;
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-dark);
+  transition: .4s;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.slider-text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.slider-text.on {
+  right: 7px;
+  color: white;
+  opacity: 0;
+}
+
+.slider-text.off {
+  left: 7px;
+  color: var(--grey-light);
+  opacity: 1;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 2px;
+  bottom: 2px;
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+input:checked + .slider {
+  background: var(--gradient-primary);
+}
+
+input:checked + .slider .slider-text.on {
+  opacity: 1;
+}
+
+input:checked + .slider .slider-text.off {
+  opacity: 0;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 0 3px rgba(58, 102, 255, 0.2);
+}
+
+input:checked + .slider:before {
+  transform: translateX(30px);
+}
+
+.toggle-label-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.toggle-label {
+  font-weight: 600;
+  font-size: var(--font-size-md);
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+}
+
+.status-badge.public {
+  background: var(--secondary);
+  color: white;
+}
+
+.status-badge.private {
+  background: var(--grey-dark);
+  color: white;
+}
+
+.visibility-preview {
+  background-color: white;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--grey-light);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.preview-header {
+  background: var(--primary);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-md);
+  display: flex;
+  justify-content: center;
+}
+
+.preview-label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.preview-card {
+  padding: var(--spacing-md);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.preview-tag {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+.preview-tag.public {
+  background: var(--secondary);
+}
+
+.preview-tag.private {
+  background: var(--grey-dark);
+}
+
+.preview-icon {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--light);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.preview-content {
+  flex: 1;
+}
+
+.preview-name {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.preview-email {
+  font-size: var(--font-size-xs);
+  color: var(--grey-dark);
+}
+
+.status-message {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.status-message.updating {
+  background-color: rgba(255, 159, 28, 0.1);
+  color: var(--warning);
+}
+
+.status-message.success {
+  background-color: rgba(0, 193, 112, 0.1);
+  color: var(--success);
+}
+
+.status-indicator {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--warning);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  margin-right: var(--spacing-sm);
+}
+
+.status-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--success);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  margin-right: var(--spacing-sm);
+}
+
+.visibility-note {
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--grey-dark);
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.5;
+}
+
+.note-marker {
+  color: var(--secondary);
+  margin-right: var(--spacing-xs);
+  font-weight: 700;
+}
+
+.withdraw-info {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: rgba(255, 58, 94, 0.05);
+  border-left: 3px solid var(--error);
+  border-radius: var(--border-radius-sm);
+  color: var(--grey-dark);
+  line-height: 1.5;
 }
 
 .withdraw-button {
-  padding: 0.75rem 1.5rem;
-  background-color: #dc3545;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--error);
   color: white;
   border: none;
-  border-radius: 4px;
-  font-weight: bold;
+  border-radius: var(--border-radius-md);
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .withdraw-button:hover:not(:disabled) {
-  background-color: #c82333;
+  background-color: #d42a46;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .withdraw-button:disabled {
-  background-color: #cccccc;
+  background-color: var(--grey-mid);
   cursor: not-allowed;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+  margin-right: var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .visibility-option-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-section {
+    padding: var(--spacing-lg);
+  }
+  
+  .visibility-toggle {
+    flex-direction: column;
+  }
 }
 </style> 

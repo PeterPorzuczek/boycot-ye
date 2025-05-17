@@ -79,7 +79,7 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700;800&display=swap');
 
 * {
   box-sizing: border-box;
@@ -88,17 +88,28 @@ export default {
 }
 
 :root {
+  /* Refined color palette inspired by Virgil Abloh */
   --primary: #121212;
+  --primary-dark: #000000;
   --secondary: #FF3A5E;
   --accent: #3A66FF;
+  --accent-2: #00C170;
   --light: #F8F8F8;
+  --off-white: #F2F2F2;
   --grey-light: #E8E8E8;
   --grey-mid: #B0B0B0;
   --grey-dark: #707070;
   --success: #00C170;
   --error: #FF3A5E;
   --warning: #FF9F1C;
+  
+  /* Refined gradients */
   --gradient-primary: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+  --gradient-dark: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 90%);
+  --gradient-light: linear-gradient(135deg, var(--light) 0%, var(--grey-light) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  
+  /* Refined spacing and sizing */
   --border-radius-sm: 4px;
   --border-radius-md: 8px;
   --border-radius-lg: 16px;
@@ -111,6 +122,8 @@ export default {
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   --spacing-xxl: 48px;
+  
+  /* Typography scale */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -145,6 +158,18 @@ body {
   z-index: 10;
   padding: var(--spacing-md) 0;
   border-bottom: 1px solid var(--grey-light);
+  position: relative;
+}
+
+.app-header::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--gradient-primary);
+  opacity: 0.7;
 }
 
 .app-header .container {
@@ -156,6 +181,7 @@ body {
 .site-title-link {
   text-decoration: none;
   transition: transform 0.2s ease;
+  position: relative;
 }
 
 .site-title-link:hover {
@@ -164,13 +190,34 @@ body {
 
 .site-title {
   font-size: var(--font-size-xl);
-  font-weight: 700;
+  font-weight: 800;
   margin: 0;
   text-transform: uppercase;
   letter-spacing: -0.5px;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.site-title::before {
+  content: '"';
+  position: absolute;
+  left: -15px;
+  top: -5px;
+  font-size: 1.2em;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.site-title::after {
+  content: '"';
+  position: absolute;
+  right: -15px;
+  top: -5px;
+  font-size: 1.2em;
+  font-weight: 800;
+  color: var(--primary);
 }
 
 .main-nav {
@@ -179,43 +226,28 @@ body {
 }
 
 .nav-link {
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   color: var(--primary);
   position: relative;
-  padding: var(--spacing-xs) 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
   text-transform: uppercase;
   font-size: var(--font-size-sm);
-  letter-spacing: 0.5px;
-  transition: color 0.2s;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  border: 1px solid transparent;
 }
 
 .nav-link:hover {
   color: var(--secondary);
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: var(--secondary);
-  transition: width 0.3s;
-}
-
-.nav-link:hover::after {
-  width: 100%;
+  border-color: var(--secondary);
+  transform: translateY(-2px);
 }
 
 .router-link-active {
   color: var(--secondary);
-  font-weight: 600;
-}
-
-.router-link-active::after {
-  width: 100%;
+  font-weight: 700;
+  border-bottom: 2px solid var(--secondary);
 }
 
 .app-content {
@@ -224,10 +256,21 @@ body {
 }
 
 .app-footer {
-  background-color: var(--primary);
+  background: var(--gradient-dark);
   color: var(--light);
   padding: var(--spacing-xl) 0;
   text-align: center;
+  position: relative;
+}
+
+.app-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
 }
 
 .btn {
@@ -241,18 +284,36 @@ body {
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   font-size: var(--font-size-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: height 0.3s;
+  z-index: -1;
+}
+
+.btn:hover::after {
+  height: 100%;
 }
 
 .btn-primary {
-  background-color: var(--secondary);
+  background: var(--gradient-primary);
   color: white;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-  background-color: var(--accent);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
 
@@ -265,7 +326,7 @@ body {
 .btn-secondary:hover {
   background-color: var(--secondary);
   color: white;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 input, textarea, select {
@@ -275,20 +336,43 @@ input, textarea, select {
   border: 1px solid var(--grey-mid);
   font-size: var(--font-size-md);
   width: 100%;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: all 0.3s;
+  background-color: var(--off-white);
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(58, 102, 255, 0.1);
+  transform: translateY(-2px);
 }
 
 label {
   display: block;
   margin-bottom: var(--spacing-xs);
-  font-weight: 500;
-  color: var(--grey-dark);
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  letter-spacing: 1px;
+}
+
+.section-title {
+  position: relative;
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: 800;
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 4px;
+  background: var(--gradient-primary);
+  bottom: -8px;
+  left: 0;
 }
 
 .text-center { text-align: center; }
