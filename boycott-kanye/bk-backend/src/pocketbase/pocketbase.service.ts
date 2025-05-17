@@ -144,21 +144,15 @@ export class PocketbaseService implements OnModuleInit {
         );
       }
 
-      let fullName = 'Anonymous'; // Default to Anonymous
-      let signatureEmail = 'anonymous@example.com'; // Default to anonymous email
+      let fullName = 'Anonymous';
+      let signatureEmail = 'anonymous@example.com';
 
-      // If name is provided in DTO, use it
-      if (name) {
-        fullName = publicDisplay ? name : 'Anonymous';
-      }
-      // If email is provided in DTO, use it
-      if (email) {
-        signatureEmail = publicDisplay
-          ? this.anonymizeEmail(email)
-          : 'anonymous@example.com';
-      }
+      fullName = name ? name : 'Anonymous';
 
-      // If name or email is not provided in DTO, fetch from user record
+      signatureEmail = email
+        ? this.anonymizeEmail(email)
+        : 'anonymous@example.com';
+
       if ((!name || !email) && userId) {
         try {
           const user = await this.pb.collection('users').getOne(userId);
