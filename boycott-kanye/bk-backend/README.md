@@ -84,6 +84,7 @@ The API provides the following endpoints:
 
 - `POST /api/auth/register` - Register a new user
 - `POST /api/auth/login` - Authenticate and get a token
+- `GET /api/auth/me` - Get user info
 
 ### Signatures
 
