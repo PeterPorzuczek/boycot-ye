@@ -8,6 +8,7 @@
         </transition>
       </router-view>
     </main>
+    <app-footer />
     <mobile-bottom-nav />
     <router-link 
       v-if="shouldShowSignButton" 
@@ -20,6 +21,7 @@
 
 <script>
 import AppHeader from './components/AppHeader.vue';
+import AppFooter from './components/AppFooter.vue';
 import MobileBottomNav from './components/MobileBottomNav.vue';
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
@@ -29,6 +31,7 @@ export default {
   name: 'App',
   components: {
     AppHeader,
+    AppFooter,
     MobileBottomNav
   },
   setup() {
@@ -89,7 +92,7 @@ export default {
 
 .main-content {
   flex: 1;
-  padding-bottom: 75px; /* Space for mobile bottom nav */
+  padding-bottom: 0;
 }
 
 /* Page transition animations */

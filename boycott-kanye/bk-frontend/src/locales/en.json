@@ -219,5 +219,13 @@
       "private": "Private",
       "description": "Choose how your signature will appear on the public list."
     }
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "legal": "Legal",
+    "connect": "Connect With Us",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "rights": "All Rights Reserved"
   }
 } 

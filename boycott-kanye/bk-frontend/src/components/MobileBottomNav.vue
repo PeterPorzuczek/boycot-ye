@@ -100,6 +100,7 @@ export default {
   padding-bottom: env(safe-area-inset-bottom, 0px);
   width: 100vw;
   margin: 0;
+  display: none; /* Hide by default */
 }
 
 .nav-item {
@@ -154,9 +155,9 @@ export default {
   border-radius: 3px 3px 0 0;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 767px) {
   .mobile-bottom-nav {
-    display: none;
+    display: flex; /* Show only on mobile */
   }
 }
 </style> 
