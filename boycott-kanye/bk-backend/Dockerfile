@@ -26,7 +26,7 @@ FROM node:20-alpine as production
 # Set environment variables
 ENV NODE_ENV=production \
     PORT=3000 \
-    POCKETBASE_URL=http://localhost:8090
+    POCKETBASE_URL=http://0.0.0.0:8090
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
