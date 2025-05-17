@@ -140,6 +140,8 @@ export default {
       try {
         const apiData = {
           userId: signatureData.userId,
+          name: signatureData.name,
+          email: signatureData.email,
           agreeCheckbox: signatureData.agreeCheckbox,
           publicDisplay: signatureData.publicDisplay
         };

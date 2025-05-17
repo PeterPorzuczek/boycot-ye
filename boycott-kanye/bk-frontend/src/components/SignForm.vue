@@ -114,6 +114,8 @@ export default {
       
       const signatureData = {
         userId: this.user.id,
+        email: this.user.email,
+        name: this.user.name,
         agreeCheckbox: this.formState.agreeCheckbox,
         publicDisplay: this.formState.publicDisplay
       };
