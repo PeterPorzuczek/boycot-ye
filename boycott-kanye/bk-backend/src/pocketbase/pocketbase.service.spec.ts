@@ -329,6 +329,8 @@ describe('PocketbaseService', () => {
           author_id: createSignatureDto.userId,
           agree_checkbox: createSignatureDto.agreeCheckbox,
           public_display: createSignatureDto.publicDisplay,
+          email: 'anonymous@example.com',
+          full_name: 'Anonymous',
         }),
       };
 
@@ -343,6 +345,8 @@ describe('PocketbaseService', () => {
         author_id: createSignatureDto.userId,
         agree_checkbox: createSignatureDto.agreeCheckbox,
         public_display: createSignatureDto.publicDisplay,
+        email: 'anonymous@example.com',
+        full_name: 'Anonymous',
       });
 
       expect(result).toHaveProperty('id');

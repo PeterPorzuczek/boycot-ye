@@ -26,10 +26,18 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
-    - name: Run tests
+    - name: Create mock environment for tests
+      run: |
+        echo "Creating test environment with mocks..."
+        echo "POCKETBASE_URL=http://mock-pocketbase" > .env.test
+        echo "POCKETBASE_ADMIN_EMAIL=test@example.com" >> .env.test
+        echo "POCKETBASE_ADMIN_PASSWORD=testpassword" >> .env.test
+        echo "NODE_ENV=test" >> .env.test
+    
+    - name: Run all tests
       run: npm test
     
-    - name: Generate test report
+    - name: Generate test coverage
       run: npm run test:cov
       
     - name: Upload test coverage
@@ -86,7 +94,46 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
-    - name: Run tests
+    - name: Create test setup file
+      run: |
+        echo "Creating Vue test setup file..."
+        mkdir -p tests/setup
+        cat > tests/setup/test-env.js << 'EOF'
+        // Mock localStorage
+        global.localStorage = {
+          getItem: jest.fn(),
+          setItem: jest.fn(),
+          removeItem: jest.fn()
+        };
+        
+        // Mock window.fetch
+        global.fetch = jest.fn(() => 
+          Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ user: { id: 'test-user', name: 'Test User' } })
+          })
+        );
+        
+        // Mock Vue composition API auth module
+        jest.mock('@/composables/useAuth', () => ({
+          useAuth: () => ({
+            isLoggedIn: { value: false },
+            user: { value: null },
+            login: jest.fn(),
+            logout: jest.fn(),
+            register: jest.fn()
+          })
+        }));
+        EOF
+        
+        # Update jest.config.js to use setup file
+        if grep -q "setupFiles" jest.config.js; then
+          sed -i "s|setupFiles:.*|setupFiles: ['<rootDir>/tests/setup/test-env.js'],|" jest.config.js
+        else
+          sed -i "/module.exports/a \  setupFiles: ['<rootDir>/tests/setup/test-env.js']," jest.config.js
+        fi
+    
+    - name: Run all tests
       run: npm test
 
   frontend-build:
