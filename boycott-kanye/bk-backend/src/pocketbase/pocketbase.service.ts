@@ -117,6 +117,30 @@ export class PocketbaseService implements OnModuleInit {
     }
   }
 
+  async getSignaturesWithDisplayNames(): Promise<any[]> {
+    try {
+      // Get all signatures - no fancy queries
+      const records = await this.pb.collection('signatures').getFullList();
+
+      // Just map to the format we need
+      return records.map((record) => {
+        return {
+          id: record.id,
+          displayName: record.public_display ? 'User' : 'Anonymous',
+          created: record.created,
+        };
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get signatures: ${error.message || 'Unknown error'}`,
+      );
+      throw new HttpException(
+        'Failed to retrieve signatures',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async createSignature(createSignatureDto: CreateSignatureDto): Promise<any> {
     try {
       const { userId, agreeCheckbox, publicDisplay } = createSignatureDto;

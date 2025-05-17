@@ -5,11 +5,13 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Logger,
   Param,
   Post,
   Put,
   UseGuards,
   Request,
+  HttpException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -22,11 +24,14 @@ import { PocketbaseService } from '../pocketbase/pocketbase.service';
 import { CreateSignatureDto } from './dto/create-signature.dto';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { SignatureDto } from './dto/signature.dto';
+import { SignatureDisplayDto } from './dto/signature-display.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
 @ApiTags('signatures')
 @Controller('signatures')
 export class SignaturesController {
+  private readonly logger = new Logger(SignaturesController.name);
+
   constructor(private readonly pocketbaseService: PocketbaseService) {}
 
   @Get('all')
@@ -37,6 +42,18 @@ export class SignaturesController {
   })
   async getSignatures(): Promise<any[]> {
     return this.pocketbaseService.getSignatures();
+  }
+
+  @Get('display-list')
+  @ApiOperation({ summary: 'Get a list of signatures with display names' })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Returns signatures with display names (anonymous for private signatures)',
+    type: [SignatureDisplayDto],
+  })
+  async getSignaturesWithDisplayNames(): Promise<SignatureDisplayDto[]> {
+    return this.pocketbaseService.getSignaturesWithDisplayNames();
   }
 
   @Post()
