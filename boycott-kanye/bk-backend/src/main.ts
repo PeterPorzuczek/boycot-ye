@@ -3,6 +3,7 @@ import { AppModule } from './app.module.js';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,7 +35,18 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
+
+  // Save Swagger JSON to file
+  fs.writeFileSync('./swagger.json', JSON.stringify(document, null, 2));
+  console.log('Swagger JSON exported to ./swagger.json');
+
+  // Setup Swagger UI
   SwaggerModule.setup('docs', app, document);
+
+  // Endpoint for Swagger JSON
+  app.use('/api-json', (req, res) => {
+    res.json(document);
+  });
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3000;
@@ -44,5 +56,6 @@ async function bootstrap() {
   console.log(
     `Swagger documentation available at: http://localhost:${port}/docs`,
   );
+  console.log(`Swagger JSON available at: http://localhost:${port}/api-json`);
 }
 bootstrap();

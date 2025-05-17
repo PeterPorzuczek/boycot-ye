@@ -1,0 +1,357 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Invalid registration data"
+          }
+        },
+        "summary": "Register a new user",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User authenticated successfully"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "summary": "Authenticate user and receive token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/signatures/all": {
+      "get": {
+        "operationId": "SignaturesController_getSignatures",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns all signatures in the system"
+          }
+        },
+        "summary": "Get all signatures",
+        "tags": [
+          "signatures"
+        ]
+      }
+    },
+    "/api/signatures": {
+      "post": {
+        "operationId": "SignaturesController_createSignature",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSignatureDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The signature has been successfully created"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "409": {
+            "description": "User has already signed"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new signature",
+        "tags": [
+          "signatures"
+        ]
+      }
+    },
+    "/api/signatures/me": {
+      "get": {
+        "operationId": "SignaturesController_getCurrentUserSignature",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User's signature",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignatureDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User has not signed the petition yet"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get the current user's signature",
+        "tags": [
+          "signatures"
+        ]
+      }
+    },
+    "/api/signatures/{id}": {
+      "delete": {
+        "operationId": "SignaturesController_deleteSignature",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signature deleted successfully"
+          },
+          "403": {
+            "description": "User is not authorized to delete this signature"
+          },
+          "404": {
+            "description": "Signature not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a signature",
+        "tags": [
+          "signatures"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Boycott Kanye API",
+    "description": "API for the Boycott Kanye petition application",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address for the user account",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for the user account",
+            "example": "StrongP@ssw0rd",
+            "minLength": 8
+          },
+          "passwordConfirm": {
+            "type": "string",
+            "description": "Confirmation of the password",
+            "example": "StrongP@ssw0rd"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the user",
+            "example": "John Doe"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "passwordConfirm",
+          "name"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the registered user",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for the user account",
+            "example": "StrongP@ssw0rd"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "CreateSignatureDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "The ID of the user creating the signature",
+            "example": "user123456"
+          },
+          "agreeCheckbox": {
+            "type": "boolean",
+            "description": "Confirmation checkbox that the user agrees with the petition",
+            "example": true
+          },
+          "publicDisplay": {
+            "type": "boolean",
+            "description": "Whether the signature should be publicly displayed with user info",
+            "example": true
+          }
+        },
+        "required": [
+          "userId",
+          "agreeCheckbox",
+          "publicDisplay"
+        ]
+      },
+      "SignatureUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID",
+            "example": "user123456"
+          },
+          "name": {
+            "type": "string",
+            "description": "User name (or \"Anonymous\" if private)",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email (masked if shown)",
+            "example": "j***e@example.com"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email"
+        ]
+      },
+      "SignatureDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the signature",
+            "example": "sig123456"
+          },
+          "user": {
+            "type": "string",
+            "description": "Reference to the user who signed",
+            "example": "user123456"
+          },
+          "agree_checkbox": {
+            "type": "boolean",
+            "description": "Whether the user agreed with the petition",
+            "example": true
+          },
+          "public_display": {
+            "type": "boolean",
+            "description": "Whether the signature is displayed publicly with user info",
+            "example": true
+          },
+          "created": {
+            "type": "string",
+            "description": "When the signature was created",
+            "example": "2023-05-15 10:30:45"
+          },
+          "expand": {
+            "description": "Expanded user information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SignatureUserDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "user",
+          "agree_checkbox",
+          "public_display",
+          "created",
+          "expand"
+        ]
+      }
+    }
+  }
+}
