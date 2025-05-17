@@ -24,8 +24,8 @@ RUN npm run build && \
 # Stage 2: Serve the app using nginx
 FROM nginx:alpine
 
-# Add a non-root user to run nginx
-RUN adduser -D -H -u 1000 -s /sbin/nologin www-data
+# Remove the attempt to add a www-data user since it already exists in nginx:alpine
+# Instead, use the existing user - no need to create a new one
 
 # Copy the built app from the build stage to nginx
 COPY --from=build /app/dist /usr/share/nginx/html
@@ -40,17 +40,17 @@ exec \"\$@\"" > /docker-entrypoint.sh && \
 chmod +x /docker-entrypoint.sh
 
 # Make directories writable for nginx
-RUN chown -R www-data:www-data /usr/share/nginx/html && \
-    chown -R www-data:www-data /var/cache/nginx && \
-    chown -R www-data:www-data /var/log/nginx && \
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
     touch /var/run/nginx.pid && \
-    chown -R www-data:www-data /var/run/nginx.pid
+    chown -R nginx:nginx /var/run/nginx.pid
 
 # Remove default nginx static assets
 RUN rm -rf /usr/share/nginx/html/50x.html /usr/share/nginx/html/index.html
 
-# Use non-root user
-USER www-data
+# Use non-root nginx user
+USER nginx
 
 # Expose port 80
 EXPOSE 80
