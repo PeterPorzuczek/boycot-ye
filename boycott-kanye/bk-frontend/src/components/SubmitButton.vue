@@ -1,15 +1,11 @@
 <template>
   <button
-    class="submit-button"
     type="submit"
+    class="submit-button"
     :disabled="isSubmitting || !isValid"
   >
-    <span v-if="isSubmitting" class="loading-indicator">
-      {{ $t('common.loading') }}
-    </span>
-    <span v-else>
-      {{ $t('sign.signButton') }}
-    </span>
+    <span v-if="isSubmitting" class="spinner"></span>
+    <span v-else>SIGN THE PETITION</span>
   </button>
 </template>
 
@@ -23,7 +19,7 @@ export default {
     },
     isValid: {
       type: Boolean,
-      default: true
+      default: false
     }
   }
 }
@@ -31,29 +27,47 @@ export default {
 
 <style scoped>
 .submit-button {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background-color: #4CAF50;
+  padding: var(--spacing-md) var(--spacing-xxl);
+  background-color: var(--secondary);
   color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-weight: bold;
+  border-radius: var(--border-radius-md);
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: var(--font-size-md);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .submit-button:hover:not(:disabled) {
-  background-color: #45a049;
+  background-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .submit-button:disabled {
-  background-color: #cccccc;
+  background-color: var(--grey-mid);
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
-.loading-indicator {
-  display: inline-block;
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style> 

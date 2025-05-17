@@ -1,40 +1,67 @@
 <template>
   <div class="home-page">
     <div class="hero-section">
-      <h1>Stand Against Hate</h1>
-      <p class="description">Join us in publicly condemning Kanye West's antisemitic and Nazi views by signing this petition.</p>
-      <div class="cta-button">
-        <router-link to="/sign" class="sign-button">Sign the petition</router-link>
-      </div>
-    </div>
-    
-    <div class="counter-section">
-      <div class="signature-count">
-        <span class="count">{{ consentingSignaturesCount }}</span>
-        <span class="label">signatures collected</span>
-      </div>
-    </div>
-    
-    <div class="signatures-section">
-      <h2>Recent signatures</h2>
-      <div class="signatures-list">
-        <p v-if="isLoading">Loading...</p>
-        <p v-else-if="error" class="error-message">{{ error }}</p>
-        <div v-else-if="signatures.length === 0" class="no-signatures">
-          <p>No signatures yet. Be the first to sign!</p>
-        </div>
-        <div v-else class="signatures-grid">
-          <div v-for="signature in signatures" :key="signature.id" class="signature-item">
-            <div class="signature-name">
-              {{ signature.public_display ? signature.full_name : 'Anonymous' }}
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1 class="hero-title">STAND <span>AGAINST</span> HATE</h1>
+            <p class="hero-description">Join us in publicly condemning Kanye West's antisemitic and Nazi views by adding your name to this petition.</p>
+            <div class="cta-group">
+              <router-link to="/sign" class="btn btn-primary">SIGN THE PETITION</router-link>
+              <a href="#signatures" class="btn btn-secondary">VIEW SIGNATURES</a>
             </div>
-            <div v-if="signature.public_display" class="signature-email">
-              {{ signature.email }}
-            </div>
-            <div class="signature-date">
-              {{ formatDate(signature.created) }}
+            <div class="counter-badge">
+              <span class="count">{{ consentingSignaturesCount }}</span>
+              <span class="label">signatures so far</span>
             </div>
           </div>
+          <div class="hero-visual">
+            <div class="quote-box">
+              <p class="quote-text">"We must always take sides. Neutrality helps the oppressor, never the victim."</p>
+              <p class="quote-author">— Elie Wiesel</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="signatures" class="signatures-section">
+      <div class="container">
+        <h2 class="section-title">RECENT SIGNATURES</h2>
+        <div class="signatures-content">
+          <div v-if="isLoading" class="signatures-loading">
+            <div class="loader"></div>
+            <p>Loading signatures...</p>
+          </div>
+          
+          <div v-else-if="error" class="signatures-error">
+            <p>{{ error }}</p>
+          </div>
+          
+          <div v-else-if="signatures.length === 0" class="signatures-empty">
+            <p>No signatures yet. <strong>Be the first to sign!</strong></p>
+            <router-link to="/sign" class="btn btn-primary">SIGN NOW</router-link>
+          </div>
+          
+          <div v-else class="signatures-grid">
+            <div v-for="signature in signatures" :key="signature.id" class="signature-item">
+              <div class="signature-content">
+                <div class="signature-name">
+                  {{ signature.public_display ? signature.full_name : 'Anonymous' }}
+                </div>
+                <div v-if="signature.public_display" class="signature-email">
+                  {{ signature.email }}
+                </div>
+                <div class="signature-date">
+                  {{ formatDate(signature.created) }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="signatures-cta">
+          <router-link to="/sign" class="btn btn-primary">ADD YOUR VOICE</router-link>
         </div>
       </div>
     </div>
@@ -55,8 +82,9 @@ export default {
   },
   computed: {
     consentingSignaturesCount() {
-      // Count only signatures that have agreed to the petition
-      return this.signatures.filter(signature => signature.agree_checkbox === true).length;
+      return this.signatures.filter(signature => 
+        (signature.agree_checkbox === true)
+      ).length;
     }
   },
   created() {
@@ -69,22 +97,6 @@ export default {
       
       try {
         const response = await axios.get('http://localhost:3000/api/signatures/all');
-        console.log("DOKŁADNA ODPOWIEDŹ Z API:", JSON.stringify(response.data, null, 2));
-        
-        // Sprawdźmy każdy podpis, czy ma właściwe pola
-        if (response.data && response.data.length > 0) {
-          response.data.forEach((sig, index) => {
-            console.log(`Podpis ${index}:`, {
-              id: sig.id,
-              'public_display': sig.public_display,
-              'ma expand?': !!sig.expand,
-              'ma expand.user?': !!(sig.expand && sig.expand.user),
-              'expand.user.name': sig.expand?.user?.name,
-              'expand.user.email': sig.expand?.user?.email
-            });
-          });
-        }
-        
         this.signatures = response.data;
       } catch (err) {
         console.error('Error fetching signatures:', err);
@@ -94,37 +106,22 @@ export default {
       }
     },
     
-    maskEmail(email) {
-      if (!email) return '';
-      const [local, domain] = email.split('@');
-      const firstChar = local.charAt(0);
-      const maskedLocal = firstChar + '*'.repeat(Math.min(local.length - 1, 3));
-      const domainParts = domain.split('.');
-      const tld = domainParts.pop();
-      const domainName = domainParts.join('.');
-      const firstDomainChar = domainName.charAt(0);
-      const maskedDomain = firstDomainChar + '*'.repeat(Math.min(domainName.length - 1, 3));
-      return `${maskedLocal}@${maskedDomain}.${tld}`;
-    },
-    
     formatDate(date) {
       if (!date) return '';
       
       try {
         const dateObj = new Date(date);
         if (isNaN(dateObj.getTime())) {
-          return date; // Zwróć oryginalny string, jeśli nie da się sparsować
+          return date;
         }
         return dateObj.toLocaleDateString('en-US', { 
           year: 'numeric', 
-          month: 'long', 
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+          month: 'short', 
+          day: 'numeric'
         });
       } catch (err) {
         console.error('Error parsing date:', err);
-        return date; // W przypadku błędu zwróć oryginalny string
+        return date;
       }
     }
   }
@@ -133,127 +130,282 @@ export default {
 
 <style scoped>
 .home-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 1rem;
+  min-height: 100vh;
 }
 
+/* Hero Section */
 .hero-section {
-  text-align: center;
-  padding: 2rem 0;
+  padding: var(--spacing-xxl) 0;
+  background-color: var(--light);
+  position: relative;
+  overflow: hidden;
 }
 
-.hero-section h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: center;
 }
 
-.description {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
+.hero-text {
+  position: relative;
 }
 
-.cta-button {
-  margin: 2rem 0;
+.hero-title {
+  font-size: var(--font-size-jumbo);
+  line-height: 1.1;
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  position: relative;
 }
 
-.sign-button {
+.hero-title span {
+  color: var(--secondary);
+  position: relative;
   display: inline-block;
-  padding: 1rem 2rem;
-  background-color: #4CAF50;
-  color: white;
-  border-radius: 4px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  text-decoration: none;
 }
 
-.sign-button:hover {
-  background-color: #45a049;
+.hero-title span::after {
+  content: '';
+  position: absolute;
+  width: 110%;
+  height: 8px;
+  background-color: var(--secondary);
+  bottom: 8px;
+  left: -5%;
+  z-index: -1;
+  opacity: 0.3;
 }
 
-.counter-section {
-  text-align: center;
-  margin: 2rem 0;
+.hero-description {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+  max-width: 600px;
+  line-height: 1.5;
+  color: var(--grey-dark);
 }
 
-.signature-count {
-  display: inline-block;
-  padding: 1rem 2rem;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.cta-group {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
 }
 
-.count {
-  font-size: 2.5rem;
-  font-weight: bold;
-  display: block;
+.counter-badge {
+  display: inline-flex;
+  flex-direction: column;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: 2px solid var(--accent);
+  border-radius: var(--border-radius-md);
+  margin-top: var(--spacing-lg);
 }
 
-.label {
-  font-size: 1rem;
-  color: #666;
+.counter-badge .count {
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
 }
 
+.counter-badge .label {
+  font-size: var(--font-size-sm);
+  color: var(--grey-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quote-box {
+  background-color: var(--primary);
+  color: var(--light);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  position: relative;
+  max-width: 400px;
+  transform: rotate(-2deg);
+  box-shadow: var(--shadow-lg);
+}
+
+.quote-box::before {
+  content: '"';
+  position: absolute;
+  top: -30px;
+  left: 20px;
+  font-size: 120px;
+  color: var(--secondary);
+  opacity: 0.5;
+  font-family: Georgia, serif;
+}
+
+.quote-text {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
+}
+
+.quote-author {
+  font-style: italic;
+  color: var(--grey-mid);
+  text-align: right;
+}
+
+/* Signatures Section */
 .signatures-section {
-  margin: 3rem 0;
-}
-
-.signatures-section h2 {
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.signatures-list {
+  padding: var(--spacing-xxl) 0;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+}
+
+.section-title {
+  font-size: var(--font-size-xxl);
+  margin-bottom: var(--spacing-xl);
+  font-weight: 700;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 4px;
+  background-color: var(--secondary);
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.signatures-content {
+  margin-bottom: var(--spacing-xl);
+}
+
+.signatures-loading,
+.signatures-error,
+.signatures-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  text-align: center;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--grey-light);
+  border-radius: 50%;
+  border-top-color: var(--secondary);
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-md);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.signatures-error {
+  color: var(--error);
+  background-color: rgba(255, 58, 94, 0.1);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+}
+
+.signatures-empty {
+  padding: var(--spacing-xl);
+  background-color: var(--grey-light);
+  border-radius: var(--border-radius-md);
+}
+
+.signatures-empty p {
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-lg);
 }
 
 .signatures-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
 }
 
 .signature-item {
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: var(--light);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.signature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.signature-content {
+  padding: var(--spacing-lg);
 }
 
 .signature-name {
-  font-weight: bold;
-  font-size: 1rem;
-  color: #333;
-  margin-bottom: 0.5rem;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  color: var(--primary);
 }
 
 .signature-email {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 0.5rem;
+  font-size: var(--font-size-sm);
+  color: var(--grey-dark);
+  margin-bottom: var(--spacing-xs);
 }
 
 .signature-date {
-  font-size: 0.85rem;
-  color: #777;
+  font-size: var(--font-size-xs);
+  color: var(--grey-mid);
+  margin-top: var(--spacing-sm);
 }
 
-.no-signatures {
-  padding: 2rem;
-  color: #666;
+.signatures-cta {
+  text-align: center;
+  margin-top: var(--spacing-xl);
 }
 
-.error-message {
-  color: #721c24;
-  background-color: #f8d7da;
-  padding: 0.75rem;
-  border-radius: 4px;
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .hero-visual {
+    order: -1;
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .hero-title {
+    font-size: var(--font-size-xxl);
+  }
+  
+  .hero-description {
+    font-size: var(--font-size-md);
+  }
+  
+  .cta-group {
+    flex-direction: column;
+  }
+  
+  .signatures-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style> 

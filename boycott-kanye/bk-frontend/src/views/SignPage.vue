@@ -1,29 +1,45 @@
 <template>
   <div class="sign-page">
-    <div class="page-header">
-      <h1>Sign the Petition</h1>
-    </div>
-    
-    <div v-if="isLoading" class="loading-container">
-      <p>Loading...</p>
-    </div>
-    
-    <div v-else-if="error" class="error-container">
-      <p>{{ error }}</p>
-      <router-link to="/" class="back-link">Back to Home</router-link>
-    </div>
-    
-    <div v-else-if="hasUserSigned" class="already-signed-container">
-      <p>You have already signed this petition.</p>
-      <router-link to="/profile" class="profile-link">Profile</router-link>
-      <router-link to="/" class="back-link">Back to Home</router-link>
-    </div>
-    
-    <div v-else class="form-container">
-      <SignForm 
-        :user="user" 
-        @submit="handleSignatureSubmit"
-      />
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">SIGN THE PETITION</h1>
+        <div class="page-description">
+          <p>Your voice matters. Add your signature to stand against hate and discrimination.</p>
+        </div>
+      </div>
+      
+      <div class="sign-content">
+        <div v-if="isLoading" class="sign-loading">
+          <div class="loader"></div>
+          <p>Loading your information...</p>
+        </div>
+        
+        <div v-else-if="error" class="sign-error">
+          <div class="error-icon">!</div>
+          <div class="error-content">
+            <h3>Error</h3>
+            <p>{{ error }}</p>
+            <router-link to="/" class="btn btn-secondary">BACK TO HOME</router-link>
+          </div>
+        </div>
+        
+        <div v-else-if="hasUserSigned" class="sign-already-signed">
+          <div class="icon-check">✓</div>
+          <h3>You have already signed this petition</h3>
+          <p>Thank you for taking a stand against hate speech and discrimination.</p>
+          <div class="action-links">
+            <router-link to="/profile" class="btn btn-primary">VIEW YOUR PROFILE</router-link>
+            <router-link to="/" class="btn btn-secondary">BACK TO HOME</router-link>
+          </div>
+        </div>
+        
+        <div v-else class="sign-form-container">
+          <SignForm 
+            :user="user" 
+            @submit="handleSignatureSubmit"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -139,9 +155,6 @@ export default {
       this.error = null;
       
       try {
-        // Print what we're sending to help debugging
-        console.log('Submitting signature data:', signatureData);
-        
         // Make sure we send exactly what the API expects based on Swagger
         const apiData = {
           userId: signatureData.userId,
@@ -156,7 +169,10 @@ export default {
           }
         });
         
-        console.log('Signature created successfully:', response.data);
+        // Log response ID silently
+        if (response && response.data && response.data.id) {
+          console.debug('Created signature with ID:', response.data.id);
+        }
         
         // After successful signature, redirect to thank you page
         this.$router.push('/thank-you');
@@ -170,7 +186,6 @@ export default {
             this.$router.push('/profile');
           } else if (err.response.status === 400) {
             this.error = 'Invalid form data. Please check all fields are filled correctly.';
-            console.log('Response data:', err.response.data);
           } else {
             this.error = `Failed to sign the petition: ${err.response.data?.message || 'Unknown error'}`;
           }
@@ -187,51 +202,165 @@ export default {
 
 <style scoped>
 .sign-page {
-  padding: 2rem 1rem;
-  max-width: 800px;
-  margin: 0 auto;
+  min-height: 100vh;
+  padding: var(--spacing-xxl) 0;
 }
 
 .page-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
 }
 
-.loading-container,
-.error-container,
-.already-signed-container {
-  text-align: center;
-  padding: 2rem;
-  margin: 2rem auto;
-  max-width: 600px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.error-container {
-  color: #721c24;
-  background-color: #f8d7da;
-}
-
-.back-link,
-.profile-link {
+.page-title {
+  font-size: var(--font-size-xxl);
+  margin-bottom: var(--spacing-md);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  position: relative;
   display: inline-block;
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  color: #fff;
-  background-color: #007bff;
-  border-radius: 4px;
-  text-decoration: none;
-  transition: background-color 0.2s;
 }
 
-.back-link:hover,
-.profile-link:hover {
-  background-color: #0056b3;
+.page-title::after {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 4px;
+  background-color: var(--secondary);
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.profile-link {
-  margin-right: 1rem;
+.page-description {
+  max-width: 600px;
+  margin: var(--spacing-lg) auto 0;
+}
+
+.page-description p {
+  font-size: var(--font-size-lg);
+  color: var(--grey-dark);
+}
+
+.sign-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sign-loading,
+.sign-error,
+.sign-already-signed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  margin: var(--spacing-xl) auto;
+  text-align: center;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--grey-light);
+  border-radius: 50%;
+  border-top-color: var(--secondary);
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-md);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sign-error {
+  border-left: 4px solid var(--error);
+  text-align: left;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.error-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--error);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.error-content {
+  flex: 1;
+}
+
+.error-content h3 {
+  margin-bottom: var(--spacing-sm);
+  color: var(--error);
+}
+
+.error-content p {
+  margin-bottom: var(--spacing-md);
+}
+
+.sign-already-signed {
+  background-color: var(--light);
+}
+
+.icon-check {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--success);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-md);
+}
+
+.sign-already-signed h3 {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.sign-already-signed p {
+  margin-bottom: var(--spacing-lg);
+  color: var(--grey-dark);
+}
+
+.action-links {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.sign-form-container {
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .action-links {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .page-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .page-description p {
+    font-size: var(--font-size-md);
+  }
 }
 </style> 

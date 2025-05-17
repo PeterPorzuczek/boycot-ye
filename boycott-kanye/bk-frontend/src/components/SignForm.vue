@@ -1,17 +1,20 @@
 <template>
   <form @submit.prevent="handleSubmit" class="sign-form">
-    <UserInfoSection :user="user" />
+    <div class="form-section user-info">
+      <h2 class="section-title">Your Information</h2>
+      <UserInfoSection :user="user" />
+    </div>
     
-    <div class="form-section">
-      <h3>Petition Consent</h3>
+    <div class="form-section petition-consent">
+      <h2 class="section-title">Petition Consent</h2>
       <ConsentCheckbox
         v-model="formState.agreeCheckbox"
         :error="formErrors.agreeCheckbox"
       />
     </div>
     
-    <div class="form-section">
-      <h3>Privacy Settings</h3>
+    <div class="form-section privacy-settings">
+      <h2 class="section-title">Privacy Settings</h2>
       <VisibilityToggle
         v-model="formState.publicDisplay"
       />
@@ -25,7 +28,8 @@
     </div>
     
     <div v-if="formState.error" class="form-error">
-      {{ formState.error }}
+      <div class="error-icon">!</div>
+      <p>{{ formState.error }}</p>
     </div>
   </form>
 </template>
@@ -134,35 +138,85 @@ export default {
 
 <style scoped>
 .sign-form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-xl);
 }
 
 .form-section {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
 }
 
-.form-section h3 {
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  color: #333;
+.section-title {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-md);
+  color: var(--primary);
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 2px;
+  background-color: var(--secondary);
+  bottom: -4px;
+  left: 0;
+}
+
+.user-info {
+  background-color: var(--light);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  border-left: 3px solid var(--accent);
+}
+
+.petition-consent {
+  background-color: rgba(255, 58, 94, 0.05);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  border-left: 3px solid var(--secondary);
+}
+
+.privacy-settings {
+  background-color: rgba(58, 102, 255, 0.05);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  border-left: 3px solid var(--accent);
 }
 
 .form-actions {
-  margin-top: 2rem;
+  margin-top: var(--spacing-xl);
   text-align: center;
 }
 
 .form-error {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background-color: #f8d7da;
-  color: #721c24;
-  border-radius: 4px;
-  text-align: center;
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background-color: rgba(255, 58, 94, 0.1);
+  color: var(--error);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+}
+
+.error-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--error);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .sign-form {
+    padding: var(--spacing-md);
+  }
 }
 </style> 

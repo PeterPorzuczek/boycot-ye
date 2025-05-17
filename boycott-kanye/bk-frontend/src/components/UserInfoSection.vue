@@ -1,22 +1,24 @@
 <template>
   <div class="user-info-section">
-    <h3>{{ $t('sign.yourInfo') }}</h3>
-    <div v-if="user && user.name && user.email">
+    <div v-if="user && user.name && user.email" class="user-info-grid">
       <div class="info-row">
-        <span class="label">{{ $t('sign.nameLabel') }}:</span>
-        <span class="value">{{ user.name }}</span>
+        <div class="info-label">Name:</div>
+        <div class="info-value">{{ user.name }}</div>
       </div>
       <div class="info-row">
-        <span class="label">{{ $t('sign.emailLabel') }}:</span>
-        <span class="value">{{ user.email }}</span>
+        <div class="info-label">Email:</div>
+        <div class="info-value">{{ user.email }}</div>
       </div>
     </div>
-    <div v-else class="error-info">
-      <p>User information is incomplete. This could be due to a login issue.</p>
-      <p>Please try logging out and logging in again.</p>
+    <div v-else class="user-info-error">
+      <div class="error-icon">!</div>
+      <div class="error-content">
+        <p>User information is incomplete. This could be due to a login issue.</p>
+        <p>Please try logging out and logging in again.</p>
+      </div>
     </div>
     <div class="info-note">
-      <small>{{ $t('sign.infoNote') }}</small>
+      <small>This information is pulled from your account and will be used in your signature.</small>
     </div>
   </div>
 </template>
@@ -39,35 +41,69 @@ export default {
 
 <style scoped>
 .user-info-section {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #f9f9f9;
+  margin-bottom: var(--spacing-md);
+}
+
+.user-info-grid {
+  display: grid;
+  gap: var(--spacing-sm);
 }
 
 .info-row {
-  margin-bottom: 0.5rem;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
 }
 
-.label {
+.info-label {
+  width: 100px;
+  font-weight: 600;
+  color: var(--grey-dark);
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-weight: 400;
+  color: var(--primary);
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  border-left: 2px solid var(--accent);
+}
+
+.user-info-error {
+  padding: var(--spacing-md);
+  background-color: rgba(255, 58, 94, 0.1);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  align-items: flex-start;
+}
+
+.error-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--error);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
-  min-width: 150px;
-  margin-right: 1rem;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+.error-content p {
+  margin-bottom: var(--spacing-sm);
+  color: var(--error);
+  line-height: 1.4;
 }
 
 .info-note {
-  margin-top: 1rem;
-  color: #666;
-}
-
-.error-info {
-  color: #721c24;
-  background-color: #f8d7da;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--grey-mid);
+  line-height: 1.5;
 }
 </style> 
