@@ -1,7 +1,7 @@
 {
   "general": {
     "siteTitle": "Boycott Kanye",
-    "copyright": "© 2023 Boycott Kanye"
+    "copyright": "© {year} Boycott Kanye"
   },
   "navigation": {
     "home": "Home",

@@ -26,7 +26,7 @@
 
     <footer class="app-footer">
       <div class="container">
-        <p>{{ $t('general.copyright') }}</p>
+        <p>{{ $t('general.copyright', { year: currentYear }) }}</p>
       </div>
     </footer>
   </div>
@@ -37,7 +37,8 @@ export default {
   name: 'App',
   data() {
     return {
-      isLoggedIn: false
+      isLoggedIn: false,
+      currentYear: new Date().getFullYear()
     }
   },
   created() {
