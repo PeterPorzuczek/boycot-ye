@@ -13,7 +13,7 @@
     </div>
     
     <div v-else class="profile-content">
-      <div class="profile-section signature-status">
+      <div v-if="hasUserSigned" class="profile-section signature-status">
         <h2>{{ t('profile.signatureStatus') }}</h2>
         <div v-if="hasUserSigned" class="signed-status">
           <p class="status-text">{{ t('profile.signed') }}</p>
@@ -65,6 +65,7 @@ import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 import { useSignature } from '../composables/useSignature';
 import { useTranslation } from '../composables/useTranslation';
+import axios from 'axios';
 
 export default {
   name: 'ProfilePage',
@@ -78,8 +79,7 @@ export default {
       isFetchingSignature,
       error: signatureError,
       fetchUserSignature,
-      deleteSignature,
-      updateSignatureVisibility
+      deleteSignature
     } = useSignature();
     
     const publicDisplay = ref(false);
@@ -111,14 +111,13 @@ export default {
       try {
         isLoading.value = true;
         const result = await fetchUserSignature();
+        
         if (result) {
-          // Handle both property formats that could come from the API
-          publicDisplay.value = 
-            result.public_display !== undefined ? result.public_display : 
-            result.publicDisplay !== undefined ? result.publicDisplay : 
-            false;
+          // API zwraca public_display (snake_case), ale w modelu używamy publicDisplay (camelCase)
+          publicDisplay.value = !!result.public_display;
         }
       } catch (err) {
+        console.error('Error fetching signature in ProfilePage:', err);
         error.value = t('errors.fetchSignatureFailed');
       } finally {
         isLoading.value = false;
@@ -136,33 +135,41 @@ export default {
       error.value = null;
       updateSuccess.value = false;
       
-      console.log('Updating visibility to:', publicDisplay.value);
-      console.log('Signature ID:', signature.value.id);
-      
       try {
-        // Call the API to update the signature visibility
-        const success = await updateSignatureVisibility(
-          signature.value.id, 
-          publicDisplay.value
+        // The API expects publicDisplay (camelCase) in request body according to UpdateSignatureDto
+        const token = localStorage.getItem('token');
+        
+        const response = await axios.put(
+          `http://localhost:3000/api/signatures/${signature.value.id}`,
+          { publicDisplay: publicDisplay.value }, // Używamy camelCase w żądaniu!
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          }
         );
         
-        console.log('Update result:', success);
-        
-        if (success) {
+        if (response.status === 200) {
           updateSuccess.value = true;
+          
+          // Response zwraca obiekt z public_display (snake_case)
+          if (response.data) {
+            signature.value = response.data;
+          }
           
           // Hide the success message after a few seconds
           setTimeout(() => {
             updateSuccess.value = false;
           }, 3000);
-        } else {
-          error.value = t('errors.updateSignatureFailed');
         }
       } catch (err) {
         console.error('Failed to update visibility:', err);
         error.value = t('errors.updateSignatureFailed');
-        // Reset the checkbox to its previous state on error
-        publicDisplay.value = signature.value.public_display;
+        // Reset checkbox state on error
+        if (signature.value && signature.value.public_display !== undefined) {
+          publicDisplay.value = !!signature.value.public_display;
+        }
       } finally {
         isUpdatingVisibility.value = false;
       }

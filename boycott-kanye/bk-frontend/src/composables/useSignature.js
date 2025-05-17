@@ -114,7 +114,7 @@ export function useSignature() {
     
     try {
       const response = await signatureApi.updateSignature(signatureId, { 
-        publicDisplay: publicDisplay 
+        public_display: publicDisplay 
       });
       
       // Update local signature data

@@ -50,7 +50,27 @@ export const signatureApi = {
   
   // Aktualizacja ustawień podpisu
   updateSignature(id, updateData) {
-    return apiClient.put(`/signatures/${id}`, updateData);
+    console.log('updateSignature - ID:', id);
+    console.log('updateSignature - Data:', JSON.stringify(updateData));
+    return apiClient.put(`/signatures/${id}`, updateData)
+      .then(response => {
+        console.log('updateSignature - Success response:', response);
+        return response;
+      })
+      .catch(error => {
+        console.error('updateSignature - Error details:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+          config: {
+            url: error.config?.url,
+            method: error.config?.method,
+            headers: error.config?.headers,
+            data: error.config?.data
+          }
+        });
+        throw error;
+      });
   },
   
   // Usunięcie podpisu
