@@ -88,12 +88,12 @@ export default {
 }
 
 :root {
-  /* Refined color palette inspired by Virgil Abloh */
+  /* Updated color palette inspired by anti-hate theme and Kanye references */
   --primary: #121212;
   --primary-dark: #000000;
-  --secondary: #FF3A5E;
-  --accent: #3A66FF;
-  --accent-2: #00C170;
+  --secondary: #FF0000; /* Strong red for stopping hate */
+  --accent: #F7C548; /* Gold accent for Kanye's albums/persona */
+  --accent-2: #5D21D2; /* Purple for creativity/unity */
   --light: #F8F8F8;
   --off-white: #F2F2F2;
   --grey-light: #E8E8E8;
@@ -103,11 +103,11 @@ export default {
   --error: #FF3A5E;
   --warning: #FF9F1C;
   
-  /* Refined gradients */
-  --gradient-primary: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
-  --gradient-dark: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 90%);
+  /* Updated gradients */
+  --gradient-primary: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%); /* Red to gold */
+  --gradient-dark: linear-gradient(135deg, var(--primary-dark) 0%, #191919 90%);
   --gradient-light: linear-gradient(135deg, var(--light) 0%, var(--grey-light) 100%);
-  --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%); /* Gold to purple */
   
   /* Refined spacing and sizing */
   --border-radius-sm: 4px;

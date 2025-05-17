@@ -33,6 +33,34 @@
       "anonymous": "Anonymous"
     }
   },
+  "login": {
+    "title": "LOGIN TO YOUR ACCOUNT",
+    "subtitle": "Join the movement against hate speech",
+    "email": "Email Address",
+    "password": "Password",
+    "loginButton": "LOGIN",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register now",
+    "forgotPassword": "Forgot your password?",
+    "rememberMe": "Remember me",
+    "welcomeBack": "WELCOME BACK",
+    "loginToSign": "Login to sign the petition against hate"
+  },
+  "register": {
+    "title": "CREATE YOUR ACCOUNT", 
+    "subtitle": "Join thousands of others standing against hate",
+    "name": "Full Name",
+    "email": "Email Address",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "passwordMismatch": "Passwords do not match",
+    "registerButton": "CREATE ACCOUNT",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Login here",
+    "termsText": "By registering, you agree to stand against hate speech",
+    "joinMovement": "JOIN THE MOVEMENT",
+    "createToSign": "Create an account to sign the petition against hate"
+  },
   "signPage": {
     "title": "SIGN THE PETITION",
     "description": "Your voice matters. Add your signature to stand against hate and discrimination.",
@@ -108,5 +136,18 @@
         "errorPrefix": "Failed to withdraw signature: "
       }
     }
+  },
+  "errors": {
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "registrationFailed": "Registration failed. This email may already be registered.",
+    "fetchSignatureFailed": "Failed to fetch your signature details.",
+    "updateSignatureFailed": "Failed to update your signature visibility.",
+    "deleteSignatureFailed": "Failed to withdraw your signature."
+  },
+  "common": {
+    "loading": "Loading...",
+    "updating": "Updating...",
+    "success": "Success!",
+    "error": "Error!"
   }
 } 

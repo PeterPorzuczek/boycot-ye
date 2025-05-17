@@ -1,6 +1,7 @@
 <template>
   <div class="profile-page">
     <div class="page-header">
+      <div class="stop-hate-ribbon">STOP HATE</div>
       <h1>{{ t('profile.title') }}</h1>
     </div>
     
@@ -22,19 +23,24 @@
           <div class="status-content">
             <p class="status-text">{{ t('profile.signed') }}</p>
             <p class="signature-date">Signed on: {{ formatDate(signature?.created) }}</p>
+            <div class="impact-message">You've joined the movement against hate speech</div>
           </div>
         </div>
         <div v-else class="not-signed-status">
           <div class="status-icon">✗</div>
           <div class="status-content">
             <p class="status-text">{{ t('profile.notSigned') }}</p>
+            <p class="take-stand-message">Take a stand against antisemitism and hate speech</p>
             <router-link to="/sign" class="sign-link btn btn-primary">{{ t('home.signButton') }}</router-link>
           </div>
         </div>
       </div>
       
       <div v-if="hasUserSigned" class="profile-section signature-visibility">
-        <h2 class="section-title">{{ t('profile.visibilityTitle') }}</h2>
+        <div class="section-header">
+          <h2 class="section-title">{{ t('profile.visibilityTitle') }}</h2>
+          <div class="section-subtitle">Control how your voice is heard</div>
+        </div>
         
         <div class="visibility-option-container">
           <div class="visibility-toggle-wrapper">
@@ -93,6 +99,7 @@
       </div>
       
       <div v-if="hasUserSigned" class="profile-section withdraw-signature">
+        <div class="section-decorative-element"></div>
         <h2 class="section-title">{{ t('profile.withdrawTitle') }}</h2>
         <p class="withdraw-info">If you wish to remove your signature from this petition, you can withdraw it. This action cannot be undone.</p>
         <button 
@@ -104,6 +111,10 @@
           <span v-else>{{ t('profile.withdrawButton') }}</span>
         </button>
       </div>
+    </div>
+    
+    <div class="unity-banner">
+      <div class="unity-message">UNITED AGAINST HATE</div>
     </div>
   </div>
 </template>
@@ -287,12 +298,30 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
+  position: relative;
 }
 
 .page-header {
   text-align: center;
   margin-bottom: var(--spacing-xxl);
   position: relative;
+  padding-top: var(--spacing-xl);
+}
+
+.stop-hate-ribbon {
+  position: absolute;
+  top: 0;
+  right: -50px;
+  background: var(--secondary);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-xl);
+  font-weight: 800;
+  font-size: var(--font-size-sm);
+  transform: rotate(45deg) translateX(30px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-md);
+  z-index: 1;
 }
 
 .page-header h1 {
@@ -389,9 +418,13 @@ export default {
   background: var(--gradient-primary);
 }
 
+.section-header {
+  margin-bottom: var(--spacing-lg);
+}
+
 .section-title {
   margin-top: 0;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-xs);
   font-size: var(--font-size-xl);
   font-weight: 800;
   color: var(--primary);
@@ -399,6 +432,13 @@ export default {
   letter-spacing: 0.5px;
   position: relative;
   display: inline-block;
+}
+
+.section-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--grey-dark);
+  font-style: italic;
+  margin-top: var(--spacing-xs);
 }
 
 .section-title::after {
@@ -420,15 +460,15 @@ export default {
 }
 
 .signed-status {
-  background-color: rgba(0, 193, 112, 0.1);
-  color: var(--success);
-  border-left: 3px solid var(--success);
+  background-color: rgba(247, 197, 72, 0.1);
+  color: var(--accent);
+  border-left: 3px solid var(--accent);
 }
 
 .not-signed-status {
-  background-color: rgba(255, 58, 94, 0.1);
-  color: var(--error);
-  border-left: 3px solid var(--error);
+  background-color: rgba(255, 0, 0, 0.05);
+  color: var(--secondary);
+  border-left: 3px solid var(--secondary);
 }
 
 .status-icon {
@@ -449,7 +489,7 @@ export default {
 }
 
 .not-signed-status .status-icon {
-  background: var(--error);
+  background: var(--secondary);
   color: white;
 }
 
@@ -468,9 +508,27 @@ export default {
   opacity: 0.8;
 }
 
+.impact-message {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: rgba(93, 33, 210, 0.1);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--accent-2);
+  display: inline-block;
+}
+
+.take-stand-message {
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  margin-bottom: var(--spacing-md);
+  color: var(--primary);
+}
+
 .sign-link {
   display: inline-block;
-  margin-top: var(--spacing-md);
+  margin-top: var(--spacing-xs);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -578,7 +636,7 @@ input:checked + .slider .slider-text.off {
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 0 3px rgba(58, 102, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(247, 197, 72, 0.2);
 }
 
 input:checked + .slider:before {
@@ -612,8 +670,8 @@ input:checked + .slider:before {
 }
 
 .status-badge.public {
-  background: var(--secondary);
-  color: white;
+  background: var(--accent);
+  color: var(--primary-dark);
 }
 
 .status-badge.private {
@@ -664,11 +722,13 @@ input:checked + .slider:before {
 }
 
 .preview-tag.public {
-  background: var(--secondary);
+  background: var(--accent);
+  color: var(--primary-dark);
 }
 
 .preview-tag.private {
   background: var(--grey-dark);
+  color: white;
 }
 
 .preview-icon {
@@ -754,11 +814,22 @@ input:checked + .slider:before {
   font-weight: 700;
 }
 
+.section-decorative-element {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--secondary);
+  opacity: 0.2;
+  transform: rotate(45deg);
+}
+
 .withdraw-info {
   margin-bottom: var(--spacing-lg);
   padding: var(--spacing-md);
-  background-color: rgba(255, 58, 94, 0.05);
-  border-left: 3px solid var(--error);
+  background-color: rgba(255, 0, 0, 0.05);
+  border-left: 3px solid var(--secondary);
   border-radius: var(--border-radius-sm);
   color: var(--grey-dark);
   line-height: 1.5;
@@ -766,7 +837,7 @@ input:checked + .slider:before {
 
 .withdraw-button {
   padding: var(--spacing-md) var(--spacing-xl);
-  background-color: var(--error);
+  background-color: var(--secondary);
   color: white;
   border: none;
   border-radius: var(--border-radius-md);
@@ -781,7 +852,7 @@ input:checked + .slider:before {
 }
 
 .withdraw-button:hover:not(:disabled) {
-  background-color: #d42a46;
+  background-color: #d00000;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -801,9 +872,48 @@ input:checked + .slider:before {
   margin-right: var(--spacing-sm);
 }
 
+.unity-banner {
+  margin-top: var(--spacing-xxl);
+  padding: var(--spacing-md);
+  background: var(--gradient-primary);
+  text-align: center;
+  border-radius: var(--border-radius-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.unity-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0) 10px,
+    rgba(0, 0, 0, 0.05) 10px,
+    rgba(0, 0, 0, 0.05) 20px
+  );
+}
+
+.unity-message {
+  color: white;
+  font-weight: 800;
+  font-size: var(--font-size-lg);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+}
+
 @media (max-width: 768px) {
   .profile-page {
     padding: 0 var(--spacing-md);
+  }
+  
+  .stop-hate-ribbon {
+    display: none;
   }
   
   .visibility-option-container {
