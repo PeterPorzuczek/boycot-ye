@@ -92,17 +92,28 @@ export class PocketbaseService implements OnModuleInit {
         expand: 'user',
       });
 
-      // Filtruj po public_display lokalnie
-      const publicRecords = records.items.filter(
-        (record) => record.public_display === true,
-      );
+      this.logger.debug(`Found ${records.items.length} total signatures`);
 
-      this.logger.debug(
-        `Found ${publicRecords.length} public signatures out of ${records.items.length} total`,
-      );
+      return records.items.map((record) => {
+        // For signatures with public_display = false, we return anonymous data
+        if (!record.public_display) {
+          // If this signature has full_name and email fields directly (from our schema update)
+          if (record.full_name !== undefined) {
+            // Return using the fields we added to signatures collection
+            return {
+              ...record,
+              full_name: 'Anonymous',
+              email: 'anonymous@example.com',
+            };
+          } else if (record.expand?.user) {
+            // If we're using the old expand approach, modify the expanded user data
+            record.expand.user.name = 'Anonymous';
+            record.expand.user.email = 'anonymous@example.com';
+          }
+          return record;
+        }
 
-      return publicRecords.map((record) => {
-        // Zawsze maskuj email w publicznych sygnaturach
+        // For public signatures, mask the email if expanded user data is available
         if (record.expand?.user) {
           const email = record.expand.user.email;
           record.expand.user.email = this.maskEmail(email);

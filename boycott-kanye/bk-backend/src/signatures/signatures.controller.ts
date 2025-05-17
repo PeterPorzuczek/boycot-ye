@@ -11,8 +11,6 @@ import {
   Put,
   UseGuards,
   Request,
-  HttpException,
-  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -26,6 +24,15 @@ import { CreateSignatureDto } from './dto/create-signature.dto';
 import { UpdateSignatureDto } from './dto/update-signature.dto';
 import { SignatureDto } from './dto/signature.dto';
 import { AuthGuard } from '../auth/auth.guard';
+
+// Define interface for Request with user property
+interface RequestWithUser extends Request {
+  user: {
+    id: string;
+    email?: string;
+    name?: string;
+  };
+}
 
 @ApiTags('signatures')
 @Controller('signatures')
@@ -44,6 +51,17 @@ export class SignaturesController {
     return this.pocketbaseService.getSignatures();
   }
 
+  @Get('display')
+  @ApiOperation({ summary: 'Get all signatures with anonymized private data' })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Returns all signatures, with private ones having anonymous data',
+  })
+  async getAllSignatures(): Promise<any[]> {
+    return this.pocketbaseService.getSignatures();
+  }
+
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -58,7 +76,7 @@ export class SignaturesController {
   @HttpCode(HttpStatus.CREATED)
   async createSignature(
     @Body() createSignatureDto: CreateSignatureDto,
-    @Request() req,
+    @Request() req: RequestWithUser,
   ): Promise<any> {
     // Override userId with the authenticated user's ID
     createSignatureDto.userId = req.user.id;
@@ -78,7 +96,7 @@ export class SignaturesController {
     status: HttpStatus.NOT_FOUND,
     description: 'User has not signed the petition yet',
   })
-  async getCurrentUserSignature(@Request() req): Promise<any | null> {
+  async getCurrentUserSignature(@Request() req: RequestWithUser): Promise<any> {
     return this.pocketbaseService.getUserSignature(req.user.id);
   }
 
@@ -102,7 +120,7 @@ export class SignaturesController {
   async updateSignature(
     @Param('id') id: string,
     @Body() updateSignatureDto: UpdateSignatureDto,
-    @Request() req,
+    @Request() req: RequestWithUser,
   ) {
     return this.pocketbaseService.updateSignature(
       id,
@@ -127,7 +145,10 @@ export class SignaturesController {
     status: HttpStatus.NOT_FOUND,
     description: 'Signature not found',
   })
-  async deleteSignature(@Param('id') id: string, @Request() req) {
+  async deleteSignature(
+    @Param('id') id: string,
+    @Request() req: RequestWithUser,
+  ) {
     return this.pocketbaseService.deleteSignature(id, req.user.id);
   }
 }
