@@ -24,10 +24,8 @@
     "setup:db": "npm run build && npm run setup:env && npm run migrate",
     "setup": "npm run build && node dist/migrations/scripts/setup-and-test.js",
     "clean:scripts": "rimraf scripts",
-    "fix:imports": "node update-imports.js",
     "test:auth": "jest src/auth/auth.middleware.spec.ts --coverage",
-    "test:report": "jest src/auth/auth.middleware.spec.ts --coverage --reportFilename=coverage-report",
-    "test:all": "jest src/auth/auth.middleware.spec.ts --coverage"
+    "test:report": "jest --coverage --reportFilename=coverage-report"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
