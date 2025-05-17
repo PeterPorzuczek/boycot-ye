@@ -13,7 +13,7 @@
     </div>
     
     <div v-else class="profile-content">
-      <div v-if="hasUserSigned" class="profile-section signature-status">
+      <div class="profile-section signature-status">
         <h2>{{ t('profile.signatureStatus') }}</h2>
         <div v-if="hasUserSigned" class="signed-status">
           <p class="status-text">{{ t('profile.signed') }}</p>
