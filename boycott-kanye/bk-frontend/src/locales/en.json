@@ -1,0 +1,91 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "back": "Back",
+    "next": "Next"
+  },
+  "header": {
+    "title": "Boycott Kanye",
+    "home": "Home",
+    "login": "Login",
+    "register": "Register",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "home": {
+    "title": "Stand Against Hate",
+    "description": "Join us in publicly condemning Kanye West's antisemitic and Nazi views by signing this petition.",
+    "counterText": "signatures collected",
+    "signButton": "Sign the petition",
+    "recentSignatures": "Recent signatures"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Login",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register here"
+  },
+  "register": {
+    "title": "Register",
+    "name": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "registerButton": "Register",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Login here"
+  },
+  "sign": {
+    "title": "Sign the Petition",
+    "yourInfo": "Your Information",
+    "nameLabel": "Full Name",
+    "emailLabel": "Email",
+    "infoNote": "This information is pulled from your account and will be used in your signature.",
+    "consentLabel": "I condemn Kanye West's antisemitic and Nazi views and wish to sign this petition.",
+    "visibilityLabel": "Show my name publicly in the signatures list",
+    "visibilityNote": "Your email will always be masked for privacy.",
+    "signButton": "Sign the petition",
+    "alreadySigned": "You have already signed this petition.",
+    "backToHome": "Back to home"
+  },
+  "thankYou": {
+    "title": "Thank You for Your Support!",
+    "message": "Your signature has been successfully added to the petition.",
+    "shareTitle": "Share this petition",
+    "backToHome": "Back to home"
+  },
+  "profile": {
+    "title": "Your Profile",
+    "signatureStatus": "Signature Status",
+    "signed": "You have signed the petition",
+    "notSigned": "You haven't signed the petition yet",
+    "visibilityTitle": "Signature Visibility",
+    "visibilityLabel": "Show my name publicly in the signatures list",
+    "withdrawTitle": "Withdraw Signature",
+    "withdrawButton": "Withdraw my signature",
+    "withdrawConfirm": "Are you sure you want to withdraw your signature?",
+    "updateSuccess": "Your preferences have been updated successfully."
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "message": "The page you are looking for does not exist.",
+    "backToHome": "Back to home"
+  },
+  "errors": {
+    "invalidCredentials": "Invalid email or password",
+    "registrationFailed": "Registration failed",
+    "fetchSignatureFailed": "Failed to retrieve signature information",
+    "createSignatureFailed": "Failed to create signature",
+    "updateSignatureFailed": "Failed to update signature",
+    "deleteSignatureFailed": "Failed to withdraw signature",
+    "alreadySigned": "You have already signed this petition",
+    "formValidation": "Please check that all fields are filled correctly",
+    "connectionError": "Connection error. Please check your internet connection."
+  }
+} 
