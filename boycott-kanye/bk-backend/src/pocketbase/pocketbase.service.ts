@@ -263,6 +263,7 @@ export class PocketbaseService implements OnModuleInit {
       data.anonymized_name = anonymizedName;
       data.email = anonymizedEmail;
       data.name = anonymizedName;
+      data.full_name = anonymizedName;
 
       const updated = await this.pb
         .collection('signatures')
