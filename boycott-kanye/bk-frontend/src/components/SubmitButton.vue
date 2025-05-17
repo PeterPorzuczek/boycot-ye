@@ -5,7 +5,7 @@
     :disabled="isSubmitting || !isValid"
   >
     <span v-if="isSubmitting" class="spinner"></span>
-    <span v-else>SIGN THE PETITION</span>
+    <span v-else>{{ $t('signPage.form.submitButton') }}</span>
   </button>
 </template>
 

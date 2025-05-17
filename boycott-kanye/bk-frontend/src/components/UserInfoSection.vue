@@ -2,23 +2,23 @@
   <div class="user-info-section">
     <div v-if="user && user.name && user.email" class="user-info-grid">
       <div class="info-row">
-        <div class="info-label">Name:</div>
+        <div class="info-label">{{ $t('signForm.userInfo.nameLabel') }}</div>
         <div class="info-value">{{ user.name }}</div>
       </div>
       <div class="info-row">
-        <div class="info-label">Email:</div>
+        <div class="info-label">{{ $t('signForm.userInfo.emailLabel') }}</div>
         <div class="info-value">{{ user.email }}</div>
       </div>
     </div>
     <div v-else class="user-info-error">
       <div class="error-icon">!</div>
       <div class="error-content">
-        <p>User information is incomplete. This could be due to a login issue.</p>
-        <p>Please try logging out and logging in again.</p>
+        <p>{{ $t('signForm.userInfo.error') }}</p>
+        <p>{{ $t('signForm.userInfo.errorHelp') }}</p>
       </div>
     </div>
     <div class="info-note">
-      <small>This information is pulled from your account and will be used in your signature.</small>
+      <small>{{ $t('signForm.userInfo.note') }}</small>
     </div>
   </div>
 </template>

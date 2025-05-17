@@ -1,7 +1,7 @@
 <template>
   <div class="visibility-toggle">
     <div class="visibility-info">
-      <p>Choose how your signature appears in the public petition list:</p>
+      <p>{{ $t('signForm.visibility.description') }}</p>
     </div>
     <label class="toggle-container">
       <div class="toggle-switch">
@@ -12,25 +12,25 @@
         />
         <span class="slider"></span>
       </div>
-      <span class="toggle-label">Show my name publicly in the signatures list</span>
+      <span class="toggle-label">{{ $t('signForm.visibility.toggle') }}</span>
     </label>
     <div class="visibility-note">
-      <small>Your email will always be masked for privacy.</small>
+      <small>{{ $t('signForm.visibility.note') }}</small>
     </div>
     <div class="visibility-preview">
-      <p><strong>Preview:</strong></p> 
+      <p><strong>{{ $t('signForm.visibility.preview') }}</strong></p> 
       <div class="preview-signature">
         <div class="preview-card" :class="{ 'active': modelValue }">
           <div class="preview-icon">👤</div>
           <div class="preview-content">
-            <div class="preview-name">Your Full Name</div>
-            <div class="preview-email">y***@example.com</div>
+            <div class="preview-name">{{ $t('signForm.visibility.previewPublic') }}</div>
+            <div class="preview-email">{{ $t('signForm.visibility.previewEmail') }}</div>
           </div>
         </div>
         <div class="preview-card" :class="{ 'active': !modelValue }">
           <div class="preview-icon">🔒</div>
           <div class="preview-content">
-            <div class="preview-name">Anonymous</div>
+            <div class="preview-name">{{ $t('signForm.visibility.previewPrivate') }}</div>
           </div>
         </div>
       </div>

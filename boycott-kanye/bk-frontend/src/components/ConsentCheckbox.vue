@@ -1,7 +1,7 @@
 <template>
   <div class="consent-checkbox">
     <div class="petition-text">
-      <p>I strongly condemn Kanye West's antisemitic statements and promotion of Nazi ideology. By signing this petition, I'm taking a stand against hate speech and discrimination.</p>
+      <p>{{ $t('signForm.petition.text') }}</p>
     </div>
     <label class="checkbox-container">
       <div class="custom-checkbox">
@@ -12,7 +12,7 @@
         />
         <span class="checkmark"></span>
       </div>
-      <span class="checkbox-label">I condemn Kanye West's antisemitic and Nazi views and wish to sign this petition.</span>
+      <span class="checkbox-label">{{ $t('signForm.petition.checkbox') }}</span>
     </label>
     <div v-if="error" class="error-message">
       <div class="error-icon">!</div>

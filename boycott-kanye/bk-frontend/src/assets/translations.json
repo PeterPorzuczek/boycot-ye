@@ -1,0 +1,112 @@
+{
+  "general": {
+    "siteTitle": "Boycott Kanye",
+    "copyright": "© 2023 Boycott Kanye"
+  },
+  "navigation": {
+    "home": "Home",
+    "signPetition": "Sign Petition",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "homePage": {
+    "hero": {
+      "title": "STAND AGAINST HATE",
+      "description": "Join us in publicly condemning Kanye West's antisemitic and Nazi views by adding your name to this petition.",
+      "signButton": "SIGN THE PETITION",
+      "viewButton": "VIEW SIGNATURES",
+      "counterLabel": "signatures so far"
+    },
+    "quote": {
+      "text": "We must always take sides. Neutrality helps the oppressor, never the victim.",
+      "author": "— Elie Wiesel"
+    },
+    "signatures": {
+      "title": "RECENT SIGNATURES",
+      "loading": "Loading signatures...",
+      "error": "Failed to load signatures",
+      "empty": "No signatures yet. Be the first to sign!",
+      "signNowButton": "SIGN NOW",
+      "addVoiceButton": "ADD YOUR VOICE",
+      "anonymous": "Anonymous"
+    }
+  },
+  "signPage": {
+    "title": "SIGN THE PETITION",
+    "description": "Your voice matters. Add your signature to stand against hate and discrimination.",
+    "loading": "Loading your information...",
+    "errorTitle": "Error",
+    "connectionError": "Cannot connect to API server. Please make sure the backend is running at http://localhost:3000",
+    "alreadySigned": {
+      "title": "You have already signed this petition",
+      "description": "Thank you for taking a stand against hate speech and discrimination.",
+      "viewProfileButton": "VIEW YOUR PROFILE",
+      "homeButton": "BACK TO HOME"
+    },
+    "form": {
+      "formError": "Missing user information. Please try logging in again.",
+      "consentError": "Please check this box to confirm your consent.",
+      "submitButton": "SIGN THE PETITION"
+    }
+  },
+  "signForm": {
+    "userInfo": {
+      "title": "Your Information",
+      "nameLabel": "Name:",
+      "emailLabel": "Email:",
+      "error": "User information is incomplete. This could be due to a login issue.",
+      "errorHelp": "Please try logging out and logging in again.",
+      "note": "This information is pulled from your account and will be used in your signature."
+    },
+    "petition": {
+      "title": "Petition Consent",
+      "text": "I strongly condemn Kanye West's antisemitic statements and promotion of Nazi ideology. By signing this petition, I'm taking a stand against hate speech and discrimination.",
+      "checkbox": "I condemn Kanye West's antisemitic and Nazi views and wish to sign this petition."
+    },
+    "visibility": {
+      "title": "Privacy Settings",
+      "description": "Choose how your signature appears in the public petition list:",
+      "toggle": "Show my name publicly in the signatures list",
+      "note": "Your email will always be masked for privacy.",
+      "preview": "Preview:",
+      "previewPublic": "Your Full Name",
+      "previewEmail": "y***@example.com",
+      "previewPrivate": "Anonymous"
+    }
+  },
+  "profilePage": {
+    "title": "YOUR PROFILE",
+    "signatureSection": {
+      "title": "Your Signature",
+      "loading": "Loading your signature data...",
+      "notSigned": {
+        "title": "You haven't signed the petition yet",
+        "description": "Add your voice to stand against hate and discrimination.",
+        "button": "SIGN THE PETITION NOW"
+      },
+      "visibilitySettings": {
+        "title": "Signature Visibility",
+        "description": "Control how your signature appears on the public signatures list.",
+        "toggle": "Show my name publicly on the signatures list",
+        "note": "When this is off, your signature will appear as 'Anonymous'",
+        "updateButton": "UPDATE VISIBILITY",
+        "successMessage": "Visibility settings updated successfully!",
+        "errorPrefix": "Failed to update visibility: "
+      },
+      "withdraw": {
+        "title": "Withdraw Your Signature",
+        "description": "If you wish to remove your signature from the petition, you can withdraw it here.",
+        "note": "This action cannot be undone.",
+        "button": "WITHDRAW SIGNATURE",
+        "confirmTitle": "Confirm Signature Withdrawal",
+        "confirmMessage": "Are you sure you want to withdraw your signature from the petition? This action cannot be undone.",
+        "confirmButton": "YES, WITHDRAW MY SIGNATURE",
+        "cancelButton": "NO, KEEP MY SIGNATURE",
+        "successMessage": "Your signature has been withdrawn successfully.",
+        "errorPrefix": "Failed to withdraw signature: "
+      }
+    }
+  }
+} 

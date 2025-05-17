@@ -4,21 +4,21 @@
       <div class="container">
         <div class="hero-content">
           <div class="hero-text">
-            <h1 class="hero-title">STAND <span>AGAINST</span> HATE</h1>
-            <p class="hero-description">Join us in publicly condemning Kanye West's antisemitic and Nazi views by adding your name to this petition.</p>
+            <h1 class="hero-title">{{ $t('homePage.hero.title').split(' ')[0] }} <span>{{ $t('homePage.hero.title').split(' ')[1] }}</span> {{ $t('homePage.hero.title').split(' ')[2] }}</h1>
+            <p class="hero-description">{{ $t('homePage.hero.description') }}</p>
             <div class="cta-group">
-              <router-link to="/sign" class="btn btn-primary">SIGN THE PETITION</router-link>
-              <a href="#signatures" class="btn btn-secondary">VIEW SIGNATURES</a>
+              <router-link to="/sign" class="btn btn-primary">{{ $t('homePage.hero.signButton') }}</router-link>
+              <a href="#signatures" class="btn btn-secondary">{{ $t('homePage.hero.viewButton') }}</a>
             </div>
             <div class="counter-badge">
               <span class="count">{{ consentingSignaturesCount }}</span>
-              <span class="label">signatures so far</span>
+              <span class="label">{{ $t('homePage.hero.counterLabel') }}</span>
             </div>
           </div>
           <div class="hero-visual">
             <div class="quote-box">
-              <p class="quote-text">"We must always take sides. Neutrality helps the oppressor, never the victim."</p>
-              <p class="quote-author">— Elie Wiesel</p>
+              <p class="quote-text">{{ $t('homePage.quote.text') }}</p>
+              <p class="quote-author">{{ $t('homePage.quote.author') }}</p>
             </div>
           </div>
         </div>
@@ -27,11 +27,11 @@
     
     <div id="signatures" class="signatures-section">
       <div class="container">
-        <h2 class="section-title">RECENT SIGNATURES</h2>
+        <h2 class="section-title">{{ $t('homePage.signatures.title') }}</h2>
         <div class="signatures-content">
           <div v-if="isLoading" class="signatures-loading">
             <div class="loader"></div>
-            <p>Loading signatures...</p>
+            <p>{{ $t('homePage.signatures.loading') }}</p>
           </div>
           
           <div v-else-if="error" class="signatures-error">
@@ -39,15 +39,15 @@
           </div>
           
           <div v-else-if="signatures.length === 0" class="signatures-empty">
-            <p>No signatures yet. <strong>Be the first to sign!</strong></p>
-            <router-link to="/sign" class="btn btn-primary">SIGN NOW</router-link>
+            <p>{{ $t('homePage.signatures.empty') }}</p>
+            <router-link to="/sign" class="btn btn-primary">{{ $t('homePage.signatures.signNowButton') }}</router-link>
           </div>
           
           <div v-else class="signatures-grid">
             <div v-for="signature in signatures" :key="signature.id" class="signature-item">
               <div class="signature-content">
                 <div class="signature-name">
-                  {{ signature.public_display ? signature.full_name : 'Anonymous' }}
+                  {{ signature.public_display ? signature.full_name : $t('homePage.signatures.anonymous') }}
                 </div>
                 <div v-if="signature.public_display" class="signature-email">
                   {{ signature.email }}
@@ -61,7 +61,7 @@
         </div>
         
         <div class="signatures-cta">
-          <router-link to="/sign" class="btn btn-primary">ADD YOUR VOICE</router-link>
+          <router-link to="/sign" class="btn btn-primary">{{ $t('homePage.signatures.addVoiceButton') }}</router-link>
         </div>
       </div>
     </div>

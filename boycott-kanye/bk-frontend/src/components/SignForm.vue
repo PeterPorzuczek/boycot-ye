@@ -1,12 +1,12 @@
 <template>
   <form @submit.prevent="handleSubmit" class="sign-form">
     <div class="form-section user-info">
-      <h2 class="section-title">Your Information</h2>
+      <h2 class="section-title">{{ $t('signForm.userInfo.title') }}</h2>
       <UserInfoSection :user="user" />
     </div>
     
     <div class="form-section petition-consent">
-      <h2 class="section-title">Petition Consent</h2>
+      <h2 class="section-title">{{ $t('signForm.petition.title') }}</h2>
       <ConsentCheckbox
         v-model="formState.agreeCheckbox"
         :error="formErrors.agreeCheckbox"
@@ -14,7 +14,7 @@
     </div>
     
     <div class="form-section privacy-settings">
-      <h2 class="section-title">Privacy Settings</h2>
+      <h2 class="section-title">{{ $t('signForm.visibility.title') }}</h2>
       <VisibilityToggle
         v-model="formState.publicDisplay"
       />
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { t } from '@/utils/i18n';
 import UserInfoSection from './UserInfoSection.vue';
 import ConsentCheckbox from './ConsentCheckbox.vue';
 import VisibilityToggle from './VisibilityToggle.vue';
@@ -84,12 +85,12 @@ export default {
       this.formErrors.agreeCheckbox = '';
       
       if (!this.user || !this.user.id) {
-        this.formState.error = 'Missing user information. Please try logging in again.';
+        this.formState.error = t('signPage.form.formError');
         return false;
       }
       
       if (!this.formState.agreeCheckbox) {
-        this.formErrors.agreeCheckbox = 'Please check this box to confirm your consent.';
+        this.formErrors.agreeCheckbox = t('signPage.form.consentError');
         return false;
       }
       

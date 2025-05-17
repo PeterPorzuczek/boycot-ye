@@ -2,34 +2,34 @@
   <div class="sign-page">
     <div class="container">
       <div class="page-header">
-        <h1 class="page-title">SIGN THE PETITION</h1>
+        <h1 class="page-title">{{ $t('signPage.title') }}</h1>
         <div class="page-description">
-          <p>Your voice matters. Add your signature to stand against hate and discrimination.</p>
+          <p>{{ $t('signPage.description') }}</p>
         </div>
       </div>
       
       <div class="sign-content">
         <div v-if="isLoading" class="sign-loading">
           <div class="loader"></div>
-          <p>Loading your information...</p>
+          <p>{{ $t('signPage.loading') }}</p>
         </div>
         
         <div v-else-if="error" class="sign-error">
           <div class="error-icon">!</div>
           <div class="error-content">
-            <h3>Error</h3>
+            <h3>{{ $t('signPage.errorTitle') }}</h3>
             <p>{{ error }}</p>
-            <router-link to="/" class="btn btn-secondary">BACK TO HOME</router-link>
+            <router-link to="/" class="btn btn-secondary">{{ $t('signPage.alreadySigned.homeButton') }}</router-link>
           </div>
         </div>
         
         <div v-else-if="hasUserSigned" class="sign-already-signed">
           <div class="icon-check">✓</div>
-          <h3>You have already signed this petition</h3>
-          <p>Thank you for taking a stand against hate speech and discrimination.</p>
+          <h3>{{ $t('signPage.alreadySigned.title') }}</h3>
+          <p>{{ $t('signPage.alreadySigned.description') }}</p>
           <div class="action-links">
-            <router-link to="/profile" class="btn btn-primary">VIEW YOUR PROFILE</router-link>
-            <router-link to="/" class="btn btn-secondary">BACK TO HOME</router-link>
+            <router-link to="/profile" class="btn btn-primary">{{ $t('signPage.alreadySigned.viewProfileButton') }}</router-link>
+            <router-link to="/" class="btn btn-secondary">{{ $t('signPage.alreadySigned.homeButton') }}</router-link>
           </div>
         </div>
         

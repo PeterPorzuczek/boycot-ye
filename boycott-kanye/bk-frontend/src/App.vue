@@ -3,18 +3,18 @@
     <header class="app-header">
       <div class="container">
         <router-link to="/" class="site-title-link">
-          <h1 class="site-title">Boycott Kanye</h1>
+          <h1 class="site-title">{{ $t('general.siteTitle') }}</h1>
         </router-link>
         <nav class="main-nav">
-          <router-link to="/" class="nav-link">Home</router-link>
+          <router-link to="/" class="nav-link">{{ $t('navigation.home') }}</router-link>
           <template v-if="isLoggedIn">
-            <router-link to="/sign" class="nav-link">Sign Petition</router-link>
-            <router-link to="/profile" class="nav-link">Profile</router-link>
-            <a href="#" @click.prevent="handleLogout" class="nav-link">Logout</a>
+            <router-link to="/sign" class="nav-link">{{ $t('navigation.signPetition') }}</router-link>
+            <router-link to="/profile" class="nav-link">{{ $t('navigation.profile') }}</router-link>
+            <a href="#" @click.prevent="handleLogout" class="nav-link">{{ $t('navigation.logout') }}</a>
           </template>
           <template v-else>
-            <router-link to="/login" class="nav-link">Login</router-link>
-            <router-link to="/register" class="nav-link">Register</router-link>
+            <router-link to="/login" class="nav-link">{{ $t('navigation.login') }}</router-link>
+            <router-link to="/register" class="nav-link">{{ $t('navigation.register') }}</router-link>
           </template>
         </nav>
       </div>
@@ -26,7 +26,7 @@
 
     <footer class="app-footer">
       <div class="container">
-        <p>&copy; 2023 Boycott Kanye</p>
+        <p>{{ $t('general.copyright') }}</p>
       </div>
     </footer>
   </div>
