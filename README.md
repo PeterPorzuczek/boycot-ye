@@ -120,6 +120,7 @@ The backend API provides the following endpoints:
 - `POST /api/signatures` - Create a new signature (requires authentication)
 - `GET /api/signatures/me` - Get the current user's signature (requires authentication)
 - `DELETE /api/signatures/:id` - Remove a signature (requires authentication)
+- `PUT /api/signatures/:id` - Updates a signature (requires authentication)
 
 ## Deployment
 

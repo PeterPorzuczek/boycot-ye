@@ -330,6 +330,16 @@
             "description": "The ID of the user creating the signature",
             "example": "user123456"
           },
+          "email": {
+            "type": "string",
+            "description": "Email address of the person signing the petition",
+            "example": "signer@example.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the person signing the petition",
+            "example": "John Doe"
+          },
           "agreeCheckbox": {
             "type": "boolean",
             "description": "Confirmation checkbox that the user agrees with the petition",
