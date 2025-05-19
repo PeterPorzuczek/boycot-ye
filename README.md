@@ -149,6 +149,13 @@ docker build -t boycott-kanye-backend .
 docker run -p 3000:3000 boycott-kanye-backend
 ```
 
+### PocketBase
+
+```bash
+docker run -d --name pocketbase -p 8090:8090 -v ~/pb_data:/pb_data adrianmusante/pocketbase
+# Then head to the logs for activation link
+```
+
 ## License
 
 This project is licensed under the GNU General Public License (GPL) - see the LICENSE file for details.
