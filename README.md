@@ -142,7 +142,8 @@ docker run -p 8080:80 boycott-kanye-frontend
 # Build production version
 cd boycott-kanye/bk-backend
 npm run build
-npm run start:prod
+npm run migrate
+npm run start
 
 # Using Docker
 docker build -t boycott-kanye-backend .
