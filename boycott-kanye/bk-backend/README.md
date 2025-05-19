@@ -22,6 +22,8 @@ This API serves as a wrapper around [PocketBase](https://pocketbase.io/) - a lig
 - **Future AI Integration**: Prepared foundation for integrating AI services for content moderation, signature analysis, etc.
 - **Standardized API**: Consistent RESTful endpoint design regardless of underlying data storage
 
+- TO RUN CONTAINER: `docker run -d --name pocketbase -p 8090:8090 -v ~/pb_data:/pb_data adrianmusante/pocketbase` -> then head to container logs for activation link
+
 ## Technology Stack
 
 - **NestJS**: Modern, progressive Node.js framework
@@ -57,7 +59,7 @@ The project includes a migration system to configure PocketBase collections:
 npm run build
 
 # Setup environment and run migrations
-npm run setup:db
+npm run migrate
 
 # Full setup including test data creation
 npm run setup
