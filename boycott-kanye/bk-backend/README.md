@@ -22,7 +22,7 @@ This API serves as a wrapper around [PocketBase](https://pocketbase.io/) - a lig
 - **Future AI Integration**: Prepared foundation for integrating AI services for content moderation, signature analysis, etc.
 - **Standardized API**: Consistent RESTful endpoint design regardless of underlying data storage
 
-- TO RUN CONTAINER: `docker run -d --name pocketbase -p 8090:8090 -v ~/pb_data:/pb_data adrianmusante/pocketbase` -> then head to container logs for activation link
+- **TO RUN CONTAINER** -> `docker run -d --name pocketbase -p 8090:8090 -v ~/pb_data:/pb_data adrianmusante/pocketbase` -> then head to container logs for activation link
 
 ## Technology Stack
 
